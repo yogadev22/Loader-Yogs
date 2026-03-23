@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_height="match_parent"
+     android:layout_width="match_parent"
+     tools:context=".MainActivity">
+
+    <TextView
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:gravity="center"
+         android:textSize="18sp"
+         android:textColor="@color/white"
+         android:layout_marginTop="10dp"
+         android:id="@+id/title"
+         android:text="YOGS LOADER"
+         android:textStyle="bold" />
+
+    <LinearLayout
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:layout_below="@id/title"
+         android:layout_marginEnd="16dp"
+         android:gravity="center"
+         android:background="#282929"
+         android:orientation="vertical"
+         android:layout_centerHorizontal="true"
+         android:layout_marginTop="40dp"
+         android:layout_marginStart="16dp"
+         android:id="@+id/licenseinfo">
+
+        <TextView
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:textSize="16sp"
+             android:textStyle="bold"
+             android:text="License Will Be Expire On" />
+
+        <LinearLayout
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:gravity="center"
+             android:orientation="horizontal"
+             android:layout_centerHorizontal="true"
+             android:layout_marginTop="12sp">
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:gravity="center"
+                 android:orientation="vertical"
+                 android:layout_centerHorizontal="true">
+
+                <TextView
+                     android:layout_height="25dp"
+                     android:layout_width="50dp"
+                     android:gravity="center"
+                     android:background="@drawable/bitfalse"
+                     android:textSize="14sp"
+                     android:textColor="@color/black"
+                     android:id="@+id/textday"
+                     android:text="20" />
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="16sp"
+                     android:textStyle="bold"
+                     android:text="Day" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:gravity="center"
+                 android:orientation="vertical"
+                 android:layout_centerHorizontal="true"
+                 android:layout_marginStart="12sp">
+
+                <TextView
+                     android:layout_height="25dp"
+                     android:layout_width="50dp"
+                     android:gravity="center"
+                     android:background="@drawable/bitfalse"
+                     android:textSize="14sp"
+                     android:textColor="@color/black"
+                     android:id="@+id/texthour"
+                     android:text="20" />
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="16sp"
+                     android:textStyle="bold"
+                     android:text="Hour" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:gravity="center"
+                 android:orientation="vertical"
+                 android:layout_centerHorizontal="true"
+                 android:layout_marginStart="12sp">
+
+                <TextView
+                     android:layout_height="25dp"
+                     android:layout_width="50dp"
+                     android:gravity="center"
+                     android:background="@drawable/bitfalse"
+                     android:textSize="14sp"
+                     android:textColor="@color/black"
+                     android:id="@+id/textminute"
+                     android:text="20" />
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="16sp"
+                     android:textStyle="bold"
+                     android:text="Minute" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:gravity="center"
+                 android:orientation="vertical"
+                 android:layout_centerHorizontal="true"
+                 android:layout_marginStart="12sp">
+
+                <TextView
+                     android:layout_height="25dp"
+                     android:layout_width="50dp"
+                     android:gravity="center"
+                     android:background="@drawable/bitfalse"
+                     android:textSize="14sp"
+                     android:textColor="@color/black"
+                     android:id="@+id/textsecond"
+                     android:text="20" />
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="16sp"
+                     android:textStyle="bold"
+                     android:text="Second" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:layout_below="@id/licenseinfo"
+         android:gravity="center"
+         android:orientation="horizontal"
+         android:layout_centerHorizontal="true"
+         android:layout_marginTop="40dp">
+
+        <Button
+             android:id="@+id/startbtn"
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:background="@color/green"
+             android:textSize="16sp"
+             android:textColor="#FFFFFF"
+             android:text="START" />
+
+    </LinearLayout>
+
+</RelativeLayout>
