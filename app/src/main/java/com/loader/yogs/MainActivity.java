@@ -1,8 +1,15 @@
 package com.loader.yogs;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +31,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        if (!Settings.canDrawOverlays(this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, 123);
+        }
+
+        Button startBtn = binding.startbtn;
+
+        startBtn.setOnClickListener(v -> {
+            if (!isServiceRunning()) {
+                startService(new Intent(MainActivity.this, Floating.class));
+            } else {
+                Toast.makeText(this, "Service is already running", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean isServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (manager != null) {
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (Floating.class.getName().equals(service.service.getClassName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     private void CountTimerAccout() {
@@ -79,5 +113,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         this.binding = null;
+        if (isServiceRunning()) {
+            stopService(new Intent(MainActivity.this, Floating.class));
+        }
     }
 }

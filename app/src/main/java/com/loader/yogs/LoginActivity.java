@@ -19,51 +19,50 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.loader.yogs.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
-    
+
     static {
         System.loadLibrary("yogs");
     }
-    
+
     private ActivityLoginBinding binding;
-    
+
     private static final String USER = "USER";
     private static final String PASS = "PASS";
     private FPrefs prefs;
-            
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        
+
         prefs = FPrefs.with(LoginActivity.this);
-        
+
         MaterialButton loginbtn = binding.loginBtn;
-            
+
         TextInputEditText textUsername = binding.textUsername;
         TextInputEditText textPassword = binding.textPassword;
-            
+
         textUsername.setText(prefs.read(USER, ""));
         textPassword.setText(prefs.read(PASS, ""));
-            
-        loginbtn.setOnClickListener(new View.OnClickListener() {
-        @Override
-            public void onClick(View v) {
-                if (!textUsername.getText().toString().isEmpty() && !textPassword.getText().toString().isEmpty()) {
-                    prefs.write(USER, textUsername.getText().toString());
-                    prefs.write(PASS, textPassword.getText().toString());
-                    
-                    String userKey = textUsername.getText().toString().trim();
-                    String passKey = textPassword.getText().toString().trim();
-                    
-                    String combinedKey = userKey+":"+passKey; 
-                    
-                    Login(LoginActivity.this, combinedKey);
-                } else if (textUsername.getText().toString().isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Please enter username!", Toast.LENGTH_SHORT).show();
-                } else if (textPassword.getText().toString().isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Please enter password!", Toast.LENGTH_SHORT).show();
-                }
+
+        loginbtn.setOnClickListener(view -> {
+            if (!textUsername.getText().toString().isEmpty() && !textPassword.getText().toString().isEmpty()) {
+                prefs.write(USER, textUsername.getText().toString());
+                prefs.write(PASS, textPassword.getText().toString());
+
+                String userKey = textUsername.getText().toString().trim();
+                String passKey = textPassword.getText().toString().trim();
+
+                String combinedKey = userKey + ":" + passKey;
+
+                Login(LoginActivity.this, combinedKey);
+            } else if (textUsername.getText().toString().isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Please enter username!", Toast.LENGTH_SHORT).show();
+            } else if (textPassword.getText().toString().isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Please enter password!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(LoginActivity.this, "Please enter username and password!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -72,13 +71,13 @@ public class LoginActivity extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(m_Context);
         View viewloading = inflater.inflate(R.layout.loading_animation, null);
         AlertDialog dialogloading =
-        new AlertDialog.Builder(m_Context, 5)
-                    .setView(viewloading)
-                    .setCancelable(false)
-                    .create();
+                new AlertDialog.Builder(m_Context, 5)
+                        .setView(viewloading)
+                        .setCancelable(false)
+                        .create();
         dialogloading.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialogloading.show();
-        
+
         final Handler loginHandler =
                 new Handler() {
                     @SuppressLint("HandlerLeak")
@@ -98,13 +97,14 @@ public class LoginActivity extends AppCompatActivity {
                             builder.setTitle("ERROR");
                             builder.setMessage(msg.obj.toString());
                             builder.setCancelable(false);
-                            builder.setPositiveButton("OK", (dialog, which) -> {});
+                            builder.setPositiveButton("OK", (dialog, which) -> {
+                            });
                             builder.show();
                         }
                         dialogloading.dismiss();
                     }
                 };
-    
+
         new Thread(() -> {
             String result = native_Check(m_Context, userKey);
             if ("yogaganteng11".equals(result)) {

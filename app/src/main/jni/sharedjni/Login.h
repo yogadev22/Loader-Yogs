@@ -10,7 +10,6 @@
 #include "LicenseTools.h"
 #include <jni.h>
 #include <string>
-#include "obfuscate.h"
 
 using json = nlohmann::ordered_json;
 bool xConnected = false, xServerConnection = false, memek = false;

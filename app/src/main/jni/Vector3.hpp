@@ -1,7 +1,8 @@
 #pragma once
-
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <string.h>
+
 
 
 struct Vector3
@@ -26,7 +27,6 @@ struct Vector3
     inline Vector3(float value);
     inline Vector3(float x, float y);
     inline Vector3(float x, float y, float z);
-
 
     /**
      * Constants for common vectors.
@@ -58,18 +58,18 @@ struct Vector3
     static inline Vector3 ClampMagnitude(Vector3 vector, float maxLength);
 
     /**
-     * Returns the component of a in the direction of b (scalar projection).
-     * @param a: The target vector.
-     * @param b: The vector being compared against.
-     * @return: A scalar value.
+     * Retorna o componente de a na dire��o de b (proje��o escalar).
+     * @param a: O vetor de destino.
+     * @param b: O vetor que est� sendo comparado.
+     * @return: Um valor escalar.
      */
     static inline float Component(Vector3 a, Vector3 b);
 
     /**
-     * Returns the cross product of two vectors.
-     * @param lhs: The left side of the multiplication.
-     * @param rhs: The right side of the multiplication.
-     * @return: A new vector.
+     * Retorna o produto vetorial de dois vetores.
+     * @param lhs: O lado esquerdo da multiplica��o.
+     * @param rhs: O lado direito da multiplica��o.
+     * @return: Um novo vetor.
      */
     static inline Vector3 Cross(Vector3 lhs, Vector3 rhs);
 
@@ -92,13 +92,13 @@ struct Vector3
     static inline float Dot(Vector3 lhs, Vector3 rhs);
 
     /**
-     * Converts a spherical representation of a vector into cartesian
-     * coordinates.
-     * This uses the ISO convention (radius r, inclination theta, azimuth phi).
-     * @param rad: The magnitude of the vector.
-     * @param theta: The angle in the XY plane from the X axis.
-     * @param phi: The angle from the positive Z axis to the vector.
-     * @return: A new vector.
+     * Converte uma representa��o esf�rica de um vetor em cartesiano
+     * coordenadas.
+     * Isso usa a conven��o ISO (raio r, inclina��o theta, azimute phi).
+     * @param rad: A magnitude do vetor.
+     * @param theta: O �ngulo no plano XY do eixo X.
+     * @param phi: O �ngulo do eixo Z positivo para o vetor.
+     * @return: Um novo vetor.
      */
     static inline Vector3 FromSpherical(float rad, float theta, float phi);
 
@@ -154,7 +154,7 @@ struct Vector3
      * @return: A new vector.
      */
     static inline Vector3 MoveTowards(Vector3 current, Vector3 target,
-                                      float maxDistanceDelta);
+        float maxDistanceDelta);
 
     /**
      * Returns a new vector with magnitude of one.
@@ -180,8 +180,8 @@ struct Vector3
      * @param tangent: A reference to the second axis vector.
      * @param binormal: A reference to the third axis vector.
      */
-    static inline void OrthoNormalize(Vector3 &normal, Vector3 &tangent,
-                                      Vector3 &binormal);
+    static inline void OrthoNormalize(Vector3& normal, Vector3& tangent,
+        Vector3& binormal);
 
     /**
      * Returns the vector projection of a onto b.
@@ -234,8 +234,8 @@ struct Vector3
      * @return: A new vector.
      */
     static inline Vector3 RotateTowards(Vector3 current, Vector3 target,
-                                        float maxRadiansDelta,
-                                        float maxMagnitudeDelta);
+        float maxRadiansDelta,
+        float maxMagnitudeDelta);
 
     /**
      * Multiplies two vectors element-wise.
@@ -283,8 +283,8 @@ struct Vector3
      * @param theta: The angle in the XY plane from the X axis.
      * @param phi: The angle from the positive Z axis to the vector.
      */
-    static inline void ToSpherical(Vector3 vector, float &rad, float &theta,
-                                   float &phi);
+    static inline void ToSpherical(Vector3 vector, float& rad, float& theta,
+        float& phi);
 
 
     /**
@@ -417,7 +417,7 @@ Vector3 Vector3::Min(Vector3 a, Vector3 b)
 }
 
 Vector3 Vector3::MoveTowards(Vector3 current, Vector3 target,
-                             float maxDistanceDelta)
+    float maxDistanceDelta)
 {
     Vector3 d = target - current;
     float m = Magnitude(d);
@@ -439,8 +439,8 @@ Vector3 Vector3::Orthogonal(Vector3 v)
     return v.Z < v.X ? Vector3(v.Y, -v.X, 0) : Vector3(0, -v.Z, v.Y);
 }
 
-void Vector3::OrthoNormalize(Vector3 &normal, Vector3 &tangent,
-                             Vector3 &binormal)
+void Vector3::OrthoNormalize(Vector3& normal, Vector3& tangent,
+    Vector3& binormal)
 {
     normal = Normalized(normal);
     tangent = ProjectOnPlane(tangent, normal);
@@ -472,13 +472,13 @@ Vector3 Vector3::Reject(Vector3 a, Vector3 b)
 }
 
 Vector3 Vector3::RotateTowards(Vector3 current, Vector3 target,
-                               float maxRadiansDelta,
-                               float maxMagnitudeDelta)
+    float maxRadiansDelta,
+    float maxMagnitudeDelta)
 {
     float magCur = Magnitude(current);
     float magTar = Magnitude(target);
     float newMag = magCur + maxMagnitudeDelta *
-                            ((magTar > magCur) - (magCur > magTar));
+        ((magTar > magCur) - (magCur > magTar));
     newMag = fmin(newMag, fmax(magCur, magTar));
     newMag = fmax(newMag, fmin(magCur, magTar));
 
@@ -496,7 +496,7 @@ Vector3 Vector3::RotateTowards(Vector3 current, Vector3 target,
         axis /= magAxis;
     current = Normalized(current);
     Vector3 newVector = current * cos(maxRadiansDelta) +
-                        Cross(axis, current) * sin(maxRadiansDelta);
+        Cross(axis, current) * sin(maxRadiansDelta);
     return newVector * newMag;
 }
 
@@ -532,8 +532,8 @@ float Vector3::SqrMagnitude(Vector3 v)
     return v.X * v.X + v.Y * v.Y + v.Z * v.Z;
 }
 
-void Vector3::ToSpherical(Vector3 vector, float &rad, float &theta,
-                          float &phi)
+void Vector3::ToSpherical(Vector3 vector, float& rad, float& theta,
+    float& phi)
 {
     rad = Magnitude(vector);
     float v = vector.Z / rad;
@@ -603,7 +603,7 @@ char Vector3::ToChar(Vector3 a) {
     strncpy(buffer, ", ", sizeof(buffer));
     strncpy(buffer, z, sizeof(buffer));
     strncpy(buffer, ", ", sizeof(buffer));
-    return buffer[25];
+    return buffer[24];
 }
 
 Vector3 operator-(Vector3 rhs) { return rhs * -1; }
