@@ -36,6 +36,11 @@
             android:name=".Floating"
             android:exported="true">
         </service>
+
+        <service
+            android:name=".Overlay"
+            android:exported="true">
+        </service>
             
     </application>
 </manifest>

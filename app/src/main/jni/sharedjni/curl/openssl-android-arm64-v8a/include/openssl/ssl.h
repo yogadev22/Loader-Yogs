@@ -836,8 +836,8 @@ DEPRECATEDIN_1_1_0(void SSL_set_debug(SSL *s, int debug))
  * type of message received). There are also two "special" states:
  * TLS = TLS or DTLS state
  * DTLS = DTLS specific state
- * CR/SR = Client Read/Server Read
- * CW/SW = Client Write/Server Write
+ * CR/SR = Client Read/server Read
+ * CW/SW = Client Write/server Write
  *
  * The "special" states are:
  * TLS_ST_BEFORE = No handshake has been initiated yet

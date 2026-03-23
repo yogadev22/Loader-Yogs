@@ -86,10 +86,18 @@
                 android:orientation="vertical"
                 android:layout_marginStart="3sp">
 
-                <TextView
+                <Switch
+                    android:id="@+id/enableesp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4sp"
+                    android:textSize="15sp"
+                    android:text="Enable ESP"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2sp"
                     android:textSize="14sp"
                     android:textColor="@color/green_300"
                     android:text="ESP Selection"/>

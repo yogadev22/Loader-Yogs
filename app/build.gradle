@@ -7,7 +7,6 @@ plugins {
 android {
     namespace 'com.loader.yogs'
     compileSdk 34
-    ndkVersion '24.0.8215888'
     
     defaultConfig {
         applicationId "com.loader.yogs"
@@ -20,12 +19,9 @@ android {
             useSupportLibrary true
         }
         
-        externalNativeBuild {
-            ndkBuild {
-                abiFilters 'arm64-v8a'
-            }
+        ndk {
+            abiFilters 'arm64-v8a'
         }
-        
     }
 
     buildTypes {
@@ -42,10 +38,13 @@ android {
 
     
     externalNativeBuild {
-        ndkBuild {
-            path file('src/main/jni/Android.mk')
+        cmake {
+            path 'src/main/jni/CMakeLists.txt'
+            version '3.22.1'
         }
     }
+
+    ndkVersion '24.0.8215888'
     
     buildFeatures {
         viewBinding true
@@ -58,4 +57,5 @@ dependencies {
     implementation "com.google.android.material:material:1.12.0"
     implementation "androidx.appcompat:appcompat:1.7.1"
     implementation "com.airbnb.android:lottie:3.5.0"
+    implementation "com.github.topjohnwu.libsu:core:4.0.0"
 }

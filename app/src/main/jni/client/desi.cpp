@@ -1,8 +1,7 @@
 #include <jni.h>
 #include <string>
 #include "obfuscate.h"
-#include "sharedjni/Login.h"
-#include "ESP.h"
+#include "../sharedjni/Login.h"
 #include "Hacks.h"
 
 ESP espOverlay;

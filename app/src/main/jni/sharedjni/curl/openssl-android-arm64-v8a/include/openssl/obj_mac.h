@@ -1216,7 +1216,7 @@
 #define OBJ_ms_ctl_sign         1L,3L,6L,1L,4L,1L,311L,10L,3L,1L
 
 #define SN_ms_sgc               "msSGC"
-#define LN_ms_sgc               "Microsoft Server Gated Crypto"
+#define LN_ms_sgc               "Microsoft server Gated Crypto"
 #define NID_ms_sgc              137
 #define OBJ_ms_sgc              1L,3L,6L,1L,4L,1L,311L,10L,3L,3L
 
@@ -1469,7 +1469,7 @@
 #define OBJ_textNotice          OBJ_id_qt,3L
 
 #define SN_server_auth          "serverAuth"
-#define LN_server_auth          "TLS Web Server Authentication"
+#define LN_server_auth          "TLS Web server Authentication"
 #define NID_server_auth         129
 #define OBJ_server_auth         OBJ_id_kp,1L
 
@@ -1539,7 +1539,7 @@
 #define OBJ_sshClient           OBJ_id_kp,21L
 
 #define SN_sshServer            "secureShellServer"
-#define LN_sshServer            "SSH Server"
+#define LN_sshServer            "SSH server"
 #define NID_sshServer           1026
 #define OBJ_sshServer           OBJ_id_kp,22L
 
@@ -2493,7 +2493,7 @@
 #define OBJ_netscape_ca_policy_url              OBJ_netscape_cert_extension,8L
 
 #define SN_netscape_ssl_server_name             "nsSslServerName"
-#define LN_netscape_ssl_server_name             "Netscape SSL Server Name"
+#define LN_netscape_ssl_server_name             "Netscape SSL server Name"
 #define NID_netscape_ssl_server_name            77
 #define OBJ_netscape_ssl_server_name            OBJ_netscape_cert_extension,12L
 
@@ -2508,7 +2508,7 @@
 #define OBJ_netscape_cert_sequence              OBJ_netscape_data_type,5L
 
 #define SN_ns_sgc               "nsSGC"
-#define LN_ns_sgc               "Netscape Server Gated Crypto"
+#define LN_ns_sgc               "Netscape server Gated Crypto"
 #define NID_ns_sgc              139
 #define OBJ_ns_sgc              OBJ_netscape,4L,1L
 

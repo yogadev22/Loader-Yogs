@@ -17,6 +17,10 @@ import java.io.IOException;
 
 public class Overlay extends Service {
 
+    static {
+        System.loadLibrary("yogs");
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -67,12 +71,12 @@ public class Overlay extends Service {
 				@Override
 				public void run() {
 					try {
-						Thread.sleep(100);
+						Thread.sleep(5000);
+                        //Shell(MainActivity.daemon64);
 					}
 					catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					//Shell(MainActivity.daemon64);
 				}
 			}).start();
         }

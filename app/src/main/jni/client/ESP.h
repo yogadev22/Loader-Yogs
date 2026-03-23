@@ -1,7 +1,80 @@
 #ifndef PAKC_ESP_H
 #define PAKC_ESP_H
-#include "import.h"
 
+#include <jni.h>
+#include <string>
+#include <cstdlib>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <android/log.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <cerrno>
+#include <sys/un.h>
+#include <cstring>
+#include <string>
+#include <cmath>
+
+class Color {
+public:
+	float r;
+	float g;
+	float b;
+	float a;
+
+	Color() {
+		this->r = 0;
+		this->g = 0;
+		this->b = 0;
+		this->a = 0;
+	}
+
+	Color(float r, float g, float b, float a) {
+		this->r = r;
+		this->g = g;
+		this->b = b;
+		this->a = a;
+	}
+
+	Color(float r, float g, float b) {
+		this->r = r;
+		this->g = g;
+		this->b = b;
+		this->a = 255;
+	}
+
+	static Color White(int alpha){
+		return Color(255, 255, 255, alpha);
+	}
+	static Color Green(int alpha){
+		return Color(0,255,0, alpha);
+	}
+	static Color Wood(int alpha){
+		return Color(40,252,80, alpha);
+	}
+	static Color Black(int alpha){
+		return Color(0,0,0, alpha);
+	}
+	static Color Red(int alpha)
+	{
+		return Color(255, 0, 0, alpha);
+	}
+	static Color Yellow(int alpha)
+	{
+		return Color(255, 255, 0, alpha);
+	}
+	static Color Orange(int alpha)
+	{
+		return Color(255, 165, 0, alpha);
+	}
+	static Color Blue(int alpha)
+	{
+		return Color(45, 255, 220, alpha);
+	}
+};
 
 class ESP
 {

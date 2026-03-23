@@ -13,9 +13,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.loader.yogs.databinding.ActivityMainBinding;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.Locale;
+import com.topjohnwu.superuser.Shell;
 
 public class MainActivity extends AppCompatActivity {
 	
@@ -25,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
             
     private ActivityMainBinding binding;
 	private static native String EXP();
+    public static String daemon64;
+    private String daemonPath64;
+
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,15 +47,40 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, 123);
         }
 
-        Button startBtn = binding.startbtn;
+        if (Shell.rootAccess()) {
+            binding.mode.setText("Root");
+            binding.mode.setTextColor(Color.RED);
+            daemon64 = "su -c " + daemonPath64;
+        } else {
+            binding.mode.setText("Container");
+            binding.mode.setTextColor(Color.GREEN);
+            daemon64 = daemonPath64;
+        }
 
-        startBtn.setOnClickListener(v -> {
+        loadAssets64();
+
+        binding.startbtn.setOnClickListener(v -> {
             if (!isServiceRunning()) {
                 startService(new Intent(MainActivity.this, Floating.class));
             } else {
-                Toast.makeText(this, "Service is already running", Toast.LENGTH_SHORT).show();
+                stopService(new Intent(MainActivity.this, Floating.class));
             }
+            // Beri sedikit delay agar sistem memperbarui status service sebelum UI diupdate
+            new Handler().postDelayed(this::updateButtonUI, 200);
         });
+    }
+
+    // Fungsi untuk memperbarui tampilan tombol
+    private void updateButtonUI() {
+        if (isServiceRunning()) {
+            binding.startbtn.setText("STOP");
+            binding.startbtn.setBackgroundColor(Color.parseColor("#D32F2F")); // Merah saat Running
+            binding.startbtn.setIconResource(android.R.drawable.ic_media_pause);
+        } else {
+            binding.startbtn.setText("START");
+            binding.startbtn.setBackgroundColor(Color.parseColor("#388E3C")); // Hijau saat Berhenti
+            binding.startbtn.setIconResource(android.R.drawable.ic_media_play);
+        }
     }
 
     private boolean isServiceRunning() {
@@ -102,19 +137,44 @@ public class MainActivity extends AppCompatActivity {
         };
         handler.postDelayed(runnable, 0);
     }
+
+    private void loadAssets64() {
+        String filesDir = getFilesDir().toString() + "/fuck";
+        try {
+            OutputStream myOutput = new FileOutputStream(filesDir);
+            byte[] buffer = new byte[1024];
+            int length;
+            InputStream myInput = getAssets().open("fuck");
+            while ((length = myInput.read(buffer)) != -1) {
+                myOutput.write(buffer, 0, length);
+            }
+            myInput.close();
+            myOutput.flush();
+            myOutput.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        daemonPath64 = getFilesDir().toString() + "/fuck";
+        try {
+            Runtime.getRuntime().exec("chmod 777 " + daemonPath64);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     
     @Override
     protected void onResume() {
         super.onResume();
         CountTimerAccout();
+        updateButtonUI(); // Update UI saat aplikasi dibuka kembali
     }
     
     @Override
     protected void onDestroy() {
         super.onDestroy();
         this.binding = null;
-        if (isServiceRunning()) {
-            stopService(new Intent(MainActivity.this, Floating.class));
-        }
+        // Note: Jika ingin service tetap jalan meski activity ditutup, hapus baris stopService di bawah ini.
+        stopService(new Intent(MainActivity.this, Floating.class));
+        stopService(new Intent(MainActivity.this, Overlay.class));
     }
 }

@@ -1,17 +1,28 @@
 #ifndef PAKC_SOCKET_H
 #define PAKC_SOCKET_H
 
-#include "import.h"
-
-
+#include <jni.h>
+#include <string>
+#include <cstdlib>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <android/log.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <cerrno>
+#include <sys/un.h>
+#include <cstring>
+#include <string>
+#include <cmath>
 
 #define SOCKET_NAME "\0somethingf"
 #define BACKLOG 8
 int sock, clientD;
 sockaddr_un addr_server;
 char socket_name[108];
-
-
 
 int Create()
 {

@@ -7,21 +7,9 @@
      android:layout_width="match_parent"
      tools:context=".MainActivity">
 
-    <TextView
-         android:layout_height="wrap_content"
-         android:layout_width="match_parent"
-         android:gravity="center"
-         android:textSize="18sp"
-         android:textColor="@color/white"
-         android:layout_marginTop="10dp"
-         android:id="@+id/title"
-         android:text="CONTAINER"
-         android:textStyle="bold" />
-
     <LinearLayout
          android:layout_height="wrap_content"
          android:layout_width="match_parent"
-         android:layout_below="@id/title"
          android:layout_marginEnd="16dp"
          android:gravity="center"
          android:background="#282929"
@@ -44,22 +32,21 @@
              android:layout_width="wrap_content"
              android:gravity="center"
              android:orientation="horizontal"
-             android:layout_centerHorizontal="true"
              android:layout_marginTop="12sp">
 
             <LinearLayout
                  android:layout_height="wrap_content"
                  android:layout_width="wrap_content"
                  android:gravity="center"
-                 android:orientation="vertical"
-                 android:layout_centerHorizontal="true">
+                 android:orientation="vertical">
 
                 <TextView
                      android:layout_height="25dp"
                      android:layout_width="50dp"
                      android:gravity="center"
-                     android:background="@drawable/bitfalse"
+                     android:background="@color/white"
                      android:textSize="14sp"
+                     android:textStyle="bold"
                      android:textColor="@color/black"
                      android:id="@+id/textday"
                      android:text="20" />
@@ -78,14 +65,14 @@
                  android:layout_width="wrap_content"
                  android:gravity="center"
                  android:orientation="vertical"
-                 android:layout_centerHorizontal="true"
                  android:layout_marginStart="12sp">
 
                 <TextView
                      android:layout_height="25dp"
                      android:layout_width="50dp"
                      android:gravity="center"
-                     android:background="@drawable/bitfalse"
+                    android:textStyle="bold"
+                     android:background="@color/white"
                      android:textSize="14sp"
                      android:textColor="@color/black"
                      android:id="@+id/texthour"
@@ -105,14 +92,14 @@
                  android:layout_width="wrap_content"
                  android:gravity="center"
                  android:orientation="vertical"
-                 android:layout_centerHorizontal="true"
                  android:layout_marginStart="12sp">
 
                 <TextView
                      android:layout_height="25dp"
                      android:layout_width="50dp"
                      android:gravity="center"
-                     android:background="@drawable/bitfalse"
+                    android:textStyle="bold"
+                     android:background="@color/white"
                      android:textSize="14sp"
                      android:textColor="@color/black"
                      android:id="@+id/textminute"
@@ -132,14 +119,14 @@
                  android:layout_width="wrap_content"
                  android:gravity="center"
                  android:orientation="vertical"
-                 android:layout_centerHorizontal="true"
                  android:layout_marginStart="12sp">
 
                 <TextView
                      android:layout_height="25dp"
                      android:layout_width="50dp"
                      android:gravity="center"
-                     android:background="@drawable/bitfalse"
+                    android:textStyle="bold"
+                     android:background="@color/white"
                      android:textSize="14sp"
                      android:textColor="@color/black"
                      android:id="@+id/textsecond"
@@ -166,31 +153,71 @@
          android:orientation="horizontal"
          android:layout_marginTop="5dp"
          android:layout_marginStart="16dp"
+        android:background="#282929"
          app:cardCornerRadius="10dp">
 
         <ImageView
-             android:layout_height="wrap_content"
-             android:layout_width="wrap_content"
+             android:layout_height="60dp"
+             android:layout_width="60dp"
              android:src="@drawable/ic_launcher_foreground" />
 
         <LinearLayout
-             android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="YOGS LOADER"
+                android:layout_marginTop="5sp"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3sp"
+                    android:text="Mode: "
+                    android:textSize="15sp"/>
+
+                <TextView
+                    android:id="@+id/mode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3sp"
+                    android:text="Root"
+                    android:textSize="15sp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+             android:layout_height="match_parent"
              android:layout_width="match_parent"
              android:gravity="end">
 
-            <Button
-                 android:layout_height="wrap_content"
+            <com.google.android.material.button.MaterialButton
+                 android:layout_height="50dp"
                  android:layout_width="wrap_content"
+                 android:layout_marginTop="4dp"
+                 android:layout_marginBottom="4dp"
                  android:textSize="16sp"
-                 android:backgroundTint="@color/green"
+                 android:backgroundTint="#2E8B57"
                  android:textColor="#FFFFFF"
-                 app:cardCornerRadius="10dp"
+                 app:cornerRadius="10dp"
                  android:layout_gravity="end"
                  android:id="@+id/startbtn"
                  android:text="PLAY" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
-    </LinearLayout>
+    </LinearLayout>>
 
 </RelativeLayout>

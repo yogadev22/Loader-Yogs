@@ -38,28 +38,23 @@ public class LoginActivity extends AppCompatActivity {
 
         prefs = FPrefs.with(LoginActivity.this);
 
-        MaterialButton loginbtn = binding.loginBtn;
+        binding.textUsername.setText(prefs.read(USER, ""));
+        binding.textPassword.setText(prefs.read(PASS, ""));
 
-        TextInputEditText textUsername = binding.textUsername;
-        TextInputEditText textPassword = binding.textPassword;
+        binding.loginBtn.setOnClickListener(view -> {
+            if (!binding.textUsername.getText().toString().isEmpty() && !binding.textPassword.getText().toString().isEmpty()) {
+                prefs.write(USER, binding.textUsername.getText().toString());
+                prefs.write(PASS, binding.textPassword.getText().toString());
 
-        textUsername.setText(prefs.read(USER, ""));
-        textPassword.setText(prefs.read(PASS, ""));
-
-        loginbtn.setOnClickListener(view -> {
-            if (!textUsername.getText().toString().isEmpty() && !textPassword.getText().toString().isEmpty()) {
-                prefs.write(USER, textUsername.getText().toString());
-                prefs.write(PASS, textPassword.getText().toString());
-
-                String userKey = textUsername.getText().toString().trim();
-                String passKey = textPassword.getText().toString().trim();
+                String userKey = binding.textUsername.getText().toString().trim();
+                String passKey = binding.textPassword.getText().toString().trim();
 
                 String combinedKey = userKey + ":" + passKey;
 
                 Login(LoginActivity.this, combinedKey);
-            } else if (textUsername.getText().toString().isEmpty()) {
+            } else if (binding.textUsername.getText().toString().isEmpty()) {
                 Toast.makeText(LoginActivity.this, "Please enter username!", Toast.LENGTH_SHORT).show();
-            } else if (textPassword.getText().toString().isEmpty()) {
+            } else if (binding.textPassword.getText().toString().isEmpty()) {
                 Toast.makeText(LoginActivity.this, "Please enter password!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(LoginActivity.this, "Please enter username and password!", Toast.LENGTH_SHORT).show();
@@ -68,15 +63,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void Login(final Context m_Context, final String userKey) {
-        LayoutInflater inflater = LayoutInflater.from(m_Context);
-        View viewloading = inflater.inflate(R.layout.loading_animation, null);
-        AlertDialog dialogloading =
-                new AlertDialog.Builder(m_Context, 5)
-                        .setView(viewloading)
-                        .setCancelable(false)
-                        .create();
-        dialogloading.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialogloading.show();
+        AppFunction.ShowLoadingAnimation(m_Context);
 
         final Handler loginHandler =
                 new Handler() {
@@ -101,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                             });
                             builder.show();
                         }
-                        dialogloading.dismiss();
+                        AppFunction.HideLoadingAnimation(m_Context);
                     }
                 };
 

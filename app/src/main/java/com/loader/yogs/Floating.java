@@ -22,6 +22,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 public class Floating extends Service {
@@ -50,6 +51,11 @@ public class Floating extends Service {
     }
 
     private void features() {
+        Switch enableesp = mFloatingView.findViewById(R.id.enableesp);
+        enableesp.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            startService(new Intent(Floating.this, Overlay.class));
+        });
+
         CheckBox line = mFloatingView.findViewById(R.id.espline);
         line.setChecked(getConfig((String) line.getText()));
         SettingValue(9, getConfig((String) line.getText()));
