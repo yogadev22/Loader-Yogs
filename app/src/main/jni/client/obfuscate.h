@@ -1,5 +1,5 @@
-#include "../../../../../../../SDK/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/cstddef"
-#include "../../../../../../../SDK/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/string"
+#include <cstddef>
+#include <string>
 namespace ay
 {
 	template <std::size_t N, char KEY>
