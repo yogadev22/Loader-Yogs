@@ -38,7 +38,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/white"
-                android:text="CLOSE" />
+                android:text="YOGS LOADER" />
 
         </LinearLayout>
 
@@ -90,29 +90,29 @@
                     android:id="@+id/enableesp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4sp"
+                    android:textColor="@color/white"
                     android:textSize="15sp"
                     android:text="Enable ESP"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="2sp"
+                    android:gravity="center_horizontal"
                     android:textSize="14sp"
                     android:textColor="@color/green_300"
                     android:text="ESP Selection"/>
 
-                <CheckBox
+                <Switch
                     android:id="@+id/espline"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="23dp"
                     android:textSize="15sp"
                     android:textColor="@color/white"
                     android:text="Line"/>
 
-                <CheckBox
+                <Switch
                     android:id="@+id/espbox"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="23dp"
                     android:textSize="15sp"
                     android:textColor="@color/white"
