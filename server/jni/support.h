@@ -2,7 +2,7 @@
 #define SUPPORT_H
 
 #include "socket.h"
-#include "../struct.h"
+#include "struct.h"
 #include "Quaternion.hpp"
 
 #define PI 3.141592653589793238

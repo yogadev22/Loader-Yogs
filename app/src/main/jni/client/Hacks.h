@@ -2,7 +2,7 @@
 #define DESI_IMPORTANT_HACK_H
 
 #include "socket.h"
-#include "../struct.h"
+#include "struct.h"
 #include "ESP.h"
 
 Request request;

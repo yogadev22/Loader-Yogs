@@ -159,7 +159,7 @@
         <ImageView
              android:layout_height="60dp"
              android:layout_width="60dp"
-             android:src="@drawable/ic_launcher_foreground" />
+             android:src="@drawable/yogs" />
 
         <LinearLayout
             android:layout_width="wrap_content"

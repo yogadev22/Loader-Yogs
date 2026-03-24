@@ -7,34 +7,33 @@
      android:layout_width="match_parent"
      tools:context=".LoginActivity">
 
-    <TextView
-         android:layout_height="wrap_content"
-         android:layout_width="match_parent"
-         android:gravity="center_horizontal"
-         android:textSize="18sp"
-         android:textColor="#FFFFFF"
-         android:layout_marginTop="10dp"
-         android:textStyle="bold"
-         android:text="YOGS LOADER" />
-
     <LinearLayout
-         android:layout_height="450dp"
+         android:layout_height="match_parent"
          android:layout_width="match_parent"
+        android:layout_above="@+id/loginLyt"
          android:gravity="center"
-         android:orientation="horizontal">
+         android:orientation="vertical">
 
-        <com.airbnb.lottie.LottieAnimationView
-             android:layout_height="200dp"
-             android:layout_width="200dp"
-             android:scaleType="centerInside"
-             app:lottie_rawRes="@raw/welcome"
-             app:lottie_speed="1.0"
-             app:lottie_autoPlay="true"
-             app:lottie_loop="true" />
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center_horizontal"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="23dp"
+            android:textStyle="bold"
+            android:text="YOGS LOADER" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="140dp"
+            android:layout_marginTop="13dp"
+            android:src="@drawable/yogs"/>
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/loginLyt"
          android:layout_height="wrap_content"
          android:layout_width="match_parent"
          android:layout_centerInParent="true"
