@@ -56,7 +56,7 @@ public class Floating extends Service {
             startService(new Intent(Floating.this, Overlay.class));
         });
 
-        CheckBox line = mFloatingView.findViewById(R.id.espline);
+        Switch line = mFloatingView.findViewById(R.id.espline);
         line.setChecked(getConfig((String) line.getText()));
         SettingValue(9, getConfig((String) line.getText()));
         line.setOnCheckedChangeListener((buttonView, isChecked) -> {
