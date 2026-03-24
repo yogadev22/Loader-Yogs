@@ -16,14 +16,13 @@ static auto WorldToScreen(D3DMatrix viewMatrix, Vector3 ScreenPos, int g_screenW
     auto v9 = (ScreenPos.X * viewMatrix._11) + (ScreenPos.Y * viewMatrix._21) + (ScreenPos.Z * viewMatrix._31) + viewMatrix._41;
     auto v10 = (ScreenPos.X * viewMatrix._12) + (ScreenPos.Y * viewMatrix._22) + (ScreenPos.Z * viewMatrix._32) + viewMatrix._42;
     auto v12 = (ScreenPos.X * viewMatrix._14) + (ScreenPos.Y * viewMatrix._24) + (ScreenPos.Z * viewMatrix._34) + viewMatrix._44;
+    auto v13 = (float)g_screenWidth / 2.0f;
+    auto v14 = (float)g_screenHeight / 2.0f;
 
-    if (v12 >= 0.001f) {
-        auto v13 = (float)g_screenWidth / 2.0f;
-        auto v14 = (float)g_screenHeight / 2.0f;
+    result.X = v13 + (v13 * v9) / v12;
+    result.Y = v14 - (v14 * v10) / v12;
+    result.Z = v12;
 
-        result.X = v13 + (v13 * v9) / v12;
-        result.Y = v14 - (v14 * v10) / v12;
-    }
     return result;
 }
 
@@ -52,12 +51,12 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                 playerCount++;
             }
 
-            //if (HeadLocation.Z != 1) {
+            if (HeadLocation.Z > 0) {
                 if (isPlayerLinee) {
                     esp.DrawLine(Color(255, 255, 255, 255), 1.0f, Vector2(screenWidth / 2, 0),
                                  Vector2(x, y));
                 }
-            //}
+            }
         }
     }
 

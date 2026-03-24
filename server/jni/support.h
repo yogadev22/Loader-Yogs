@@ -140,22 +140,6 @@ float getDistance(struct Vector3 mxyz, struct Vector3 exyz)
 	return sqrt((mxyz.X-exyz.X) * (mxyz.X-exyz.X) + (mxyz.Y-exyz.Y) * (mxyz.Y-exyz.Y) + (mxyz.Z-exyz.Z) * (mxyz.Z-exyz.Z)) / 100;
 }
 
-uintptr_t GetPlayerHeadTF(uintptr_t player) {
-	auto ptr = Read<uintptr_t>(player + 0x5c0);
-	return ptr;
-}
-
-class MonoDictionary {
-public:
-	uintptr_t getValues() {
-		return Read<uintptr_t>(reinterpret_cast<uintptr_t>(this) + 0x28) + 0x20;
-	}
-
-	int getNumValues() {
-		return Read<int>(reinterpret_cast<uintptr_t>(this) + 0x38);
-	}
-};
-
 struct Matrix {
 	Vector4 Position;
 	Quaternion Rotation;
@@ -221,14 +205,6 @@ static auto GetPosition(uintptr_t Transform) {
 	}
 
 	return pos;
-}
-
-static auto GetNodePosition(uintptr_t nodeTransform) {
-	auto transformValue = Read<uintptr_t>(nodeTransform + 0x10);
-	if (transformValue == 0) {
-		return Vector3::Zero();
-	}
-	return GetPosition(transformValue);
 }
 
 #endif

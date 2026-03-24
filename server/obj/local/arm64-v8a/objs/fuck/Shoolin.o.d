@@ -1,5 +1,5 @@
-./obj/local/arm64-v8a/objs/sock64/Shoolin.o: jni\Shoolin.cpp \
-  jni\support.h jni\socket.h jni\includes.h \
+./obj/local/arm64-v8a/objs/fuck/Shoolin.o: jni\Shoolin.cpp jni\support.h \
+  jni\socket.h jni\includes.h \
   D:\SDK\ndk\24.0.8215888\build\\..\sources\cxx-stl\llvm-libc++\include\stdio.h \
   D:\SDK\ndk\24.0.8215888\build\\..\sources\cxx-stl\llvm-libc++\include\__config \
   D:\SDK\ndk\24.0.8215888\build\\..\sources\cxx-stl\llvm-libc++\include\string.h \
