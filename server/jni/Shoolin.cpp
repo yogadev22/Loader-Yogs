@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    uintptr_t base = getBase();
+    uintptr_t base = FindLibrary("libil2cpp.so", 1);
 
     Request request{};
     Response response{};
@@ -28,16 +28,14 @@ int main(int argc, char *argv[]) {
         response.PlayerCount = 0;
 
         uintptr_t GameFacade = 0;
-        uintptr_t GameFacadeBase = Read<uintptr_t>(base + 0xC3328F8);
+        
+        uintptr_t GameFacadeBase = Read<uintptr_t>(base + 0xC21A778);
         if (GameFacadeBase) {
-            uintptr_t GameFacadeBase_c = Read<uintptr_t>(GameFacadeBase);
-            if (GameFacadeBase_c) {
-                uintptr_t GameFacade_c = Read<uintptr_t>(GameFacadeBase_c + 0xB8);
+           uintptr_t GameFacade_c = Read<uintptr_t>(GameFacadeBase + 0xB8);
                 if (GameFacade_c) {
                     GameFacade = Read<uintptr_t>(GameFacade_c);
                 }
             }
-        }
 
         uintptr_t localPlayer = 0;
 

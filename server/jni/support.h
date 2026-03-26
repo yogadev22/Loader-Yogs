@@ -1,60 +1,79 @@
 #ifndef SUPPORT_H
 #define SUPPORT_H
 
+#include <inttypes.h>
 #include "socket.h"
 #include "struct.h"
 #include "Quaternion.hpp"
 
 #define PI 3.141592653589793238
 
-ssize_t process_v(pid_t __pid, struct iovec* __local_iov, unsigned long __local_iov_count, struct iovec* __remote_iov, unsigned long __remote_iov_count, unsigned long __flags) {
-	return syscall(process_vm_readv_syscall, __pid, __local_iov, __local_iov_count, __remote_iov, __remote_iov_count, __flags);
-}
+#if defined(__aarch64__)
+    // 64-bit ARM
+    #define SYS_process_vm_readv 270
+    #define SYS_process_vm_writev 271
+    #define SYS_openat 56
+#elif defined(__x86_64__)
+    // 64-bit x86
+    #define SYS_process_vm_readv 310
+    #define SYS_process_vm_writev 311
+    #define SYS_open 2
+#elif defined(__arm__)
+    // 32-bit ARM
+    #define SYS_process_vm_readv 376
+    #define SYS_process_vm_writev 377
+    #define SYS_open 5
+#elif defined(__i386__)
+    // 32-bit x86
+    #define SYS_process_vm_readv 347
+    #define SYS_process_vm_writev 348
+    #define SYS_open 5
+#else
+    #error "Arquitetura não suportada"
+#endif
 
-ssize_t process_v2(pid_t __pid, struct iovec* __local_iov, unsigned long __local_iov_count, struct iovec* __remote_iov, unsigned long __remote_iov_count, unsigned long __flags) {
-	return syscall(process_vm_writev_syscall, __pid, __local_iov, __local_iov_count, __remote_iov, __remote_iov_count, __flags);
-}
+// Encontra o endereço base de uma biblioteca dentro do processo alvo
+uintptr_t FindLibrary(const char* name, int index) {
+    int i = 0;
+    uintptr_t start = 0;
+    char line[1024] = {0};
+    char dname[128], fname[128];
 
-int pvm(uintptr_t address, void* buffer,int size) {
-	struct iovec local[1];
-	struct iovec remote[1];
-
-	local[0].iov_base = (void*)buffer;
-	local[0].iov_len = size;
-	remote[0].iov_base = (void*)address;
-	remote[0].iov_len = size;
-	ssize_t bytes = process_v(pid, local, 1, remote, 1, 0);
-	return bytes == size;
-}
-
-void pvm2(uintptr_t address, void* buffer,int size) {
-	struct iovec local[1];
-	struct iovec remote[1];
-
-	local[0].iov_base = (void*)buffer;
-	local[0].iov_len = size;
-	remote[0].iov_base = (void*)address;
-	remote[0].iov_len = size;
-
-	process_v2(pid, local, 1, remote, 1, 0);
-}
-
-uintptr_t getBase() {
-    FILE *fp;
-    uintptr_t addr = 0;
-    char filename[40], buffer[1024];
-    snprintf(filename, sizeof(filename), "/proc/%d/maps", pid);
-    fp = fopen(filename, "rt");
-    if (fp != NULL) {
-        while (fgets(buffer, sizeof(buffer), fp)) {
-            if (strstr(buffer, "libil2cpp.so")) {
-                addr = (uintptr_t)strtoul(buffer, NULL, 16);
-                break;
+    snprintf(dname, sizeof(dname), "%s", name);
+    snprintf(fname, sizeof(fname), "/proc/%d/maps", pid);
+    FILE* p = fopen(fname, "r");
+    if (p) {
+        while (fgets(line, sizeof(line), p)) {
+            if (strstr(line, dname) != NULL) {
+                i++;
+                if (i == index) {
+                    sscanf(line, "%" SCNxPTR, &start);
+                    break;
+                }
             }
         }
-        fclose(fp);
+        fclose(p);
     }
-    return addr;
+    return start;
+}
+
+// Lê memória usando process_vm_readv
+template<class T>
+T Read(uintptr_t address) {
+    T buf{};
+    struct iovec local, remote;
+    
+    local.iov_base = &buf;
+    local.iov_len = sizeof(T);
+    remote.iov_base = reinterpret_cast<void*>(address);
+    remote.iov_len = sizeof(T);
+    
+    ssize_t bytes = syscall(SYS_process_vm_readv, pid, &local, 1, &remote, 1, 0);
+    if (bytes != sizeof(T)) {
+        // Error handling - você pode querer lançar uma exceção ou logar erro
+        memset(&buf, 0, sizeof(T));
+    }
+    return buf;
 }
 
 pid_t getPid(char * name) {
@@ -101,38 +120,6 @@ pid_t getPid(char * name) {
 		pid= atoi(ptr->d_name);
 	}
 	return pid;
-}
-
-ssize_t process_v3(pid_t __pid, const struct iovec *__local_iov, unsigned long __local_iov_count,
-				  const struct iovec *__remote_iov, unsigned long __remote_iov_count,
-				  unsigned long __flags, bool iswrite)
-{
-	return syscall((iswrite ? process_vm_writev_syscall : process_vm_readv_syscall), __pid,
-				   __local_iov, __local_iov_count, __remote_iov, __remote_iov_count, __flags);
-}
-
-
-bool pvm3(void *address, void *buffer, size_t size, bool iswrite)
-{
-	struct iovec local[1];
-	struct iovec remote[1];
-	local[0].iov_base = buffer;
-	local[0].iov_len = size;
-	remote[0].iov_base = address;
-	remote[0].iov_len = size;
-	if (pid < 0)
-	{
-		return false;
-	}
-	ssize_t bytes = process_v3(pid, local, 1, remote, 1, 0, iswrite);
-	return bytes == size;
-}
-
-template<typename T>
-T Read(unsigned long address) {
-    T data;
-    pvm3(reinterpret_cast < void *>(address), reinterpret_cast<void *>(&data), sizeof(T), false);
-    return data;
 }
 
 float getDistance(struct Vector3 mxyz, struct Vector3 exyz)
