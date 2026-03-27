@@ -74,6 +74,8 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
         
         float textsize = screenHeight / 50;
 
+        response.fov = 70.0f;
+
         for (int i = 0; i < response.PlayerCount; i++) {
             PlayerData player = response.Players[i];
             

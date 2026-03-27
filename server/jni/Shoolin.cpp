@@ -28,23 +28,23 @@ int main(int argc, char *argv[]) {
         response.PlayerCount = 0;
 
         uintptr_t GameFacade = 0;
-        
+
         uintptr_t GameFacadeBase = Read<uintptr_t>(base + 0xC21A778);
         if (GameFacadeBase) {
-           uintptr_t GameFacade_c = Read<uintptr_t>(GameFacadeBase + 0xB8);
-           if (GameFacade_c) {
-              GameFacade = Read<uintptr_t>(GameFacade_c);
+            uintptr_t GameFacade_c = Read<uintptr_t>(GameFacadeBase + 0xB8);
+            if (GameFacade_c) {
+                GameFacade = Read<uintptr_t>(GameFacade_c);
 
-              if (GameFacade) {
+                if (GameFacade) {
                     uintptr_t match = Read<uintptr_t>(GameFacade + 0x90);
                     if (match) {
-                       uintptr_t localPlayer = Read<uintptr_t>(match + 0xb0);
-        
+                        uintptr_t localPlayer = Read<uintptr_t>(match + 0xb0);
+
                         if (localPlayer) {
                             uintptr_t LocalHeadNode = Read<uintptr_t>(localPlayer + 0x5C0);
                             uintptr_t LocalHeadTF = Read<uintptr_t>(LocalHeadNode + 0x10);
                             Vector3 LocalHeadPos = GetPosition(LocalHeadTF);
-                
+
                             uintptr_t followcam = Read<uintptr_t>(localPlayer + 0x5b0);
                             if (followcam) {
                                 uintptr_t cambase = Read<uintptr_t>(followcam + 0x28);
@@ -52,85 +52,104 @@ int main(int argc, char *argv[]) {
                                     uintptr_t cam = Read<uintptr_t>(cambase + 0x10);
                                     if (cam) {
                                         response.matrix = Read<D3DMatrix>(cam + 0xD8);
-                                        response.fov = Read<float>(cam + 0x158);
                                     }
                                 }
                             }
-                
+
                             uintptr_t entitybase = Read<uintptr_t>(GameFacade + 0xC0);
                             if (entitybase) {
                                 uintptr_t entity = Read<uintptr_t>(entitybase + 0x28) + 0x20;
                                 int entityCount = Read<int>(entitybase + 0x38);
-                
+
                                 if (entityCount <= 0) {
                                     send((void *) &response, sizeof(response));
                                     continue;
                                 }
-                
+
                                 for (int i = 0; i < entityCount; i++) {
-                                    uintptr_t enemy = Read<uintptr_t>(entity + sizeof(uintptr_t) * i);
-                                    
+                                    uintptr_t enemy = Read<uintptr_t>(
+                                            entity + sizeof(uintptr_t) * i);
+
                                     uintptr_t AvatarManager = Read<uintptr_t>(enemy + 0x690);
                                     if (AvatarManager && enemy != localPlayer) {
-                                        uintptr_t UmaAvatarSimple = Read<uintptr_t>(AvatarManager + 0x118);
+                                        uintptr_t UmaAvatarSimple = Read<uintptr_t>(
+                                                AvatarManager + 0x118);
                                         if (UmaAvatarSimple) {
-                                           uintptr_t IsVisible = Read<bool>(UmaAvatarSimple + 0xD8);
-                                           if (IsVisible == 1) {
-                                              uintptr_t UmaData = Read<uintptr_t>(UmaAvatarSimple + 0x20);
-                                              if (UmaData) {
-                                                if (!enemy || Read<bool>(UmaData + 0x79) || Read<bool>(enemy + 0x74))
-                                                    continue;
-                            
-                                                PlayerData *data = &response.Players[response.PlayerCount];
-                            
-                                                uintptr_t GetCurHP = Read<uintptr_t>(enemy + 0x68);
-                                                if (GetCurHP != 0) {
-                                                    uintptr_t GetCur = Read<uintptr_t>(GetCurHP + 0x10);
-                                                    if (GetCur != 0) {
-                                                        uintptr_t HP = Read<uintptr_t>(GetCur + 0x20);
-                                                        if (HP != 0) data->health = (int)Read<short>(HP + 0x18);
+                                            uintptr_t IsVisible = Read<bool>(
+                                                    UmaAvatarSimple + 0xD8);
+                                            if (IsVisible == 1) {
+                                                uintptr_t UmaData = Read<uintptr_t>(
+                                                        UmaAvatarSimple + 0x20);
+                                                if (UmaData) {
+                                                    if (!enemy || Read<bool>(UmaData + 0x79) ||
+                                                        Read<bool>(enemy + 0x74))
+                                                        continue;
+
+                                                    PlayerData *data = &response.Players[response.PlayerCount];
+
+                                                    uintptr_t GetCurHP = Read<uintptr_t>(
+                                                            enemy + 0x68);
+                                                    if (GetCurHP != 0) {
+                                                        uintptr_t GetCur = Read<uintptr_t>(
+                                                                GetCurHP + 0x10);
+                                                        if (GetCur != 0) {
+                                                            uintptr_t HP = Read<uintptr_t>(
+                                                                    GetCur + 0x20);
+                                                            if (HP != 0)
+                                                                data->health = (int) Read<short>(
+                                                                        HP + 0x18);
+                                                        }
                                                     }
-                                                }
-                                                
-                                                uintptr_t HHCBNAPCKHF = Read<uintptr_t>(enemy + 0x1ee0);
-                                                if (HHCBNAPCKHF != 0) {
-                                                    bool isDieing = false;
-                                                    uintptr_t maybeDead = Read<uintptr_t>(HHCBNAPCKHF + 0x18);
-                                                    
-                                                    if (maybeDead && Read<int>(maybeDead + 0x10) == 8) {
-                                                        data->isKnocked = true;
+
+                                                    uintptr_t HHCBNAPCKHF = Read<uintptr_t>(
+                                                            enemy + 0x1ee0);
+                                                    if (HHCBNAPCKHF != 0) {
+                                                        bool isDieing = false;
+                                                        uintptr_t maybeDead = Read<uintptr_t>(
+                                                                HHCBNAPCKHF + 0x18);
+
+                                                        if (maybeDead &&
+                                                            Read<int>(maybeDead + 0x10) == 8) {
+                                                            data->isKnocked = true;
+                                                        } else {
+                                                            data->isKnocked = false;
+                                                        }
+                                                    }
+
+                                                    uintptr_t HeadNode = Read<uintptr_t>(
+                                                            enemy + 0x5C0);
+                                                    uintptr_t HeadTF = Read<uintptr_t>(
+                                                            HeadNode + 0x10);
+                                                    data->HeadPos = GetPosition(HeadTF);
+
+                                                    uintptr_t RootNode = Read<uintptr_t>(
+                                                            enemy + 0x5e8);
+                                                    uintptr_t RootTF = Read<uintptr_t>(
+                                                            RootNode + 0x10);
+                                                    data->RootPos = GetPosition(RootTF);
+
+                                                    data->Distance = getDistance(LocalHeadPos,
+                                                                                 data->HeadPos = GetPosition(
+                                                                                         HeadTF));
+                                                    data->isBot = Read<bool>(enemy + 0x3D8);
+
+                                                    memset(data->Name, 0, 64);
+                                                    if (data->isBot) {
+                                                        strcpy(data->Name, "Robot");
                                                     } else {
-                                                        data->isKnocked = false;
+                                                        uintptr_t NamePtr = Read<uintptr_t>(
+                                                                enemy + 0x3d0);
+                                                        if (NamePtr > 0x10000000) {
+                                                            getUTF8(data->Name, NamePtr);
+                                                        }
+
+                                                        if (data->Name[0] == '\0')
+                                                            strcpy(data->Name, "Enemy");
                                                     }
+
+                                                    response.PlayerCount++;
                                                 }
-                            
-                                                uintptr_t HeadNode = Read<uintptr_t>(enemy + 0x5C0);
-                                                uintptr_t HeadTF = Read<uintptr_t>(HeadNode + 0x10);
-                                                data->HeadPos = GetPosition(HeadTF);
-                                                
-                                                uintptr_t RootNode = Read<uintptr_t>(enemy + 0x5e8);
-                                                uintptr_t RootTF = Read<uintptr_t>(RootNode + 0x10);
-                                                data->RootPos = GetPosition(RootTF);
-                                                
-                                                data->Distance = getDistance(LocalHeadPos, data->HeadPos = GetPosition(HeadTF));
-                                                data->isBot = Read<bool>(enemy + 0x3D8);
-                            
-                                                memset(data->Name, 0, 64);
-                                                if (data->isBot) {
-                                                    strcpy(data->Name, "Robot");
-                                                } else {
-                                                    uintptr_t NamePtr = Read<uintptr_t>(enemy + 0x3d0); 
-                                                    if (NamePtr > 0x10000000) {
-                                                        getUTF8(data->Name, NamePtr);
-                                                    }
-                                                    
-                                                    if (data->Name[0] == '\0') 
-                                                        strcpy(data->Name, "Enemy");
-                                                }
-                            
-                                                response.PlayerCount++;
-                                              }
-                                           }
+                                            }
                                         }
                                     }
                                 }
@@ -138,8 +157,8 @@ int main(int argc, char *argv[]) {
                         }
                     }
                 }
-              }
-           }
+            }
+        }
 
         if (response.PlayerCount > 0) {
             response.Success = true;
