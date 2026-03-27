@@ -39,8 +39,8 @@ struct PlayerData {
 
 struct Response {
     bool Success;
-    float fov;
     int PlayerCount;
+    float fov;
     D3DMatrix matrix;
     PlayerData Players[100];
 };
