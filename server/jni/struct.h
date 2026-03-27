@@ -29,6 +29,10 @@ struct Request {
 
 struct PlayerData {
     Vector3 HeadPos;
+    Vector3 RootPos;
+    bool isKnocked;
+    int health;
+    char Name[100];
     float Distance;
     bool isBot;
 };
@@ -36,6 +40,7 @@ struct PlayerData {
 struct Response {
     bool Success;
     int PlayerCount;
+    float fov;
     D3DMatrix matrix;
     PlayerData Players[100];
 };

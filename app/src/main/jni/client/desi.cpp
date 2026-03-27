@@ -20,9 +20,38 @@ extern "C" JNIEXPORT void JNICALL Closee(JNIEnv *, jobject) {
 
 extern "C" JNIEXPORT void JNICALL SettingValue(JNIEnv *, jclass, jint code, jboolean jboolean1) {
 	switch ((int)code) {
-	case 1:
-		isPlayerLinee = jboolean1;
-		break;
+	    case 1:
+		    isPlayerLinee = jboolean1;
+		    break;
+        case 2:
+		    isPlayerBoxx = jboolean1;
+		    break;
+        case 3:
+		    isPlayerHealth = jboolean1;
+		    break;
+        case 4:
+		    isPlayerName = jboolean1;
+		    break;
+        case 5:
+		    isPlayerDist = jboolean1;
+		    break;
+        case 6:
+		    isr360Alert = jboolean1;
+		    break;
+        case 7:
+            isNoBot = jboolean1;
+            break;
+	}
+}
+
+extern "C" JNIEXPORT void JNICALL SettingValueI(JNIEnv *, jobject, jint code, jint number) {
+	switch ((int)code) {
+	    case 1:
+		    isPlayerBox = number;
+		    break;
+	    case 2:
+		    isPlayerLine = number;
+		    break;
 	}
 }
 
@@ -96,6 +125,7 @@ int Register3(JNIEnv *env) {
 int Register4(JNIEnv *env) {
 	JNINativeMethod methods[] = {
 			{"SettingValue", "(IZ)V", (void *) SettingValue},
+            {"SettingValueI", "(II)V", (void *) SettingValueI}
 	};
 	jclass clazz = env->FindClass("com/loader/yogs/Floating");
 	if (!clazz)

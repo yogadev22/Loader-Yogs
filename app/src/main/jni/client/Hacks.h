@@ -8,7 +8,38 @@
 Request request;
 Response response;
 
-bool isPlayerLinee;
+int isPlayerLine = 0, isPlayerBox = 0;
+bool isPlayerLinee, isPlayerBoxx, isr360Alert, isPlayerHealth, isPlayerName, isPlayerDist, isNoBot;
+Color clrEnemy, clrFilled, clrEdge, clrBox, clrSkeleton, clrHealth;
+char extra[30];
+
+Vector4 getPrecise(Vector3 neck, Vector3 head, Vector3 root)
+{
+    float minX = 3000.0f;
+    float minY = 3000.0f;
+    float maxX = 0.0f;
+    float maxY = 0.0f;
+
+    float x[40];
+
+    int iter = 0;
+    x[30] = root.X;
+    x[31] = root.Y;
+    x[32] = head.X;
+    x[33] = head.Y;
+    memcpy(&x, &neck, 120);
+
+    for (int k = 0; k < 17; k++)
+    {
+        minX = std::min(minX, x[iter]);
+        minY = std::min(minY, x[iter + 1]);
+        maxX = std::max(maxX, x[iter]);
+        maxY = std::max(maxY, x[iter + 1]);
+        iter += 2;
+    }
+
+    return { minX - 5.0f, minY - 5.0f, maxX + 5.0f, maxY + 5.0f };
+}
 
 static auto WorldToScreen(D3DMatrix viewMatrix, Vector3 ScreenPos, int g_screenWidth, int g_screenHeight) {
     auto result = Vector3(-1, -1, -1);
@@ -33,13 +64,26 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
     send((void *) &request, sizeof(request));
     receive((void *) &response);
 
+    float mScaleX = screenWidth / (float) 2340;
+    float mScaleY = screenHeight / (float) 1080;
+    Vector2 screen = Vector2(screenWidth, screenHeight);
+    Vector2 center = Vector2(screenWidth / 2, screenHeight / 2);
+
     if (response.Success) {
         float x, y;
+        
+        float textsize = screenHeight / 50;
 
         for (int i = 0; i < response.PlayerCount; i++) {
             PlayerData player = response.Players[i];
+            
+            if (isNoBot && player.isBot)
+                continue;
 
             Vector3 HeadLocation = WorldToScreen(response.matrix, response.Players[i].HeadPos,
+                                                 screenWidth, screenHeight);
+                                                 
+            Vector3 RootLocation = WorldToScreen(response.matrix, response.Players[i].RootPos,
                                                  screenWidth, screenHeight);
 
             x = HeadLocation.X;
@@ -47,14 +91,188 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
 
             if (player.isBot) {
                 botCount++;
+                clrFilled = Color(255, 255, 255, 40);
+                clrEnemy = Color(255, 255, 255, 255);
+                clrEdge = Color(255, 255, 255, 150);
+                clrSkeleton = Color(255, 255, 255, 200);
+                clrBox = Color(255, 255, 255, 200);
             } else {
                 playerCount++;
+                clrFilled = Color(255, 0, 0, 40);
+                clrEnemy = Color(255, 0, 0, 255);
+                clrEdge = Color(255, 0, 0, 150);
+                clrSkeleton = Color(255, 0, 0, 200);
+                clrBox = Color(255, 0, 0, 200);
             }
+            
+            float magic_number = (response.Players[i].Distance * response.fov);
+            float mx = (screenWidth / 4) / magic_number;
+            float my = (screenWidth / 1.38) / magic_number;
+            float top = y - my + (screenWidth / 1.7) / magic_number;
+            float bottom = RootLocation.Y + my - (screenWidth / 1.7) / magic_number;
+
+            Vector3 NeckLocation = WorldToScreen(response.matrix, response.Players[i].HeadPos, screenWidth, screenHeight);
+            NeckLocation.Y += 2.5f;
+
+            Vector4 Precise = getPrecise(NeckLocation, HeadLocation, RootLocation);
 
             if (HeadLocation.Z > 0) {
                 if (isPlayerLinee) {
-                    esp.DrawLine(Color(255, 255, 255, 255), 1.0f, Vector2(screenWidth / 2, 0),
-                                 Vector2(x, y));
+                    if (isPlayerLine == 0) {
+                        esp.DrawLine(clrEnemy, (mScaleY * 1.6f),
+                                         Vector2(center.X, (mScaleY * 118)), Vector2(x, y));
+                    } else if (isPlayerLine == 1) {
+                        esp.DrawLine(clrEnemy, (mScaleY * 1.6f), center,
+                                         Vector2(HeadLocation.X, Precise.Y));
+                    } else if (isPlayerLine == 2) {
+                        esp.DrawLine(clrEnemy, (mScaleY * 1.6f), Vector2(center.X, screenHeight),
+                                         Vector2(HeadLocation.X, bottom));
+                    }
+                }
+                
+                if (isPlayerBoxx) {
+                    if (isPlayerBox == 0) {
+                        esp.DrawRect(clrBox, (mScaleY * 3.5f),
+                                         Vector2(Precise.X, Precise.Y),
+                                         Vector2(Precise.Z, Precise.W));
+                        esp.DrawFilledRect(clrFilled, Vector2(Precise.X, Precise.Y),
+                                               Vector2(Precise.Z, Precise.W));
+                    } else if (isPlayerBox == 1) {
+                        esp.DrawRect(clrBox, (mScaleY * 3.5f),
+                                         Vector2(Precise.X, Precise.Y),
+                                         Vector2(Precise.Z, Precise.W));
+                    }
+                }
+                
+                float boxCenterX = (Precise.X + Precise.Z) / 2;
+
+                if (isPlayerHealth) {
+                    float healthLength = screenHeight / 13;
+                    float cicing = (mScaleY * 112);
+                    if (healthLength < mx)
+                        healthLength = mx;
+                    if (player.isKnocked) {
+                        clrHealth = Color(255, 0, 0, 110);
+                    } else {
+                        clrHealth = Color(0, 255, 0, 110);
+                    }
+
+                    esp.DrawFilledRect(clrHealth,
+                                           Vector2(x - healthLength, top - screenHeight / 30),
+                                           Vector2(x - healthLength +
+                                                (2 * healthLength) *
+                                                response.Players[i].health / 100,
+                                                top - screenHeight / 110));
+                    esp.DrawRect(Color(20, 20, 20), 1,
+                                     Vector2(x - healthLength, top - screenHeight / 30),
+                                     Vector2(x + healthLength, top - screenHeight / 110));
+                }
+
+                if (isPlayerName) {
+                    int TeamID = 0;
+                    esp.DrawName(Color(255, 255, 255, 255), response.Players[i].Name,
+                                     TeamID,
+                                     Vector2(HeadLocation.X,
+                                          top - screenHeight / 65), screenHeight / 60);
+                }
+
+                if (isPlayerDist) {
+                    sprintf(extra, "%0.0f M", response.Players[i].Distance);
+                    esp.DrawText(Color(255, 255, 255, 255), extra,
+                                     Vector2(x, bottom + screenHeight / 45),
+                                     textsize);
+
+
+                }
+            }
+            
+            if (HeadLocation.Z < 0) {
+                if (!isr360Alert)
+                    continue;
+
+                if (x > screenWidth - screenWidth / 12)
+                    x = screenWidth - screenWidth / 120;
+                else if (x < screenWidth / 120)
+                    x = screenWidth / 12;
+
+                if (y < screenHeight / 1) {
+                    esp.DrawRect(Color(255, 255, 255), 2,
+                                 Vector2(screenWidth - x - 100, screenHeight - 48),
+                                 Vector2(screenWidth - x + 100, screenHeight + 2));
+                    esp.DrawFilledRect(Color(255, 0, 0, 140),
+                                       Vector2(screenWidth - x - 100, screenHeight - 48),
+                                       Vector2(screenWidth - x + 100, screenHeight + 2));
+                    sprintf(extra, "%0.0f m", response.Players[i].Distance);
+                    esp.DrawText(Color(255, 255, 255, 255), extra,
+                                 Vector2(screenWidth - x, screenHeight - 20),
+                                 textsize);
+                } else {
+                    esp.DrawRect(Color(255, 255, 255), 2,
+                                 Vector2(screenWidth - x - 100, 48),
+                                 Vector2(screenWidth - x + 100, -2));
+                    esp.DrawFilledRect(Color(255, 0, 0, 140),
+                                       Vector2(screenWidth - x - 100, 48),
+                                       Vector2(screenWidth - x + 100, -2));
+                    sprintf(extra, "%0.0f m", response.Players[i].Distance);
+                    esp.DrawText(Color(255, 255, 255, 255), extra,
+                                 Vector2(screenWidth - x, 25), textsize);
+                }
+            } else if (x < -screenWidth / 10 || x > screenWidth + screenWidth / 10) {
+                if (!isr360Alert)
+                    continue;
+
+                if (y > screenHeight - screenHeight / 12)
+                    y = screenHeight - screenHeight / 120;
+                else if (y < screenHeight / 120)
+                    y = screenHeight / 12;
+
+                if (x > screenWidth / 2) {
+                    esp.DrawRect(Color(255, 255, 255), 2,
+                                 Vector2(screenWidth - 88, y - 35),
+                                 Vector2(screenWidth + 2, y + 35));
+                    esp.DrawFilledRect(Color(255, 0, 0, 140),
+                                       Vector2(screenWidth - 88, y - 35),
+                                       Vector2(screenWidth + 2, y + 35));
+                    sprintf(extra, "%0.0f m", response.Players[i].Distance);
+                    esp.DrawText(Color(255, 255, 255, 255), extra,
+                                 Vector2(screenWidth - screenWidth / 80, y + 10),
+                                 textsize);
+                } else {
+                    esp.DrawRect(Color(255, 255, 255), 2,
+                                 Vector2(0 + 88, y - 35), Vector2(0 - 2, y + 35));
+                    esp.DrawFilledRect(Color(255, 0, 0, 140),
+                                       Vector2(0 + 88, y - 35), Vector2(0 - 2, y + 35));
+                    sprintf(extra, "%0.0f m", response.Players[i].Distance);
+                    esp.DrawText(Color(255, 255, 255, 255), extra,
+                                 Vector2(screenWidth / 80, y + 10), textsize);
+                }
+            } else if (y < -screenHeight / 10 || y > screenHeight + screenHeight / 10) {
+                if (!isr360Alert)
+                    continue;
+
+                if (x > screenWidth - screenWidth / 12)
+                    x = screenWidth - screenWidth / 120;
+                else if (x < screenWidth / 120)
+                    x = screenWidth / 12;
+
+                if (y > screenHeight / 2.5) {
+                    esp.DrawRect(Color(255, 255, 255), 2,
+                                 Vector2(x - 100, screenHeight - 48), Vector2(x + 100,
+                                                                        screenHeight + 2));
+                    esp.DrawFilledRect(Color(255, 0, 0, 140),
+                                       Vector2(x - 100, screenHeight - 48),
+                                       Vector2(x + 100, screenHeight + 2));
+                    sprintf(extra, "%0.0f m", response.Players[i].Distance);
+                    esp.DrawText(Color(255, 255, 255, 255), extra,
+                                 Vector2(x, screenHeight - 20), textsize);
+                } else {
+                    esp.DrawRect(Color(255, 255, 255), 2,
+                                 Vector2(x - 100, 48), Vector2(x + 100, -2));
+                    esp.DrawFilledRect(Color(255, 0, 0, 140),
+                                       Vector2(x - 100, 48), Vector2(x + 100, -2));
+                    sprintf(extra, "%0.0f m", response.Players[i].Distance);
+                    esp.DrawText(Color(255, 255, 255, 255), extra,
+                                 Vector2(x, 25), textsize);
                 }
             }
         }

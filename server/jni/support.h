@@ -194,4 +194,56 @@ static auto GetPosition(uintptr_t Transform) {
 	return pos;
 }
 
+void getUTF8(char* dst, uintptr_t addr) {
+    if (addr < 0x10000000) {
+        dst[0] = '\0';
+        return;
+    }
+
+    int stringLen = Read<int>(addr + 0x10);
+    if (stringLen <= 0 || stringLen > 64) {
+        stringLen = 32; 
+    }
+
+    unsigned char raw[128]; 
+    for (int i = 0; i < (stringLen * 2); i++) {
+        raw[i] = Read<unsigned char>(addr + 0x14 + i);
+    }
+
+    int j = 0;
+    int charCount = 0; // 🔥 counter huruf
+
+    for (int i = 0; i < (stringLen * 2); i += 2) {
+        if (charCount >= 10) break; // 🔥 limit 10 huruf
+
+        unsigned short unicode = raw[i] | (raw[i + 1] << 8);
+        if (unicode == 0) break;
+
+        if (unicode < 0x80) {
+            dst[j++] = (char)unicode;
+        } else if (unicode < 0x800) {
+            dst[j++] = (char)((unicode >> 6) | 0xC0);
+            dst[j++] = (char)((unicode & 0x3F) | 0x80);
+        } else if (unicode >= 0xD800 && unicode <= 0xDBFF) { 
+            i += 2;
+            unsigned short low = raw[i] | (raw[i + 1] << 8);
+            unsigned int codepoint = 0x10000 + ((unicode - 0xD800) << 10) + (low - 0xDC00);
+
+            dst[j++] = (char)((codepoint >> 18) | 0xF0);
+            dst[j++] = (char)(((codepoint >> 12) & 0x3F) | 0x80);
+            dst[j++] = (char)(((codepoint >> 6) & 0x3F) | 0x80);
+            dst[j++] = (char)((codepoint & 0x3F) | 0x80);
+        } else {
+            dst[j++] = (char)((unicode >> 12) | 0xE0);
+            dst[j++] = (char)(((unicode >> 6) & 0x3F) | 0x80);
+            dst[j++] = (char)((unicode & 0x3F) | 0x80);
+        }
+
+        charCount++; // 🔥 tambah jumlah huruf
+        if (j >= 60) break; // safety buffer
+    }
+
+    dst[j] = '\0';
+}
+
 #endif

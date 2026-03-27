@@ -3,12 +3,14 @@ package com.loader.yogs;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,13 +63,30 @@ public class MainActivity extends AppCompatActivity {
 
         binding.startbtn.setOnClickListener(v -> {
             if (!isServiceRunning()) {
+                //openGame(MainActivity.this);
                 startService(new Intent(MainActivity.this, Floating.class));
+                //startService(new Intent(MainActivity.this, Overlay.class));
             } else {
                 stopService(new Intent(MainActivity.this, Floating.class));
+                stopService(new Intent(MainActivity.this, Overlay.class));
             }
             // Beri sedikit delay agar sistem memperbarui status service sebelum UI diupdate
             new Handler().postDelayed(this::updateButtonUI, 200);
         });
+    }
+    
+    private void openGame(Context ctx) {
+        try {
+            PackageManager packageManager = ctx.getPackageManager();
+            Intent launchIntent = packageManager.getLaunchIntentForPackage("com.dts.freefiremax");
+            if (launchIntent != null) {
+                ctx.startActivity(launchIntent);
+            } else {
+                Log.e("DAEMON_INIT", "Game package not found!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // Fungsi untuk memperbarui tampilan tombol

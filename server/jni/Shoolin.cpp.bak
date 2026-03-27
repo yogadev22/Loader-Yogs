@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
                                                     uintptr_t GetCur = Read<uintptr_t>(GetCurHP + 0x10);
                                                     if (GetCur != 0) {
                                                         uintptr_t HP = Read<uintptr_t>(GetCur + 0x20);
-                                                        if (HP != 0) data->health = (int)Read<short>(HP + 0x18);
+                                                        if (HP != 0) data->Health = (int)Read<short>(HP + 0x18);
                                                     }
                                                 }
                                                 
@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
                                                 data->isBot = Read<bool>(enemy + 0x3D8);
                             
                                                 memset(data->Name, 0, 64);
-                                                if (data->isBot) {
+                                                if (isClientBot) {
                                                     strcpy(data->Name, "Robot");
                                                 } else {
                                                     uintptr_t NamePtr = Read<uintptr_t>(enemy + 0x3d0); 

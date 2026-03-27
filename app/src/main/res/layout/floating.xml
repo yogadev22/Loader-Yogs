@@ -1,127 +1,406 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<FrameLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:layout_height="wrap_content"
+     android:layout_width="wrap_content">
 
     <RelativeLayout
-        android:id="@+id/logo"
-        android:layout_width="60dp"
-        android:layout_height="60dp">
+         android:layout_height="50dp"
+         android:layout_width="50dp"
+         android:id="@+id/logo">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/yogs"/>
+             android:layout_height="match_parent"
+             android:layout_width="match_parent"
+             android:src="@drawable/yogs"
+             android:scaleType="centerCrop" />
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/menulayout"
-        android:layout_width="380dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/dark">
+    <androidx.cardview.widget.CardView
+         android:layout_height="350dp"
+         android:layout_width="350dp"
+         app:cardElevation="10dp"
+         app:cardBackgroundColor="@color/dark"
+         app:cardCornerRadius="16dp"
+         android:id="@+id/menulayout">
 
         <LinearLayout
-            android:id="@+id/nhn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:background="@color/colorPrimary">
-
-            <TextView
-                android:id="@+id/closetext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:text="YOGS LOADER" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_marginTop="5sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/nhn"
-            android:orientation="horizontal">
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:padding="8dp"
+             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/esptab"
-                    android:layout_width="match_parent"
-                    android:layout_height="35dp"
-                    android:src="@drawable/esp"
-                    android:background="@color/colorPrimary" />
-
-                <ImageView
-                    android:id="@+id/aimtab"
-                    android:layout_width="match_parent"
-                    android:layout_height="35dp"
-                    android:layout_marginTop="3sp"
-                    android:src="@drawable/track"
-                    android:background="@color/colorPrimary" />
-
-                <ImageView
-                    android:id="@+id/settingtab"
-                    android:layout_width="match_parent"
-                    android:layout_height="35dp"
-                    android:layout_marginTop="3sp"
-                    android:src="@drawable/settings"
-                    android:background="@color/colorPrimary" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/espmenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="3sp">
-
-                <Switch
-                    android:id="@+id/enableesp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:text="Enable ESP"/>
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:background="@drawable/bg_button"
+                 android:gravity="center"
+                 android:padding="10dp"
+                 android:id="@+id/nhn">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:textSize="14sp"
-                    android:textColor="@color/green_300"
-                    android:text="ESP Selection"/>
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="16sp"
+                     android:textColor="@color/white"
+                     android:id="@+id/closetext"
+                     android:text="YOGS INJECTOR"
+                     android:textStyle="bold" />
 
-                <Switch
-                    android:id="@+id/espline"
-                    android:layout_width="match_parent"
-                    android:layout_height="23dp"
-                    android:textSize="15sp"
-                    android:textColor="@color/white"
-                    android:text="Line"/>
+            </LinearLayout>
 
-                <Switch
-                    android:id="@+id/espbox"
-                    android:layout_width="match_parent"
-                    android:layout_height="23dp"
-                    android:textSize="15sp"
-                    android:textColor="@color/white"
-                    android:text="Box"/>
+            <View
+                 android:layout_height="1dp"
+                 android:layout_width="match_parent"
+                 android:background="#FFFFFF"
+                 android:alpha="0.2" />
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:orientation="horizontal"
+                 android:layout_marginTop="6dp"
+                 android:id="@+id/kaka">
+
+                <Button
+                     android:layout_height="35dp"
+                     android:layout_width="80dp"
+                     android:background="@drawable/bg_button"
+                     android:textSize="14sp"
+                     android:textColor="@color/white"
+                     android:id="@+id/prevtab"
+                     android:text="PREV" />
+
+                <TextView
+                     android:layout_height="35dp"
+                     android:layout_width="0dp"
+                     android:gravity="center"
+                     android:textSize="14sp"
+                     android:textColor="@color/white"
+                     android:layout_weight="1"
+                     android:id="@+id/texttab"
+                     android:text="texttab" />
+
+                <Button
+                     android:layout_height="35dp"
+                     android:layout_width="80dp"
+                     android:background="@drawable/bg_button"
+                     android:textSize="14sp"
+                     android:textColor="@color/white"
+                     android:layout_marginStart="6dp"
+                     android:id="@+id/nexttab"
+                     android:text="NEXT" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:orientation="vertical"
+                 android:layout_marginTop="8dp"
+                 android:id="@+id/espmenu">
+
+                <ScrollView
+                     android:layout_height="wrap_content"
+                     android:layout_width="match_parent">
+
+                    <LinearLayout
+                         android:layout_height="wrap_content"
+                         android:layout_width="match_parent"
+                         android:orientation="vertical">
+
+                        <Switch
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:textSize="15sp"
+                             android:textColor="@color/white"
+                             android:id="@+id/enableesp"
+                             android:text="Enable ESP" />
+
+                        <TextView
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:gravity="center"
+                             android:textSize="14sp"
+                             android:textColor="@color/green_300"
+                             android:layout_marginTop="6dp"
+                             android:text="ESP Selection" />
+
+                        <Switch
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:textSize="15sp"
+                             android:textColor="@color/white"
+                             android:id="@+id/espline"
+                             android:text="Line" />
+
+                        <Switch
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:textSize="15sp"
+                             android:textColor="@color/white"
+                             android:id="@+id/espbox"
+                             android:text="Box" />
+
+                        <Switch
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:textSize="15sp"
+                             android:textColor="@color/white"
+                             android:id="@+id/espname"
+                             android:text="Name" />
+
+                        <Switch
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:textSize="15sp"
+                             android:textColor="@color/white"
+                             android:id="@+id/espdistance"
+                             android:text="Distance" />
+
+                        <Switch
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:textSize="15sp"
+                             android:textColor="@color/white"
+                             android:id="@+id/esphealth"
+                             android:text="Health" />
+
+                        <Switch
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:textSize="15sp"
+                             android:textColor="@color/white"
+                             android:id="@+id/esp360alert"
+                             android:text="360 Alert" />
+
+                        <Switch
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:textSize="15sp"
+                             android:textColor="@color/white"
+                             android:id="@+id/espskipbot"
+                             android:text="Skip Bot" />
+
+                    </LinearLayout>
+
+                </ScrollView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:orientation="vertical"
+                 android:layout_marginTop="8dp"
+                 android:id="@+id/aimmenu">
+
+                <ScrollView
+                     android:layout_height="wrap_content"
+                     android:layout_width="match_parent">
+
+                    <LinearLayout
+                         android:layout_height="wrap_content"
+                         android:layout_width="match_parent"
+                         android:orientation="vertical">
+
+                        <Switch
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:textSize="15sp"
+                             android:textColor="@color/white"
+                             android:id="@+id/enableeesp"
+                             android:text="Enable AimBot" />
+
+                        <Switch
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:textSize="15sp"
+                             android:textColor="@color/white"
+                             android:id="@+id/esplidne"
+                             android:text="Ignore Knocked" />
+
+                        <Switch
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:textSize="15sp"
+                             android:textColor="@color/white"
+                             android:id="@+id/espbdox"
+                             android:text="Ignore Bot" />
+
+                    </LinearLayout>
+
+                </ScrollView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:orientation="vertical"
+                 android:layout_marginTop="8dp"
+                 android:id="@+id/setmenu">
+
+                <ScrollView
+                     android:layout_height="wrap_content"
+                     android:layout_width="match_parent">
+
+                    <LinearLayout
+                         android:layout_height="wrap_content"
+                         android:layout_width="match_parent"
+                         android:orientation="vertical">
+
+                        <TextView
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:gravity="center"
+                             android:textSize="14sp"
+                             android:textColor="@color/green_300"
+                             android:layout_marginTop="6dp"
+                             android:text="Settings ESP" />
+
+                        <LinearLayout
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:orientation="vertical">
+
+                            <TextView
+                                 android:layout_height="wrap_content"
+                                 android:layout_width="match_parent"
+                                 android:gravity="start"
+                                 android:textSize="14sp"
+                                 android:textColor="@color/green_300"
+                                 android:text="Line Position" />
+
+                            <RadioGroup
+                                 android:layout_height="wrap_content"
+                                 android:layout_width="match_parent"
+                                 android:orientation="vertical"
+                                 android:id="@+id/radioline">
+
+                                <RadioButton
+                                     android:layout_height="wrap_content"
+                                     android:layout_width="match_parent"
+                                     android:textSize="14sp"
+                                     android:textColor="@color/white"
+                                     android:checked="true"
+                                     android:id="@+id/radio_top"
+                                     android:tag="0"
+                                     android:text="Top" />
+
+                                <RadioButton
+                                     android:layout_height="wrap_content"
+                                     android:layout_width="match_parent"
+                                     android:textSize="14sp"
+                                     android:textColor="@color/white"
+                                     android:id="@+id/radio_mid"
+                                     android:tag="1"
+                                     android:text="Mid" />
+
+                                <RadioButton
+                                     android:layout_height="wrap_content"
+                                     android:layout_width="match_parent"
+                                     android:textSize="14sp"
+                                     android:textColor="@color/white"
+                                     android:id="@+id/radio_bottom"
+                                     android:tag="2"
+                                     android:text="Bottom" />
+
+                            </RadioGroup>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                             android:layout_height="wrap_content"
+                             android:layout_width="match_parent"
+                             android:background="@drawable/bg_switch"
+                             android:layout_margin="6dp"
+                             android:padding="10dp"
+                             android:orientation="vertical">
+
+                            <TextView
+                                 android:layout_height="wrap_content"
+                                 android:layout_width="match_parent"
+                                 android:gravity="start"
+                                 android:textSize="14sp"
+                                 android:textColor="@color/green_300"
+                                 android:text="Box Style" />
+
+                            <RadioGroup
+                                 android:layout_height="wrap_content"
+                                 android:layout_width="match_parent"
+                                 android:orientation="vertical"
+                                 android:id="@+id/radiobox">
+
+                                <RadioButton
+                                     android:layout_height="wrap_content"
+                                     android:layout_width="match_parent"
+                                     android:textSize="14sp"
+                                     android:textColor="@color/white"
+                                     android:checked="true"
+                                     android:id="@+id/radio_stroke"
+                                     android:tag="0"
+                                     android:text="Stroke" />
+
+                                <RadioButton
+                                     android:layout_height="wrap_content"
+                                     android:layout_width="match_parent"
+                                     android:textSize="14sp"
+                                     android:textColor="@color/white"
+                                     android:id="@+id/radio_filled"
+                                     android:tag="1"
+                                     android:text="Filled" />
+
+                            </RadioGroup>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </ScrollView>
 
             </LinearLayout>
 
         </LinearLayout>
 
-    </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
 </FrameLayout>

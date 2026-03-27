@@ -10,42 +10,42 @@
     <LinearLayout
          android:layout_height="match_parent"
          android:layout_width="match_parent"
-        android:layout_above="@+id/loginLyt"
          android:gravity="center"
+         android:layout_above="@+id/loginLyt"
          android:orientation="vertical">
 
         <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:gravity="center_horizontal"
-            android:textSize="18sp"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="23dp"
-            android:textStyle="bold"
-            android:text="YOGS LOADER" />
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:gravity="center_horizontal"
+             android:textSize="18sp"
+             android:textColor="#FFFFFF"
+             android:layout_marginTop="23dp"
+             android:textStyle="bold"
+             android:text="YOGS LOADER" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="140dp"
-            android:layout_marginTop="13dp"
-            android:src="@drawable/yogs"/>
+             android:layout_height="140dp"
+             android:layout_width="wrap_content"
+             android:src="@drawable/yogs"
+             android:layout_marginTop="13dp" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/loginLyt"
          android:layout_height="wrap_content"
          android:layout_width="match_parent"
          android:layout_centerInParent="true"
          android:layout_marginEnd="16dp"
-         android:gravity="center"
-         android:background="#282929"
          android:padding="8dp"
          android:orientation="vertical"
          app:cardElevation="3dp"
          android:layout_marginTop="12dp"
          android:layout_marginStart="16dp"
-         app:cardCornerRadius="10dp">
+         android:gravity="center"
+         android:background="#282929"
+         app:cardCornerRadius="20dp"
+         android:id="@+id/loginLyt">
 
         <TextView
              android:layout_height="wrap_content"
