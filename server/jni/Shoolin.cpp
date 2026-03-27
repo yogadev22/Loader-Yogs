@@ -35,15 +35,12 @@ int main(int argc, char *argv[]) {
         uintptr_t GameFacade = Read<uintptr_t>(GameFacade_c);
         uintptr_t match = Read<uintptr_t>(GameFacade + 0x90);
         uintptr_t localPlayer = Read<uintptr_t>(match + 0xb0);
-        uintptr_t LocalHeadNode = Read<uintptr_t>(localPlayer + 0x5C0);
-        uintptr_t LocalHeadTF = Read<uintptr_t>(LocalHeadNode + 0x10);
-        Vector3 LocalHeadPos = GetPosition(LocalHeadTF);
-
         uintptr_t followcam = Read<uintptr_t>(localPlayer + 0x5b0);
         uintptr_t cambase = Read<uintptr_t>(followcam + 0x28);
         uintptr_t cam = Read<uintptr_t>(cambase + 0x10);
         response.matrix = Read<D3DMatrix>(cam + 0xD8);
-
+        uintptr_t maincamtf = Read<uintptr_t>(localPlayer + 0x320);
+        Vector3 myPos = GetPosition(maincamtf);
         uintptr_t entitybase = Read<uintptr_t>(GameFacade + 0xC0);
         uintptr_t entity = Read<uintptr_t>(entitybase + 0x28) + 0x20;
         int entityCount = Read<int>(entitybase + 0x38);
@@ -92,7 +89,7 @@ int main(int argc, char *argv[]) {
             uintptr_t RootTF = Read<uintptr_t>(RootNode + 0x10);
             data->RootPos = GetPosition(RootTF);
 
-            data->Distance = getDistance(LocalHeadPos,data->HeadPos = GetPosition(HeadTF));
+            data->Distance = Vector3::Distance(myPos, GetPosition(HeadTF));
 
             data->isBot = Read<bool>(enemy + 0x3D8);
 

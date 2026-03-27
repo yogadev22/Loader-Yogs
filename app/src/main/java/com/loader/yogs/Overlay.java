@@ -63,15 +63,20 @@ public class Overlay extends Service {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    getReady(); // jalan dulu
-    
+                    getReady();
+                }
+            }).start();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
                     try {
-                        Thread.sleep(1000); // delay 1 detik
-                    } catch (InterruptedException e) {
+                        Thread.sleep(0);
+                    }
+                    catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-    
-                    //Shell(MainActivity.daemon64); // jalan setelah delay
+                    Shell(MainActivity.daemon64);
                 }
             }).start();
         }

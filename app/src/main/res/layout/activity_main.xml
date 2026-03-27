@@ -12,10 +12,11 @@
          android:layout_width="match_parent"
          android:layout_marginEnd="16dp"
          android:gravity="center"
-         android:background="#282929"
+         android:background="@drawable/bg_rounded"
          android:orientation="vertical"
          android:layout_centerHorizontal="true"
          android:layout_marginTop="40dp"
+        android:padding="10dp"
          android:layout_marginStart="16dp"
          app:cardCornerRadius="10dp"
          android:id="@+id/licenseinfo">
@@ -146,6 +147,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/anjss"
          android:layout_height="wrap_content"
          android:layout_width="match_parent"
          android:layout_below="@id/licenseinfo"
@@ -153,7 +155,8 @@
          android:orientation="horizontal"
          android:layout_marginTop="5dp"
          android:layout_marginStart="16dp"
-        android:background="#282929"
+        android:background="@drawable/bg_rounded"
+        android:padding="10dp"
          app:cardCornerRadius="10dp">
 
         <ImageView
@@ -218,6 +221,103 @@
 
         </RelativeLayout>
 
-    </LinearLayout>>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/applist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/anjss"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="50dp"
+        android:padding="10dp"
+        android:background="@drawable/bg_rounded"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:src="@drawable/ff"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Free Fire Max"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Version: 2.120.1"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:gravity="end">
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_height="50dp"
+                    android:layout_width="80dp"
+                    app:icon="@drawable/install"
+                    app:iconGravity="textStart"
+                    app:iconSize="40dp"
+                    app:iconPadding="0dp"
+                    app:iconTint="@android:color/white"
+                    android:backgroundTint="#2E8B57"
+                    app:cornerRadius="10dp"
+                    android:layout_gravity="center"
+                    android:id="@+id/installaplbtn" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_height="50dp"
+                    android:layout_width="80dp"
+                    app:icon="@drawable/play"
+                    app:iconGravity="textStart"
+                    app:iconSize="40dp"
+                    app:iconPadding="0dp"
+                    app:iconTint="@android:color/white"
+                    android:backgroundTint="#2E8B57"
+                    app:cornerRadius="10dp"
+                    android:layout_gravity="center"
+                    android:id="@+id/startaplbtn" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_height="50dp"
+                    android:layout_width="80dp"
+                    android:layout_marginStart="3dp"
+                    android:layout_toEndOf="@+id/startaplbtn"
+                    android:backgroundTint="@color/red"
+                    app:icon="@drawable/trash"
+                    app:iconGravity="textStart"
+                    app:iconSize="30dp"
+                    app:iconPadding="0dp"
+                    app:iconTint="@android:color/white"
+                    app:cornerRadius="10dp"
+                    android:layout_gravity="center"
+                    android:id="@+id/uninstallaplbtn" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

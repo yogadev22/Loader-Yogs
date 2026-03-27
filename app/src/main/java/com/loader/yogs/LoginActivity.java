@@ -2,6 +2,8 @@ package com.loader.yogs;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -58,6 +60,34 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Please enter password!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(LoginActivity.this, "Please enter username and password!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        binding.UsernameLayout.setEndIconOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                if (clipboardManager == null || !clipboardManager.hasPrimaryClip()) {
+                    Toast.makeText(LoginActivity.this, "Please copy licence and paste!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                ClipData clipData = clipboardManager.getPrimaryClip();
+                if (clipData == null || clipData.getItemCount() == 0) {
+                    Toast.makeText(LoginActivity.this, "Please copy licence and paste!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String ed = clipData.getItemAt(0).coerceToText(getApplicationContext()).toString().trim();
+                String[] parts = ed.split(":");
+
+                if (parts.length == 2) {
+                    binding.textPassword.setText(parts[0].trim());
+                    binding.textUsername.setText(parts[1].trim());
+                    Toast.makeText(LoginActivity.this, "Credentials pasted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Please copy licence and paste!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

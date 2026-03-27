@@ -13,32 +13,20 @@ bool isPlayerLinee, isPlayerBoxx, isr360Alert, isPlayerHealth, isPlayerName, isP
 Color clrEnemy, clrFilled, clrEdge, clrBox, clrSkeleton, clrHealth;
 char extra[30];
 
-Vector4 getPrecise(Vector3 neck, Vector3 head, Vector3 root)
+Vector4 getPrecise(Vector3 head, Vector3 root)
 {
-    float minX = 3000.0f;
-    float minY = 3000.0f;
-    float maxX = 0.0f;
-    float maxY = 0.0f;
+    float height = fabs(head.Y - root.Y);
+    float width = height * 0.5f; // rasio badan
 
-    float x[40];
+    float centerX = (head.X + root.X) / 2.0f;
 
-    int iter = 0;
-    x[30] = root.X;
-    x[31] = root.Y;
-    x[32] = head.X;
-    x[33] = head.Y;
-    memcpy(&x, &neck, 120);
+    float minX = centerX - width / 2.0f;
+    float maxX = centerX + width / 2.0f;
 
-    for (int k = 0; k < 17; k++)
-    {
-        minX = std::min(minX, x[iter]);
-        minY = std::min(minY, x[iter + 1]);
-        maxX = std::max(maxX, x[iter]);
-        maxY = std::max(maxY, x[iter + 1]);
-        iter += 2;
-    }
+    float minY = head.Y;
+    float maxY = root.Y;
 
-    return { minX - 5.0f, minY - 5.0f, maxX + 5.0f, maxY + 5.0f };
+    return { minX, minY, maxX, maxY };
 }
 
 static auto WorldToScreen(D3DMatrix viewMatrix, Vector3 ScreenPos, int g_screenWidth, int g_screenHeight) {
@@ -107,17 +95,11 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                 clrBox = Color(255, 0, 0, 200);
             }
 
-            float magic_number = (response.Players[i].Distance * fov);
-            float mx = (screenWidth / 4) / magic_number;
-            float my = (screenWidth / 1.38) / magic_number;
-            float top = y - my + (screenWidth / 1.7) / magic_number;
-            float bottom = RootLocation.Y + my - (screenWidth / 1.7) / magic_number;
-
-            Vector3 NeckLocation = WorldToScreen(response.matrix, response.Players[i].HeadPos,
-                                                 screenWidth, screenHeight);
-            NeckLocation.Y += 2.5f;
-
-            Vector4 Precise = getPrecise(NeckLocation, HeadLocation, RootLocation);
+            float dist = response.Players[i].Distance;
+            float mx = screenWidth / (dist * 0.8f);
+            float my = screenWidth / (dist * 0.5f);
+            float top = y - my;
+            float bottom = RootLocation.Y + my;
 
             if (HeadLocation.Z > 0) {
                 if (isPlayerLinee) {
@@ -126,7 +108,7 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                                      Vector2(center.X, (mScaleY * 118)), Vector2(x, y));
                     } else if (isPlayerLine == 1) {
                         esp.DrawLine(clrEnemy, (mScaleY * 1.6f), center,
-                                     Vector2(HeadLocation.X, Precise.Y));
+                                     Vector2(x, y));
                     } else if (isPlayerLine == 2) {
                         esp.DrawLine(clrEnemy, (mScaleY * 1.6f), Vector2(center.X, screenHeight),
                                      Vector2(HeadLocation.X, bottom));
@@ -135,25 +117,25 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
 
                 if (isPlayerBoxx) {
                     if (isPlayerBox == 0) {
-                        esp.DrawRect(clrBox, (mScaleY * 3.5f),
-                                     Vector2(Precise.X, Precise.Y),
-                                     Vector2(Precise.Z, Precise.W));
-                        esp.DrawFilledRect(clrFilled, Vector2(Precise.X, Precise.Y),
-                                           Vector2(Precise.Z, Precise.W));
+                        esp.DrawRect(clrBox,
+                                     screenHeight / 500, Vector2(x - mx, top),
+                                     Vector2(x + mx, bottom));
                     } else if (isPlayerBox == 1) {
-                        esp.DrawRect(clrBox, (mScaleY * 3.5f),
-                                     Vector2(Precise.X, Precise.Y),
-                                     Vector2(Precise.Z, Precise.W));
+                        esp.DrawFilledRect(clrFilled,
+                                           Vector2(x - mx, top),
+                                           Vector2(x + mx, bottom));
+                        esp.DrawRect(clrBox,
+                                     screenHeight / 500, Vector2(x - mx, top),
+                                     Vector2(x + mx, bottom));
                     }
                 }
 
-                float boxCenterX = (Precise.X + Precise.Z) / 2;
-
                 if (isPlayerHealth) {
-                    float healthLength = screenHeight / 13;
-                    float cicing = (mScaleY * 112);
+                    float healthLength = screenHeight / 30;
+
                     if (healthLength < mx)
                         healthLength = mx;
+
                     if (player.isKnocked) {
                         clrHealth = Color(255, 0, 0, 110);
                     } else {
@@ -161,14 +143,15 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                     }
 
                     esp.DrawFilledRect(clrHealth,
-                                       Vector2(x - healthLength, top - screenHeight / 30),
+                                       Vector2(x - healthLength,
+                                            top - screenHeight / 110),
                                        Vector2(x - healthLength +
-                                               (2 * healthLength) *
-                                               response.Players[i].Health / 100,
-                                               top - screenHeight / 110));
-                    esp.DrawRect(Color(20, 20, 20), 1,
-                                 Vector2(x - healthLength, top - screenHeight / 30),
-                                 Vector2(x + healthLength, top - screenHeight / 110));
+                                            (2 * healthLength) *
+                                            response.Players[i].Health / 200,
+                                            top - screenHeight / 225));
+                    esp.DrawRect(Color(0, 0, 0), 1.5,
+                                 Vector2(x - healthLength, top - screenHeight / 110),
+                                 Vector2(x + healthLength, top - screenHeight / 225));
                 }
 
                 if (isPlayerName) {

@@ -1,5 +1,6 @@
 package com.loader.yogs;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -7,17 +8,23 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.loader.yogs.databinding.ActivityMainBinding;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +32,9 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.Locale;
 import com.topjohnwu.superuser.Shell;
+
+import top.niunaijun.blackbox.BlackBoxCore;
+import top.niunaijun.blackbox.entity.pm.InstallResult;
 
 public class MainActivity extends AppCompatActivity {
 	
@@ -36,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
 	private static native String EXP();
     public static String daemon64;
     private String daemonPath64;
+    private static final int REQUEST_MANAGE_STORAGE_PERMISSION = 100;
+    private static final int REQUEST_MANAGE_UNKNOWN_APP_SOURCES = 200;
+    InstallResult installResult;
+    BlackBoxCore blackboxCore;
 
     
     @Override
@@ -49,10 +63,19 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, 123);
         }
 
+        if (!isStoragePermissionGranted()) {
+            requestStoragePermissionDirect();
+        }
+
+        if (!canRequestPackageInstalls()) {
+            requestUnknownAppPermissionsDirect();
+        }
+
         if (Shell.rootAccess()) {
             binding.mode.setText("Root");
             binding.mode.setTextColor(Color.RED);
             daemon64 = "su -c " + daemonPath64;
+            binding.applist.setVisibility(View.GONE);
         } else {
             binding.mode.setText("Container");
             binding.mode.setTextColor(Color.GREEN);
@@ -72,6 +95,28 @@ public class MainActivity extends AppCompatActivity {
             }
             // Beri sedikit delay agar sistem memperbarui status service sebelum UI diupdate
             new Handler().postDelayed(this::updateButtonUI, 200);
+        });
+
+        binding.installaplbtn.setOnClickListener(v -> {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                installResult = blackboxCore.installPackageAsUser("com.dts.freefiremax", 0);
+                if (installResult.success) {
+                    Toast.makeText(MainActivity.this, "Installation Success", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, installResult.msg, Toast.LENGTH_SHORT).show();
+                }
+            }, 1000);
+        });
+
+        binding.startaplbtn.setOnClickListener(v -> {
+            blackboxCore.launchApk("com.dts.freefiremax",0);
+        });
+
+        binding.uninstallaplbtn.setOnClickListener(v -> {
+            blackboxCore.uninstallPackageAsUser("com.dts.freefiremax", 0);
+            binding.installaplbtn.setVisibility(View.VISIBLE);
+            binding.startaplbtn.setVisibility(View.GONE);
+            binding.uninstallaplbtn.setVisibility(View.GONE);
         });
     }
     
@@ -94,11 +139,19 @@ public class MainActivity extends AppCompatActivity {
         if (isServiceRunning()) {
             binding.startbtn.setText("STOP");
             binding.startbtn.setBackgroundColor(Color.parseColor("#D32F2F")); // Merah saat Running
-            binding.startbtn.setIconResource(android.R.drawable.ic_media_pause);
         } else {
             binding.startbtn.setText("START");
             binding.startbtn.setBackgroundColor(Color.parseColor("#388E3C")); // Hijau saat Berhenti
-            binding.startbtn.setIconResource(android.R.drawable.ic_media_play);
+        }
+
+        if (blackboxCore.isInstalled("com.dts.freefiremax", 0)) {
+            binding.installaplbtn.setVisibility(View.GONE);
+            binding.startaplbtn.setVisibility(View.VISIBLE);
+            binding.uninstallaplbtn.setVisibility(View.VISIBLE);
+        } else {
+            binding.installaplbtn.setVisibility(View.VISIBLE);
+            binding.startaplbtn.setVisibility(View.GONE);
+            binding.uninstallaplbtn.setVisibility(View.GONE);
         }
     }
 
@@ -155,6 +208,35 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         handler.postDelayed(runnable, 0);
+    }
+
+    private boolean isStoragePermissionGranted() {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager();
+    }
+
+    private void requestStoragePermissionDirect() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            intent.setData(Uri.fromParts("package", getPackageName(), null));
+            startActivityForResult(intent, REQUEST_MANAGE_STORAGE_PERMISSION);
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_MANAGE_STORAGE_PERMISSION);
+        }
+    }
+
+    private boolean canRequestPackageInstalls() {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                || getPackageManager().canRequestPackageInstalls();
+    }
+
+    private void requestUnknownAppPermissionsDirect() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                    Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, REQUEST_MANAGE_UNKNOWN_APP_SOURCES);
+        }
     }
 
     private void loadAssets64() {

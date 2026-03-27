@@ -29,10 +29,9 @@
     #define SYS_process_vm_writev 348
     #define SYS_open 5
 #else
-    #error "Arquitetura não suportada"
+    #error "Architecture not supported"
 #endif
 
-// Encontra o endereço base de uma biblioteca dentro do processo alvo
 uintptr_t FindLibrary(const char* name, int index) {
     int i = 0;
     uintptr_t start = 0;
@@ -57,7 +56,6 @@ uintptr_t FindLibrary(const char* name, int index) {
     return start;
 }
 
-// Lê memória usando process_vm_readv
 template<class T>
 T Read(uintptr_t address) {
     T buf{};
@@ -70,7 +68,6 @@ T Read(uintptr_t address) {
     
     ssize_t bytes = syscall(SYS_process_vm_readv, pid, &local, 1, &remote, 1, 0);
     if (bytes != sizeof(T)) {
-        // Error handling - você pode querer lançar uma exceção ou logar erro
         memset(&buf, 0, sizeof(T));
     }
     return buf;
@@ -120,11 +117,6 @@ pid_t getPid(char * name) {
 		pid= atoi(ptr->d_name);
 	}
 	return pid;
-}
-
-float getDistance(struct Vector3 mxyz, struct Vector3 exyz)
-{
-	return sqrt((mxyz.X-exyz.X) * (mxyz.X-exyz.X) + (mxyz.Y-exyz.Y) * (mxyz.Y-exyz.Y) + (mxyz.Z-exyz.Z) * (mxyz.Z-exyz.Z)) / 100;
 }
 
 struct Matrix {
@@ -211,10 +203,10 @@ void getUTF8(char* dst, uintptr_t addr) {
     }
 
     int j = 0;
-    int charCount = 0; // 🔥 counter huruf
+    int charCount = 0;
 
     for (int i = 0; i < (stringLen * 2); i += 2) {
-        if (charCount >= 10) break; // 🔥 limit 10 huruf
+        if (charCount >= 10) break;
 
         unsigned short unicode = raw[i] | (raw[i + 1] << 8);
         if (unicode == 0) break;
@@ -239,8 +231,8 @@ void getUTF8(char* dst, uintptr_t addr) {
             dst[j++] = (char)((unicode & 0x3F) | 0x80);
         }
 
-        charCount++; // 🔥 tambah jumlah huruf
-        if (j >= 60) break; // safety buffer
+        charCount++;
+        if (j >= 60) break;
     }
 
     dst[j] = '\0';
