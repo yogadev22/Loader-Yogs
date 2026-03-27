@@ -71,20 +71,20 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
 
     if (response.Success) {
         float x, y;
-        
+
         float textsize = screenHeight / 50;
 
-        response.fov = 70.0f;
+        float fov = 70.0f;
 
         for (int i = 0; i < response.PlayerCount; i++) {
             PlayerData player = response.Players[i];
-            
+
             if (isNoBot && player.isBot)
                 continue;
 
             Vector3 HeadLocation = WorldToScreen(response.matrix, response.Players[i].HeadPos,
                                                  screenWidth, screenHeight);
-                                                 
+
             Vector3 RootLocation = WorldToScreen(response.matrix, response.Players[i].RootPos,
                                                  screenWidth, screenHeight);
 
@@ -106,14 +106,15 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                 clrSkeleton = Color(255, 0, 0, 200);
                 clrBox = Color(255, 0, 0, 200);
             }
-            
-            float magic_number = (response.Players[i].Distance * response.fov);
+
+            float magic_number = (response.Players[i].Distance * fov);
             float mx = (screenWidth / 4) / magic_number;
             float my = (screenWidth / 1.38) / magic_number;
             float top = y - my + (screenWidth / 1.7) / magic_number;
             float bottom = RootLocation.Y + my - (screenWidth / 1.7) / magic_number;
 
-            Vector3 NeckLocation = WorldToScreen(response.matrix, response.Players[i].HeadPos, screenWidth, screenHeight);
+            Vector3 NeckLocation = WorldToScreen(response.matrix, response.Players[i].HeadPos,
+                                                 screenWidth, screenHeight);
             NeckLocation.Y += 2.5f;
 
             Vector4 Precise = getPrecise(NeckLocation, HeadLocation, RootLocation);
@@ -122,30 +123,30 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                 if (isPlayerLinee) {
                     if (isPlayerLine == 0) {
                         esp.DrawLine(clrEnemy, (mScaleY * 1.6f),
-                                         Vector2(center.X, (mScaleY * 118)), Vector2(x, y));
+                                     Vector2(center.X, (mScaleY * 118)), Vector2(x, y));
                     } else if (isPlayerLine == 1) {
                         esp.DrawLine(clrEnemy, (mScaleY * 1.6f), center,
-                                         Vector2(HeadLocation.X, Precise.Y));
+                                     Vector2(HeadLocation.X, Precise.Y));
                     } else if (isPlayerLine == 2) {
                         esp.DrawLine(clrEnemy, (mScaleY * 1.6f), Vector2(center.X, screenHeight),
-                                         Vector2(HeadLocation.X, bottom));
+                                     Vector2(HeadLocation.X, bottom));
                     }
                 }
-                
+
                 if (isPlayerBoxx) {
                     if (isPlayerBox == 0) {
                         esp.DrawRect(clrBox, (mScaleY * 3.5f),
-                                         Vector2(Precise.X, Precise.Y),
-                                         Vector2(Precise.Z, Precise.W));
+                                     Vector2(Precise.X, Precise.Y),
+                                     Vector2(Precise.Z, Precise.W));
                         esp.DrawFilledRect(clrFilled, Vector2(Precise.X, Precise.Y),
-                                               Vector2(Precise.Z, Precise.W));
+                                           Vector2(Precise.Z, Precise.W));
                     } else if (isPlayerBox == 1) {
                         esp.DrawRect(clrBox, (mScaleY * 3.5f),
-                                         Vector2(Precise.X, Precise.Y),
-                                         Vector2(Precise.Z, Precise.W));
+                                     Vector2(Precise.X, Precise.Y),
+                                     Vector2(Precise.Z, Precise.W));
                     }
                 }
-                
+
                 float boxCenterX = (Precise.X + Precise.Z) / 2;
 
                 if (isPlayerHealth) {
@@ -160,34 +161,34 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                     }
 
                     esp.DrawFilledRect(clrHealth,
-                                           Vector2(x - healthLength, top - screenHeight / 30),
-                                           Vector2(x - healthLength +
-                                                (2 * healthLength) *
-                                                response.Players[i].health / 100,
-                                                top - screenHeight / 110));
+                                       Vector2(x - healthLength, top - screenHeight / 30),
+                                       Vector2(x - healthLength +
+                                               (2 * healthLength) *
+                                               response.Players[i].Health / 100,
+                                               top - screenHeight / 110));
                     esp.DrawRect(Color(20, 20, 20), 1,
-                                     Vector2(x - healthLength, top - screenHeight / 30),
-                                     Vector2(x + healthLength, top - screenHeight / 110));
+                                 Vector2(x - healthLength, top - screenHeight / 30),
+                                 Vector2(x + healthLength, top - screenHeight / 110));
                 }
 
                 if (isPlayerName) {
                     int TeamID = 0;
                     esp.DrawName(Color(255, 255, 255, 255), response.Players[i].Name,
-                                     TeamID,
-                                     Vector2(HeadLocation.X,
-                                          top - screenHeight / 65), screenHeight / 60);
+                                 TeamID,
+                                 Vector2(HeadLocation.X,
+                                         top - screenHeight / 65), screenHeight / 60);
                 }
 
                 if (isPlayerDist) {
                     sprintf(extra, "%0.0f M", response.Players[i].Distance);
                     esp.DrawText(Color(255, 255, 255, 255), extra,
-                                     Vector2(x, bottom + screenHeight / 45),
-                                     textsize);
+                                 Vector2(x, bottom + screenHeight / 45),
+                                 textsize);
 
 
                 }
             }
-            
+
             if (HeadLocation.Z < 0) {
                 if (!isr360Alert)
                     continue;
@@ -260,7 +261,7 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                 if (y > screenHeight / 2.5) {
                     esp.DrawRect(Color(255, 255, 255), 2,
                                  Vector2(x - 100, screenHeight - 48), Vector2(x + 100,
-                                                                        screenHeight + 2));
+                                                                              screenHeight + 2));
                     esp.DrawFilledRect(Color(255, 0, 0, 140),
                                        Vector2(x - 100, screenHeight - 48),
                                        Vector2(x + 100, screenHeight + 2));
@@ -278,30 +279,30 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                 }
             }
         }
+
+        int ENEM_ICON = 2;
+        int BOT_ICON = 3;
+
+        if (playerCount == 0) {
+            ENEM_ICON = 0;
+        }
+        if (botCount == 0) {
+            BOT_ICON = 1;
+        }
+
+        char cn[10];
+        sprintf(cn, "%d", playerCount);
+
+        char bt[10];
+        sprintf(bt, "%d", botCount);
+
+
+        esp.DrawOTH(Vector2(screenWidth / 2 - (80), 60), ENEM_ICON);
+        esp.DrawOTH(Vector2(screenWidth / 2, 60), BOT_ICON);
+
+        esp.DrawText(Color(255, 255, 255, 255), cn, Vector2(screenWidth / 2 - (20), 87), 23);
+
+        esp.DrawText(Color(255, 255, 255, 255), bt, Vector2(screenWidth / 2 + (50), 87), 23);
     }
-
-    int ENEM_ICON = 2;
-    int BOT_ICON = 3;
-
-    if (playerCount == 0) {
-        ENEM_ICON = 0;
-    }
-    if (botCount == 0) {
-        BOT_ICON = 1;
-    }
-
-    char cn[10];
-    sprintf(cn, "%d", playerCount);
-
-    char bt[10];
-    sprintf(bt, "%d", botCount);
-
-
-    esp.DrawOTH(Vector2(screenWidth / 2 - (80), 60), ENEM_ICON);
-    esp.DrawOTH(Vector2(screenWidth / 2, 60), BOT_ICON);
-
-    esp.DrawText(Color(255, 255, 255, 255), cn, Vector2(screenWidth / 2 - (20), 87), 23);
-
-    esp.DrawText(Color(255, 255, 255, 255), bt, Vector2(screenWidth / 2 + (50), 87), 23);
 }
 #endif // DESI_IMPORTANT_HACK_H

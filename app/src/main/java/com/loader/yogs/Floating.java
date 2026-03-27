@@ -87,7 +87,7 @@ public class Floating extends Service {
         health.setChecked(getConfig((String) health.getText()));
         SettingValue(3, getConfig((String) health.getText()));
         health.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            setValue(String.valueOf(line.getText()), health.isChecked());
+            setValue(String.valueOf(health.getText()), health.isChecked());
             SettingValue(3, isChecked);
         });
         
