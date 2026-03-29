@@ -41,8 +41,9 @@ int main(int argc, char *argv[]) {
                 uintptr_t cambase = Read<uintptr_t>(followcam + 0x28);
                 uintptr_t cam = Read<uintptr_t>(cambase + 0x10);
                 response.matrix = Read<D3DMatrix>(cam + 0xD8);
-                uintptr_t maincamtf = Read<uintptr_t>(localPlayer + 0x320);
-                Vector3 myPos = GetPosition(maincamtf);
+
+                Vector3 myPos = GetPosition(Read<uintptr_t>(Read<uintptr_t>(localPlayer + 0x5C0) + 0x10));
+
                 uintptr_t entitybase = Read<uintptr_t>(match + 0x100);
                 uintptr_t entity = Read<uintptr_t>(entitybase + 0x28) + 0x20;
                 int entityCount = Read<int>(Read<uintptr_t>(entitybase + 0x28) + 0x18);
@@ -56,6 +57,10 @@ int main(int argc, char *argv[]) {
                     uintptr_t enemy = Read<uintptr_t>(entity + sizeof(uintptr_t) * i);
 
                     if (!enemy || enemy == localPlayer || Read<bool>(enemy + 0x74))
+                        continue;
+
+                    float Distance = Vector3::Distance(myPos, GetPosition(Read<uintptr_t>(Read<uintptr_t>(enemy + 0x5C0) + 0x10)));
+                    if (Distance > 150)
                         continue;
 
                     uintptr_t AvatarManager = Read<uintptr_t>(enemy + 0x690);
@@ -93,15 +98,10 @@ int main(int argc, char *argv[]) {
                         data->isKnocked = false;
                     }
 
-                    uintptr_t HeadNode = Read<uintptr_t>(enemy + 0x5C0);
-                    uintptr_t HeadTF = Read<uintptr_t>(HeadNode + 0x10);
-                    data->HeadPos = GetPosition(HeadTF);
+                    data->HeadPos = GetPosition(Read<uintptr_t>(Read<uintptr_t>(enemy + 0x5C0) + 0x10));
+                    data->RootPos = GetPosition(Read<uintptr_t>(Read<uintptr_t>(enemy + 0x5e8) + 0x10));
 
-                    uintptr_t RootNode = Read<uintptr_t>(enemy + 0x5e8);
-                    uintptr_t RootTF = Read<uintptr_t>(RootNode + 0x10);
-                    data->RootPos = GetPosition(RootTF);
-
-                    data->Distance = Vector3::Distance(myPos, GetPosition(HeadTF));
+                    data->Distance = Distance;
 
                     data->isBot = Read<bool>(enemy + 0x3D8);
 
