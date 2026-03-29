@@ -30,6 +30,9 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import org.lsposed.lsparanoid.Obfuscate;
+
+@Obfuscate
 public class Floating extends Service {
 
     Context mContext;
@@ -62,11 +65,6 @@ public class Floating extends Service {
     }
 
     private void features() {
-        Switch enableesp = mFloatingView.findViewById(R.id.enableesp);
-        enableesp.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            startService(new Intent(Floating.this, Overlay.class));
-        });
-
         Switch line = mFloatingView.findViewById(R.id.espline);
         line.setChecked(getConfig((String) line.getText()));
         SettingValue(1, getConfig((String) line.getText()));

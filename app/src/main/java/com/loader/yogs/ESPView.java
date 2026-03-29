@@ -23,6 +23,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
+import org.lsposed.lsparanoid.Obfuscate;
+
+@Obfuscate
 public class ESPView extends View implements Runnable {
 
     private Paint boxFillPaint,

@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import android.preference.PreferenceManager;
+
+import org.lsposed.lsparanoid.Obfuscate;
+
 import java.util.Set;
 
+@Obfuscate
 public class FPrefs {
     private static final String LENGTH = "_length";
     private static final String DEFAULT_STRING_VALUE = "";

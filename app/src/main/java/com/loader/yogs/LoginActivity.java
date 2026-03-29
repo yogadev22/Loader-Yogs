@@ -20,6 +20,9 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.loader.yogs.databinding.ActivityLoginBinding;
 
+import org.lsposed.lsparanoid.Obfuscate;
+
+@Obfuscate
 public class LoginActivity extends AppCompatActivity {
 
     static {

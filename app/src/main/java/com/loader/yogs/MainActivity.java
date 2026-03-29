@@ -33,9 +33,9 @@ import java.util.Date;
 import java.util.Locale;
 import com.topjohnwu.superuser.Shell;
 
-import top.niunaijun.blackbox.BlackBoxCore;
-import top.niunaijun.blackbox.entity.pm.InstallResult;
+import org.lsposed.lsparanoid.Obfuscate;
 
+@Obfuscate
 public class MainActivity extends AppCompatActivity {
 	
     static {
@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private String daemonPath64;
     private static final int REQUEST_MANAGE_STORAGE_PERMISSION = 100;
     private static final int REQUEST_MANAGE_UNKNOWN_APP_SOURCES = 200;
-    InstallResult installResult;
-    BlackBoxCore blackboxCore;
 
     
     @Override
@@ -63,19 +61,10 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, 123);
         }
 
-        if (!isStoragePermissionGranted()) {
-            requestStoragePermissionDirect();
-        }
-
-        if (!canRequestPackageInstalls()) {
-            requestUnknownAppPermissionsDirect();
-        }
-
         if (Shell.rootAccess()) {
             binding.mode.setText("Root");
             binding.mode.setTextColor(Color.RED);
-            daemon64 = "su -c " + daemonPath64;
-            binding.applist.setVisibility(View.GONE);
+            daemon64 = "su -c /data/local/tmp/fuck";
         } else {
             binding.mode.setText("Container");
             binding.mode.setTextColor(Color.GREEN);
@@ -88,35 +77,13 @@ public class MainActivity extends AppCompatActivity {
             if (!isServiceRunning()) {
                 //openGame(MainActivity.this);
                 startService(new Intent(MainActivity.this, Floating.class));
-                //startService(new Intent(MainActivity.this, Overlay.class));
+                startService(new Intent(MainActivity.this, Overlay.class));
             } else {
                 stopService(new Intent(MainActivity.this, Floating.class));
                 stopService(new Intent(MainActivity.this, Overlay.class));
             }
             // Beri sedikit delay agar sistem memperbarui status service sebelum UI diupdate
             new Handler().postDelayed(this::updateButtonUI, 200);
-        });
-
-        binding.installaplbtn.setOnClickListener(v -> {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                installResult = blackboxCore.installPackageAsUser("com.dts.freefiremax", 0);
-                if (installResult.success) {
-                    Toast.makeText(MainActivity.this, "Installation Success", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, installResult.msg, Toast.LENGTH_SHORT).show();
-                }
-            }, 1000);
-        });
-
-        binding.startaplbtn.setOnClickListener(v -> {
-            blackboxCore.launchApk("com.dts.freefiremax",0);
-        });
-
-        binding.uninstallaplbtn.setOnClickListener(v -> {
-            blackboxCore.uninstallPackageAsUser("com.dts.freefiremax", 0);
-            binding.installaplbtn.setVisibility(View.VISIBLE);
-            binding.startaplbtn.setVisibility(View.GONE);
-            binding.uninstallaplbtn.setVisibility(View.GONE);
         });
     }
     
@@ -142,16 +109,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             binding.startbtn.setText("START");
             binding.startbtn.setBackgroundColor(Color.parseColor("#388E3C")); // Hijau saat Berhenti
-        }
-
-        if (blackboxCore.isInstalled("com.dts.freefiremax", 0)) {
-            binding.installaplbtn.setVisibility(View.GONE);
-            binding.startaplbtn.setVisibility(View.VISIBLE);
-            binding.uninstallaplbtn.setVisibility(View.VISIBLE);
-        } else {
-            binding.installaplbtn.setVisibility(View.VISIBLE);
-            binding.startaplbtn.setVisibility(View.GONE);
-            binding.uninstallaplbtn.setVisibility(View.GONE);
         }
     }
 
