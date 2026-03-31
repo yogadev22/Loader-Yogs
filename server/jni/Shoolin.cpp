@@ -1,9 +1,35 @@
 #include "support.h"
-#include <android/log.h>
 
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, "SOCKET", __VA_ARGS__)
+std::atomic<bool> keepAiming{false};
+std::thread aimThread;
+Vector3 currentBestTargetPos = Vector3::Zero();
+
+void ContinuousAim(uintptr_t oneself) {
+    while (keepAiming) {
+        uint64_t aimingInfo = Read<uint64_t>(oneself + 0xd20);
+        if (aimingInfo) {
+            Vector3 startPos = Read<Vector3>(aimingInfo + 0x4c); // old
+            Vector3 dir = currentBestTargetPos - startPos;  
+            Write<Vector3>(aimingInfo + 0x40, dir);
+        }
+    }  
+}
 
 int main(int argc, char *argv[]) {
+    pid = getPid("com.dts.freefiremax");
+    if (pid == 0) {
+        printf("\nGame is not running");
+        Close();
+        return 0;
+    }
+
+    uintptr_t base = FindLibrary("libil2cpp.so", 1);
+    if (!base) {
+        printf("\nBase lib not found");
+        Close();
+        return 0;
+    }
+
     if (!Create()) {
         perror("Creation Failed");
         return 0;
@@ -14,23 +40,18 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    pid = getPid("com.dts.freefiremax");
-    if (pid == 0) {
-        printf("\nGame is not running");
-        Close();
-        return 0;
-    }
-
-    uintptr_t base = FindLibrary("libil2cpp.so", 1);
-
     Request request{};
     Response response{};
+    
+    Vector3 targetAimPos = Vector3::Zero();
+    bool isFiring = false;
 
     while ((receive((void *) &request) > 0)) {
         response.Success = false;
         response.PlayerCount = 0;
+        float nearest = -1.0f;
 
-        uintptr_t GameFacadeBase = Read<uintptr_t>(base + 0xC21A778);
+        uintptr_t GameFacadeBase = Read<uintptr_t>(base + 0xC2132B8);
         uintptr_t GameFacade_c = Read<uintptr_t>(GameFacadeBase + 0xB8);
         uintptr_t GameFacade = Read<uintptr_t>(GameFacade_c);
         uintptr_t match = Read<uintptr_t>(GameFacade + 0x90);
@@ -40,7 +61,9 @@ int main(int argc, char *argv[]) {
                 uintptr_t followcam = Read<uintptr_t>(localPlayer + 0x5b0);
                 uintptr_t cambase = Read<uintptr_t>(followcam + 0x28);
                 uintptr_t cam = Read<uintptr_t>(cambase + 0x10);
-                response.matrix = Read<D3DMatrix>(cam + 0xD8);
+                D3DMatrix matrix = Read<D3DMatrix>(cam + 0xD8);
+                
+                isFiring = Read<bool>(localPlayer + 0x758);
 
                 Vector3 myPos = GetPosition(Read<uintptr_t>(Read<uintptr_t>(localPlayer + 0x5C0) + 0x10));
 
@@ -81,44 +104,85 @@ int main(int argc, char *argv[]) {
 
                     if (Read<bool>(UmaData + 0x79))
                         continue;
-
-                    uintptr_t GetCurHP = Read<uintptr_t>(enemy + 0x68);
-                    uintptr_t GetCur = Read<uintptr_t>(GetCurHP + 0x10);
-                    uintptr_t HP = Read<uintptr_t>(GetCur + 0x20);
-
+                        
                     PlayerData *data = &response.Players[response.PlayerCount];
 
-                    data->Health = (int) Read<short>(HP + 0x18);
-
-                    uintptr_t HHCBNAPCKHF = Read<uintptr_t>(enemy + 0x1ee0);
-                    uintptr_t maybeDead = Read<uintptr_t>(HHCBNAPCKHF + 0x18);
-                    if (maybeDead && Read<int>(maybeDead + 0x10) == 8) {
-                        data->isKnocked = true;
-                    } else {
-                        data->isKnocked = false;
+                    uintptr_t GetCurHP = Read<uintptr_t>(enemy + 0x68);
+                    if (GetCurHP) {
+                        uintptr_t GetCur = Read<uintptr_t>(GetCurHP + 0x10);
+                        if (GetCur) {
+                            uintptr_t HP = Read<uintptr_t>(GetCur + 0x20);
+                            if (HP) data->Health = (int) Read<short>(HP + 0x18);
+                        }
                     }
 
-                    data->HeadPos = GetPosition(Read<uintptr_t>(Read<uintptr_t>(enemy + 0x5C0) + 0x10));
-                    data->RootPos = GetPosition(Read<uintptr_t>(Read<uintptr_t>(enemy + 0x5e8) + 0x10));
-
+                    uintptr_t HHCBNAPCKHF = Read<uintptr_t>(enemy + 0x18e0);
+                    if (HHCBNAPCKHF) {
+                        uintptr_t maybeDead = Read<uintptr_t>(HHCBNAPCKHF + 0x18);
+                        if (maybeDead) {
+                            int pose = Read<int>(maybeDead + 0x10);
+                            if (pose == 8) {
+                                data->isKnocked = true;
+                            } else {
+                                data->isKnocked = false;
+                            }
+                        }
+                    }
+                    
+                    Vector3 HeadPos = GetPosition(Read<uintptr_t>(Read<uintptr_t>(enemy + 0x5C0) + 0x10));
+                    
                     data->Distance = Distance;
-
+                    data->HeadPos = WorldToScreen(matrix, HeadPos, request.screenWidth, request.screenHeight);
+                    data->RootPos = WorldToScreen(matrix, GetPosition(Read<uintptr_t>(Read<uintptr_t>(enemy + 0x5e8) + 0x10)), request.screenWidth, request.screenHeight);
                     data->isBot = Read<bool>(enemy + 0x3D8);
-
+    
                     memset(data->Name, 0, 64);
                     if (data->isBot) {
-                        strcpy(data->Name, "Robot");
+                        strcpy(data->Name, "Bot");
                     } else {
-                        uintptr_t NamePtr = Read<uintptr_t>(enemy + 0x3d0);
+                        uintptr_t NamePtr = Read<uintptr_t>(enemy + 0x3d0); 
                         if (NamePtr > 0x10000000) {
                             getUTF8(data->Name, NamePtr);
                         }
-
-                        if (data->Name[0] == '\0')
+                        if (data->Name[0] == '\0') 
                             strcpy(data->Name, "Enemy");
+                    }
+                    
+                    if (request.options.SilentAim && !data->isKnocked) {
+                        float centerDist = sqrt((data->HeadPos.X - request.screenWidth / 2) * (data->HeadPos.X - request.screenWidth / 2) + (data->HeadPos.Y - request.screenHeight / 2) * (data->HeadPos.Y - request.screenHeight / 2));
+                        if (centerDist < request.options.fov) {
+                            if (nearest > centerDist || nearest < 0) {
+                                nearest = centerDist;
+                                
+                                if (request.options.AimPos == 0) {
+                                    targetAimPos = HeadPos; // head
+                                } else if (request.options.AimPos == 1) {
+                                    targetAimPos = HeadPos + Vector3(0, -0.2f, 0); // neck
+                                } else if (request.options.AimPos == 2) {
+                                    targetAimPos = HeadPos + Vector3(0, -0.5f, 0); // chest
+                                }
+                            }
+                        }
                     }
 
                     response.PlayerCount++;
+                }
+                
+                if (request.options.SilentAim && (nearest > 0 && isFiring)) {
+                    currentBestTargetPos = targetAimPos;
+                    if (!keepAiming) {
+                        keepAiming = true;
+                        if (aimThread.joinable()) 
+                            aimThread.join();  
+                            aimThread = std::thread([&]() {ContinuousAim(localPlayer);});
+                    }
+                } else {
+                    if (keepAiming) {
+                        keepAiming = false;
+                        if (aimThread.joinable()) 
+                            aimThread.join();  
+                            currentBestTargetPos = Vector3::Zero();
+                    }
                 }
             }
         }

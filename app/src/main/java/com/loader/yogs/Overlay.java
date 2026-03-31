@@ -32,6 +32,7 @@ public class Overlay extends Service {
 	private native boolean getReady();
     private native void Close();
 	public static native void DrawOn(ESPView espView, Canvas canvas);
+    public static native boolean isConnected();
 
     private WindowManager windowManager;
     private ESPView overlayView;

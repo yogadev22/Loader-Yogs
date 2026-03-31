@@ -85,8 +85,8 @@ public class LoginActivity extends AppCompatActivity {
                 String[] parts = ed.split(":");
 
                 if (parts.length == 2) {
-                    binding.textPassword.setText(parts[0].trim());
-                    binding.textUsername.setText(parts[1].trim());
+                    binding.textUsername.setText(parts[0].trim());
+                    binding.textPassword.setText(parts[1].trim());
                     Toast.makeText(LoginActivity.this, "Credentials pasted", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(LoginActivity.this, "Please copy licence and paste!", Toast.LENGTH_SHORT).show();

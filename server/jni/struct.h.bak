@@ -22,7 +22,6 @@ struct Vector4 {
 struct Options {
     bool SilentAim;
     int fov;
-    int AimPos;
 };
 
 struct Request {
@@ -36,7 +35,7 @@ struct PlayerData {
     Vector3 RootPos;
     int Health;
     bool isKnocked;
-    char Name[64];
+    char Name[100];
     float Distance;
     bool isBot;
 };

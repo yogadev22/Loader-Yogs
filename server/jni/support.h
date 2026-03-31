@@ -73,6 +73,19 @@ T Read(uintptr_t address) {
     return buf;
 }
 
+template<class T>
+bool Write(uintptr_t address, T value) {
+    struct iovec local, remote;
+    
+    local.iov_base = &value;
+    local.iov_len = sizeof(T);
+    remote.iov_base = reinterpret_cast<void*>(address);
+    remote.iov_len = sizeof(T);
+    
+    ssize_t bytes = syscall(SYS_process_vm_writev, pid, &local, 1, &remote, 1, 0);
+    return (bytes == sizeof(T));
+}
+
 pid_t getPid(char * name) {
 	char text[69];
 	pid_t pid = 0;
@@ -203,14 +216,9 @@ void getUTF8(char* dst, uintptr_t addr) {
     }
 
     int j = 0;
-    int charCount = 0;
-
     for (int i = 0; i < (stringLen * 2); i += 2) {
-        if (charCount >= 10) break;
-
         unsigned short unicode = raw[i] | (raw[i + 1] << 8);
         if (unicode == 0) break;
-
         if (unicode < 0x80) {
             dst[j++] = (char)unicode;
         } else if (unicode < 0x800) {
@@ -220,7 +228,6 @@ void getUTF8(char* dst, uintptr_t addr) {
             i += 2;
             unsigned short low = raw[i] | (raw[i + 1] << 8);
             unsigned int codepoint = 0x10000 + ((unicode - 0xD800) << 10) + (low - 0xDC00);
-
             dst[j++] = (char)((codepoint >> 18) | 0xF0);
             dst[j++] = (char)(((codepoint >> 12) & 0x3F) | 0x80);
             dst[j++] = (char)(((codepoint >> 6) & 0x3F) | 0x80);
@@ -230,12 +237,25 @@ void getUTF8(char* dst, uintptr_t addr) {
             dst[j++] = (char)(((unicode >> 6) & 0x3F) | 0x80);
             dst[j++] = (char)((unicode & 0x3F) | 0x80);
         }
-
-        charCount++;
-        if (j >= 60) break;
+        if (j >= 60) break; 
     }
-
     dst[j] = '\0';
+}
+
+static auto WorldToScreen(D3DMatrix viewMatrix, Vector3 ScreenPos, int g_screenWidth, int g_screenHeight) {
+    auto result = Vector3(-1, -1, -1);
+
+    auto v9 = (ScreenPos.X * viewMatrix._11) + (ScreenPos.Y * viewMatrix._21) + (ScreenPos.Z * viewMatrix._31) + viewMatrix._41;
+    auto v10 = (ScreenPos.X * viewMatrix._12) + (ScreenPos.Y * viewMatrix._22) + (ScreenPos.Z * viewMatrix._32) + viewMatrix._42;
+    auto v12 = (ScreenPos.X * viewMatrix._14) + (ScreenPos.Y * viewMatrix._24) + (ScreenPos.Z * viewMatrix._34) + viewMatrix._44;
+    auto v13 = (float)g_screenWidth / 2.0f;
+    auto v14 = (float)g_screenHeight / 2.0f;
+
+    result.X = v13 + (v13 * v9) / v12;
+    result.Y = v14 - (v14 * v10) / v12;
+    result.Z = v12;
+
+    return result;
 }
 
 #endif

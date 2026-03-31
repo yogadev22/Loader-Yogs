@@ -19,12 +19,16 @@ struct Vector4 {
     float X, Y, Z, W;
 };
 
-enum Mode {
-    InitMode = 1
+struct Options {
+    bool SilentAim;
+    int fov;
+    int AimPos;
 };
 
 struct Request {
-    int Mode;
+    int screenWidth;
+    int screenHeight;
+    Options options;
 };
 
 struct PlayerData {
@@ -32,7 +36,7 @@ struct PlayerData {
     Vector3 RootPos;
     int Health;
     bool isKnocked;
-    char Name[100];
+    char Name[64];
     float Distance;
     bool isBot;
 };
@@ -40,7 +44,6 @@ struct PlayerData {
 struct Response {
     bool Success;
     int PlayerCount;
-    D3DMatrix matrix;
     PlayerData Players[100];
 };
 

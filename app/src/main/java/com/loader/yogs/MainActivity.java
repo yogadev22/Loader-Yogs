@@ -64,11 +64,11 @@ public class MainActivity extends AppCompatActivity {
         if (Shell.rootAccess()) {
             binding.mode.setText("Root");
             binding.mode.setTextColor(Color.RED);
-            daemon64 = "su -c /data/local/tmp/fuck";
+            daemon64 = "su -c " + getFilesDir().getPath()  + "/fuck";
         } else {
             binding.mode.setText("Container");
             binding.mode.setTextColor(Color.GREEN);
-            daemon64 = daemonPath64;
+            daemon64 = getFilesDir().getPath()  + "/fuck";
         }
 
         loadAssets64();
@@ -76,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
         binding.startbtn.setOnClickListener(v -> {
             if (!isServiceRunning()) {
                 //openGame(MainActivity.this);
-                startService(new Intent(MainActivity.this, Floating.class));
-                startService(new Intent(MainActivity.this, Overlay.class));
+                Initialize(MainActivity.this);
             } else {
                 stopService(new Intent(MainActivity.this, Floating.class));
                 stopService(new Intent(MainActivity.this, Overlay.class));
@@ -87,20 +86,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     
-    private void openGame(Context ctx) {
+    private void Initialize(final Context context) {
         try {
-            PackageManager packageManager = ctx.getPackageManager();
+            PackageManager packageManager = context.getPackageManager();
             Intent launchIntent = packageManager.getLaunchIntentForPackage("com.dts.freefiremax");
             if (launchIntent != null) {
-                ctx.startActivity(launchIntent);
-            } else {
-                Log.e("DAEMON_INIT", "Game package not found!");
+                context.startActivity(launchIntent);
             }
+            Thread.sleep(3000);
+            startService(new Intent(MainActivity.this, Overlay.class));
+            startService(new Intent(MainActivity.this, Floating.class));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
+        
     // Fungsi untuk memperbarui tampilan tombol
     private void updateButtonUI() {
         if (isServiceRunning()) {
@@ -147,16 +147,16 @@ public class MainActivity extends AppCompatActivity {
                         TextView Menit = binding.textminute;
                         TextView Detik = binding.textsecond;
                         if (days > 0) {
-                            Hari.setText(" " + String.format("%02d", days));
+                            Hari.setText(String.format("%02d", days));
                         }
                         if (hours > 0) {
-                            Jam.setText(" " + String.format("%02d", hours));
+                            Jam.setText(String.format("%02d", hours));
                         }
                         if (minutes > 0) {
-                            Menit.setText(" " + String.format("%02d", minutes));
+                            Menit.setText(String.format("%02d", minutes));
                         }
                         if (seconds > 0) {
-                            Detik.setText(" " + String.format("%02d", seconds));
+                            Detik.setText(String.format("%02d", seconds));
                         }
                     }
                 } catch (Exception e) {
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadAssets64() {
-        String filesDir = getFilesDir().toString() + "/fuck";
+        String filesDir = getFilesDir().getPath()  + "/fuck";
         try {
             OutputStream myOutput = new FileOutputStream(filesDir);
             byte[] buffer = new byte[1024];
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        daemonPath64 = getFilesDir().toString() + "/fuck";
+        daemonPath64 = getFilesDir().getPath()  + "/fuck";
         try {
             Runtime.getRuntime().exec("chmod 777 " + daemonPath64);
         } catch (IOException e) {

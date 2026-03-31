@@ -23,6 +23,7 @@
 int sock, clientD;
 sockaddr_un addr_server;
 char socket_name[108];
+bool connected;
 
 int Create()
 {
@@ -67,6 +68,8 @@ int Bind()
 		Close();
 		return 0;
 	}
+    
+    connected = true;
 	return 1;
 }
 

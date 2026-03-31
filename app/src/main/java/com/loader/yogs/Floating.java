@@ -5,6 +5,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
+import android.widget.Toast;
 import static com.loader.yogs.Overlay.getConfig;
 
 import android.animation.ObjectAnimator;
@@ -43,9 +45,12 @@ public class Floating extends Service {
     
     TextView texttab;
     LinearLayout espmenu, aimmenu, setmenu;
+    
+    private FPrefs prefs;
 
     private static native void SettingValue(int i, boolean z);
     private static native void SettingValueI(int code, int value);
+    private static native void Range(int i);
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -57,6 +62,7 @@ public class Floating extends Service {
     public void onCreate() {
         super.onCreate();
         this.mContext = this;
+        prefs = FPrefs.with(this);
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.floating, null);
         logoView = mFloatingView.findViewById(R.id.logo);
         espView = mFloatingView.findViewById(R.id.menulayout);
@@ -65,123 +71,196 @@ public class Floating extends Service {
     }
 
     private void features() {
-        Switch line = mFloatingView.findViewById(R.id.espline);
-        line.setChecked(getConfig((String) line.getText()));
-        SettingValue(1, getConfig((String) line.getText()));
-        line.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            setValue(String.valueOf(line.getText()), line.isChecked());
-            SettingValue(1, isChecked);
-        });
-        
-        Switch box = mFloatingView.findViewById(R.id.espbox);
-        box.setChecked(getConfig((String) box.getText()));
-        SettingValue(2, getConfig((String) box.getText()));
-        box.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            setValue(String.valueOf(box.getText()), box.isChecked());
-            SettingValue(2, isChecked);
-        });
-        
-        Switch health = mFloatingView.findViewById(R.id.esphealth);
-        health.setChecked(getConfig((String) health.getText()));
-        SettingValue(3, getConfig((String) health.getText()));
-        health.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            setValue(String.valueOf(health.getText()), health.isChecked());
-            SettingValue(3, isChecked);
-        });
-        
-        Switch name = mFloatingView.findViewById(R.id.espname);
-        name.setChecked(getConfig((String) name.getText()));
-        SettingValue(4, getConfig((String) name.getText()));
-        name.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            setValue(String.valueOf(name.getText()), name.isChecked());
-            SettingValue(4, isChecked);
-        });
-        
-        Switch dist = mFloatingView.findViewById(R.id.espdistance);
-        dist.setChecked(getConfig((String) dist.getText()));
-        SettingValue(5, getConfig((String) dist.getText()));
-        dist.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            setValue(String.valueOf(dist.getText()), dist.isChecked());
-            SettingValue(5, isChecked);
-        });
-        
-        Switch alert = mFloatingView.findViewById(R.id.esp360alert);
-        alert.setChecked(getConfig((String) alert.getText()));
-        SettingValue(6, getConfig((String) alert.getText()));
-        alert.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            setValue(String.valueOf(alert.getText()), alert.isChecked());
-            SettingValue(6, isChecked);
-        });
-        
-        Switch nobot = mFloatingView.findViewById(R.id.espskipbot);
-        nobot.setChecked(getConfig((String) nobot.getText()));
-        SettingValue(7, getConfig((String) nobot.getText()));
-        nobot.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            setValue(String.valueOf(nobot.getText()), nobot.isChecked());
-            SettingValue(7, isChecked);
-        });
-        
-        final SharedPreferences prefs = mContext.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-
-        int savedIdd = prefs.getInt("radio_box_id", -1);
-        if (savedIdd != -1) {
-            RadioButton savedBtnn = mFloatingView.findViewById(savedIdd);
-            if (savedBtnn != null) {
-                savedBtnn.setChecked(true);
-                SettingValueI(1, Integer.parseInt(savedBtnn.getTag().toString()));
+        if (Overlay.isConnected()) {
+            Switch line = mFloatingView.findViewById(R.id.espline);
+            line.setChecked(prefs.readBoolean(String.valueOf(line.getText())));
+            SettingValue(1, prefs.readBoolean(String.valueOf(line.getText())));
+            line.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                prefs.writeBoolean(String.valueOf(line.getText()), line.isChecked());
+                SettingValue(1, isChecked);
+            });
+            
+            Switch box = mFloatingView.findViewById(R.id.espbox);
+            box.setChecked(prefs.readBoolean((String) box.getText()));
+            SettingValue(2, prefs.readBoolean((String) box.getText()));
+            box.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                prefs.writeBoolean(String.valueOf(box.getText()), box.isChecked());
+                SettingValue(2, isChecked);
+            });
+            
+            Switch health = mFloatingView.findViewById(R.id.esphealth);
+            health.setChecked(prefs.readBoolean((String) health.getText()));
+            SettingValue(3, prefs.readBoolean((String) health.getText()));
+            health.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                prefs.writeBoolean(String.valueOf(health.getText()), health.isChecked());
+                SettingValue(3, isChecked);
+            });
+            
+            Switch name = mFloatingView.findViewById(R.id.espname);
+            name.setChecked(prefs.readBoolean((String) name.getText()));
+            SettingValue(4, prefs.readBoolean((String) name.getText()));
+            name.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                prefs.writeBoolean(String.valueOf(name.getText()), name.isChecked());
+                SettingValue(4, isChecked);
+            });
+            
+            Switch dist = mFloatingView.findViewById(R.id.espdistance);
+            dist.setChecked(prefs.readBoolean((String) dist.getText()));
+            SettingValue(5, prefs.readBoolean((String) dist.getText()));
+            dist.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                prefs.writeBoolean(String.valueOf(dist.getText()), dist.isChecked());
+                SettingValue(5, isChecked);
+            });
+            
+            Switch alert = mFloatingView.findViewById(R.id.esp360alert);
+            alert.setChecked(prefs.readBoolean((String) alert.getText()));
+            SettingValue(6, prefs.readBoolean((String) alert.getText()));
+            alert.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                prefs.writeBoolean(String.valueOf(alert.getText()), alert.isChecked());
+                SettingValue(6, isChecked);
+            });
+            
+            Switch nobot = mFloatingView.findViewById(R.id.espskipbot);
+            nobot.setChecked(prefs.readBoolean((String) nobot.getText()));
+            SettingValue(7, prefs.readBoolean((String) nobot.getText()));
+            nobot.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                prefs.writeBoolean(String.valueOf(nobot.getText()), nobot.isChecked());
+                SettingValue(7, isChecked);
+            });
+            
+            int savedIdd = prefs.readInt("radio_box_id", -1);
+            if (savedIdd != -1) {
+                View v = mFloatingView.findViewById(savedIdd);
+            
+                if (v instanceof RadioButton) {
+                    RadioButton savedBtnn = (RadioButton) v;
+                    savedBtnn.setChecked(true);
+            
+                    Object tag = savedBtnn.getTag();
+                    if (tag != null) {
+                        SettingValueI(1, Integer.parseInt(tag.toString()));
+                    }
+                }
             }
+            
+            RadioGroup radiooBox = mFloatingView.findViewById(R.id.radiobox);
+            radiooBox.setOnCheckedChangeListener((group, checkedId) -> {
+                if (checkedId != -1) {
+                    View v = mFloatingView.findViewById(checkedId);
+            
+                    if (v instanceof RadioButton) {
+                        RadioButton btn = (RadioButton) v;
+            
+                        Object tag = btn.getTag();
+                        if (tag != null) {
+                            SettingValueI(1, Integer.parseInt(tag.toString()));
+                        }
+            
+                        prefs.writeInt("radio_box_id", checkedId);
+                    }
+                }
+            });
+            
+            int savedId = prefs.readInt("radio_line_id", -1);
+            if (savedId != -1) {
+                View v = mFloatingView.findViewById(savedId);
+            
+                if (v instanceof RadioButton) {
+                    RadioButton savedBtn = (RadioButton) v;
+                    savedBtn.setChecked(true);
+            
+                    Object tag = savedBtn.getTag();
+                    if (tag != null) {
+                        SettingValueI(2, Integer.parseInt(tag.toString()));
+                    }
+                }
+            }
+            
+            RadioGroup radiooLine = mFloatingView.findViewById(R.id.radioline);
+            radiooLine.setOnCheckedChangeListener((group, checkedId) -> {
+                if (checkedId != -1) {
+                    View v = mFloatingView.findViewById(checkedId);
+            
+                    if (v instanceof RadioButton) {
+                        RadioButton btn = (RadioButton) v;
+            
+                        Object tag = btn.getTag();
+                        if (tag != null) {
+                            SettingValueI(2, Integer.parseInt(tag.toString()));
+                        }
+            
+                        prefs.writeInt("radio_line_id", checkedId);
+                    }
+                }
+            });
+            
+            Switch aimsilent = mFloatingView.findViewById(R.id.AimSilent);
+            aimsilent.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                SettingValue(8, isChecked);
+            });
+            
+            int savedId2 = prefs.readInt("radio_aimpos_id", -1);
+            if (savedId2 != -1) {
+                View v = mFloatingView.findViewById(savedId2);
+            
+                if (v instanceof RadioButton) {
+                    RadioButton savedBtn = (RadioButton) v;
+                    savedBtn.setChecked(true);
+            
+                    Object tag = savedBtn.getTag();
+                    if (tag != null) {
+                        SettingValueI(3, Integer.parseInt(tag.toString()));
+                    }
+                }
+            }
+            
+            RadioGroup radioAimPos = mFloatingView.findViewById(R.id.radioaimpos);
+            radioAimPos.setOnCheckedChangeListener((group, checkedId) -> {
+                if (checkedId != -1) {
+                    View v = mFloatingView.findViewById(checkedId);
+            
+                    if (v instanceof RadioButton) {
+                        RadioButton btn = (RadioButton) v;
+            
+                        Object tag = btn.getTag();
+                        if (tag != null) {
+                            SettingValueI(3, Integer.parseInt(tag.toString()));
+                        }
+            
+                        prefs.writeInt("radio_aimpos_id", checkedId);
+                    }
+                }
+            });
+            
+            final TextView rangs = mFloatingView.findViewById(R.id.textfov);
+            final SeekBar range = mFloatingView.findViewById(R.id.aimrange); // Dapatkan referensi SeekBar "range" di sini
+    
+            int savedFovValue = prefs.readInt("fov", -1); // Gunakan default value yang masuk akal, misal 50 jika -1 tidak cocok
+            if (savedFovValue != -1) {
+                range.setProgress(savedFovValue); // Atur progress SeekBar yang benar
+                Range(savedFovValue);             // Panggil native method Anda dengan nilai yang dimuat
+                rangs.setText(String.valueOf(savedFovValue)); // Perbarui TextView
+            }
+    
+            range.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    Range(progress);
+                    rangs.setText(String.valueOf(progress));
+                    prefs.writeInt("fov", progress);
+                }
+    
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    // Tidak ada perubahan di sini
+                }
+    
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    // Tidak ada perubahan di sini
+                }
+            });
         }
-
-        final RadioGroup radiooBox = mFloatingView.findViewById(R.id.radiobox);
-        radiooBox.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                int chkdId = radiooBox.getCheckedRadioButtonId();
-                RadioButton btn = mFloatingView.findViewById(chkdId);
-                SettingValueI(1, Integer.parseInt(btn.getTag().toString()));
-
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putInt("radio_box_id", chkdId);
-                editor.apply();
-            }
-        });
-
-        int savedId = prefs.getInt("radio_line_id", -1);
-        if (savedId != -1) {
-            RadioButton savedBtn = mFloatingView.findViewById(savedId);
-            if (savedBtn != null) {
-                savedBtn.setChecked(true);
-                SettingValueI(2, Integer.parseInt(savedBtn.getTag().toString()));
-            }
-        }
-
-        final RadioGroup radiooLine = mFloatingView.findViewById(R.id.radioline);
-        radiooLine.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                int chkdId = radiooLine.getCheckedRadioButtonId();
-                RadioButton btn = mFloatingView.findViewById(chkdId);
-
-                // Pakai SettingValueI seperti biasa
-                SettingValueI(2, Integer.parseInt(btn.getTag().toString()));
-
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putInt("radio_line_id", chkdId);
-                editor.apply();
-            }
-        });
-    }
-
-    private void setValue(String key, boolean value) {
-        SharedPreferences sp = getSharedPreferences("espValue", Context.MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean(key, value);
-        ed.apply();
-    }
-
-    private boolean getConfig(String key) {
-        SharedPreferences sp = getSharedPreferences("espValue", Context.MODE_PRIVATE);
-        return sp.getBoolean(key, false);
     }
 
     @SuppressLint("InflateParams")
@@ -217,6 +296,16 @@ public class Floating extends Service {
         espmenu = mFloatingView.findViewById(R.id.espmenu);
         aimmenu = mFloatingView.findViewById(R.id.aimmenu);
         setmenu = mFloatingView.findViewById(R.id.setmenu);
+        
+        if (Overlay.isConnected()) {
+            espmenu.setVisibility(View.VISIBLE);
+            aimmenu.setVisibility(View.GONE);
+            setmenu.setVisibility(View.GONE);
+        } else {
+            espmenu.setVisibility(View.GONE);
+            aimmenu.setVisibility(View.GONE);
+            setmenu.setVisibility(View.GONE);
+        }
         
         espView.setVisibility(View.GONE);
 

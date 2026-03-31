@@ -41,6 +41,9 @@ extern "C" JNIEXPORT void JNICALL SettingValue(JNIEnv *, jclass, jint code, jboo
         case 7:
             isNoBot = jboolean1;
             break;
+        case 8:
+            options.SilentAim = jboolean1;
+            break;
 	}
 }
 
@@ -52,7 +55,18 @@ extern "C" JNIEXPORT void JNICALL SettingValueI(JNIEnv *, jobject, jint code, ji
 	    case 2:
 		    isPlayerLine = number;
 		    break;
+        case 3:
+            options.AimPos = number;
+            break;
 	}
+}
+
+extern "C" JNIEXPORT void JNICALL Range(JNIEnv *, jobject, jint range) {
+	options.fov = 1 + range;
+}
+
+extern "C" JNIEXPORT jboolean JNICALL isConnected(JNIEnv *, jobject) {
+    return connected;
 }
 
 extern "C" JNIEXPORT jboolean JNICALL getReady(JNIEnv *, jobject) {
@@ -110,7 +124,8 @@ int Register3(JNIEnv *env) {
 	JNINativeMethod methods[] = {
 			{"DrawOn", "(Lcom/loader/yogs/ESPView;Landroid/graphics/Canvas;)V", (void *) DrawOn},
 			{"Close", "()V", (void *) Closee},
-			{"getReady", "()Z", (void *) getReady}
+			{"getReady", "()Z", (void *) getReady},
+            {"isConnected", "()Z", (void *) isConnected}
 	};
 	jclass clazz = env->FindClass("com/loader/yogs/Overlay");
 	if (!clazz)
@@ -125,7 +140,8 @@ int Register3(JNIEnv *env) {
 int Register4(JNIEnv *env) {
 	JNINativeMethod methods[] = {
 			{"SettingValue", "(IZ)V", (void *) SettingValue},
-            {"SettingValueI", "(II)V", (void *) SettingValueI}
+            {"SettingValueI", "(II)V", (void *) SettingValueI},
+            {"Range", "(I)V", (void *) Range}
 	};
 	jclass clazz = env->FindClass("com/loader/yogs/Floating");
 	if (!clazz)
