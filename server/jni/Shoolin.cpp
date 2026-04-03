@@ -157,15 +157,23 @@ int main(int argc, char *argv[]) {
                                 if (request.options.AimPos == 0) {
                                     targetAimPos = HeadPos; // head
                                 } else if (request.options.AimPos == 1) {
-                                    targetAimPos = HeadPos + Vector3(0, -0.2f, 0); // neck
+                                    targetAimPos = HeadPos + Vector3(0, -0.1f, 0); // neck
                                 } else if (request.options.AimPos == 2) {
-                                    targetAimPos = HeadPos + Vector3(0, -0.5f, 0); // chest
+                                    targetAimPos = HeadPos + Vector3(0, -0.3f, 0); // chest
                                 }
                             }
                         }
                     }
 
                     response.PlayerCount++;
+                }
+                
+                if (request.options.AimLine) {
+                    if (nearest > 0) {
+                        response.targetPos = WorldToScreen(matrix, targetAimPos, request.screenWidth, request.screenHeight);
+                    } else {
+                        response.targetPos = Vector3::Zero();
+                    }
                 }
                 
                 if (request.options.SilentAim && (nearest > 0 && isFiring)) {

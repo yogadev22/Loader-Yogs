@@ -18,51 +18,82 @@ extern "C" JNIEXPORT void JNICALL Closee(JNIEnv *, jobject) {
 	Close();
 }
 
-extern "C" JNIEXPORT void JNICALL SettingValue(JNIEnv *, jclass, jint code, jboolean jboolean1) {
-	switch ((int)code) {
-	    case 1:
-		    isPlayerLinee = jboolean1;
-		    break;
+jobjectArray GetFeatureList(JNIEnv *env, jobject context) {
+    jobjectArray ret;
+
+    const char *features[] = {
+            OBFUSCATE("TitleMenu_ESP FEATURES"),
+            OBFUSCATE("0_Toggle_True_ESP Line"),
+            OBFUSCATE("1_Toggle_True_ESP Box"),
+            OBFUSCATE("2_Toggle_True_ESP Name"),
+            OBFUSCATE("3_Toggle_True_ESP Distance"),
+            OBFUSCATE("4_Toggle_True_ESP Health"),
+            OBFUSCATE("5_Toggle_True_ESP 360 Alert"),
+            OBFUSCATE("6_Toggle_True_ESP Skip Bot"),
+            OBFUSCATE("7_RadioButton_True_Line Position_Top, Mid, Bottom"),
+            OBFUSCATE("8_RadioButton_True_Box Style_Stroke, Filled"),
+            OBFUSCATE("TitleMenu_AIM FEATURES"),
+            OBFUSCATE("9_Toggle_Silent Aim"),
+            OBFUSCATE("10_RadioButton_True_Target Position_Head, Neck, Chest"),
+            OBFUSCATE("11_Seekbar_True_Aim Fov_500"),
+            OBFUSCATE("12_Toggle_Aim Line")
+    };
+
+    int Total_Feature = (sizeof features / sizeof features[0]);
+    ret = (jobjectArray)
+            env->NewObjectArray(Total_Feature, env->FindClass(OBFUSCATE("java/lang/String")),
+                                env->NewStringUTF(""));
+
+    for (int i = 0; i < Total_Feature; i++)
+        env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
+
+    return (ret);
+}
+
+void Changes(JNIEnv *env, jclass clazz, jobject obj, jint featNum, jstring featName, jint value, jlong Lvalue, jboolean boolean, jstring text) {
+    switch (featNum) {
+        case 0:
+            isPlayerLinee = boolean;
+            break;
+        case 1:
+            isPlayerBoxx = boolean;
+            break;
         case 2:
-		    isPlayerBoxx = jboolean1;
-		    break;
+            isPlayerName = boolean;
+            break;
         case 3:
-		    isPlayerHealth = jboolean1;
-		    break;
+            isPlayerDist = boolean;
+            break;
         case 4:
-		    isPlayerName = jboolean1;
-		    break;
+            isPlayerHealth = boolean;
+            break;
         case 5:
-		    isPlayerDist = jboolean1;
-		    break;
+            isr360Alert = boolean;
+            break;
         case 6:
-		    isr360Alert = jboolean1;
-		    break;
+            isNoBot = boolean;
+            break;
         case 7:
-            isNoBot = jboolean1;
+            isPlayerLine = value;
             break;
         case 8:
-            options.SilentAim = jboolean1;
+            isPlayerBox = value;
             break;
-	}
-}
-
-extern "C" JNIEXPORT void JNICALL SettingValueI(JNIEnv *, jobject, jint code, jint number) {
-	switch ((int)code) {
-	    case 1:
-		    isPlayerBox = number;
-		    break;
-	    case 2:
-		    isPlayerLine = number;
-		    break;
-        case 3:
-            options.AimPos = number;
+        case 9:
+            options.SilentAim = boolean;
             break;
-	}
-}
-
-extern "C" JNIEXPORT void JNICALL Range(JNIEnv *, jobject, jint range) {
-	options.fov = 1 + range;
+        case 10:
+            options.AimPos = value;
+            break;
+        case 11:
+            options.fov = value;
+            break;
+        case 12:
+            options.AimLine = boolean;
+            break;
+        default:
+            break;
+    }
 }
 
 extern "C" JNIEXPORT jboolean JNICALL isConnected(JNIEnv *, jobject) {
@@ -139,9 +170,8 @@ int Register3(JNIEnv *env) {
 
 int Register4(JNIEnv *env) {
 	JNINativeMethod methods[] = {
-			{"SettingValue", "(IZ)V", (void *) SettingValue},
-            {"SettingValueI", "(II)V", (void *) SettingValueI},
-            {"Range", "(I)V", (void *) Range}
+        {OBFUSCATE("GetFeatureList"), OBFUSCATE("()[Ljava/lang/String;"), reinterpret_cast<void *>(GetFeatureList)},
+        {OBFUSCATE("Changes"), OBFUSCATE("(Landroid/content/Context;ILjava/lang/String;IJZLjava/lang/String;)V"), reinterpret_cast<void *>(Changes)}
 	};
 	jclass clazz = env->FindClass("com/loader/yogs/Floating");
 	if (!clazz)

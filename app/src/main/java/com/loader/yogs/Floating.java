@@ -1,14 +1,18 @@
 package com.loader.yogs;
 
+import android.graphics.Typeface;
+import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.ViewConfiguration;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Toast;
-import static com.loader.yogs.Overlay.getConfig;
-
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -32,13 +36,22 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import org.lsposed.lsparanoid.Obfuscate;
 
 @Obfuscate
 public class Floating extends Service {
 
+    static {
+        System.loadLibrary("yogs");
+    }
+        
     Context mContext;
-    private View mFloatingView, espView, logoView;
+    private FrameLayout mFloatingView;
     private WindowManager mWindowManager;
 
     int currentTab = 0;
@@ -48,10 +61,9 @@ public class Floating extends Service {
     
     private FPrefs prefs;
 
-    private static native void SettingValue(int i, boolean z);
-    private static native void SettingValueI(int code, int value);
-    private static native void Range(int i);
-
+    private static native void Changes(Context ctx, int featNum, String featName, int value, long Lvalue, boolean b, String text);
+    native String[] GetFeatureList();
+    
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -63,208 +75,81 @@ public class Floating extends Service {
         super.onCreate();
         this.mContext = this;
         prefs = FPrefs.with(this);
-        mFloatingView = LayoutInflater.from(this).inflate(R.layout.floating, null);
-        logoView = mFloatingView.findViewById(R.id.logo);
-        espView = mFloatingView.findViewById(R.id.menulayout);
         createOver();
-        features();
-    }
-
-    private void features() {
-        if (Overlay.isConnected()) {
-            Switch line = mFloatingView.findViewById(R.id.espline);
-            line.setChecked(prefs.readBoolean(String.valueOf(line.getText())));
-            SettingValue(1, prefs.readBoolean(String.valueOf(line.getText())));
-            line.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                prefs.writeBoolean(String.valueOf(line.getText()), line.isChecked());
-                SettingValue(1, isChecked);
-            });
-            
-            Switch box = mFloatingView.findViewById(R.id.espbox);
-            box.setChecked(prefs.readBoolean((String) box.getText()));
-            SettingValue(2, prefs.readBoolean((String) box.getText()));
-            box.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                prefs.writeBoolean(String.valueOf(box.getText()), box.isChecked());
-                SettingValue(2, isChecked);
-            });
-            
-            Switch health = mFloatingView.findViewById(R.id.esphealth);
-            health.setChecked(prefs.readBoolean((String) health.getText()));
-            SettingValue(3, prefs.readBoolean((String) health.getText()));
-            health.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                prefs.writeBoolean(String.valueOf(health.getText()), health.isChecked());
-                SettingValue(3, isChecked);
-            });
-            
-            Switch name = mFloatingView.findViewById(R.id.espname);
-            name.setChecked(prefs.readBoolean((String) name.getText()));
-            SettingValue(4, prefs.readBoolean((String) name.getText()));
-            name.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                prefs.writeBoolean(String.valueOf(name.getText()), name.isChecked());
-                SettingValue(4, isChecked);
-            });
-            
-            Switch dist = mFloatingView.findViewById(R.id.espdistance);
-            dist.setChecked(prefs.readBoolean((String) dist.getText()));
-            SettingValue(5, prefs.readBoolean((String) dist.getText()));
-            dist.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                prefs.writeBoolean(String.valueOf(dist.getText()), dist.isChecked());
-                SettingValue(5, isChecked);
-            });
-            
-            Switch alert = mFloatingView.findViewById(R.id.esp360alert);
-            alert.setChecked(prefs.readBoolean((String) alert.getText()));
-            SettingValue(6, prefs.readBoolean((String) alert.getText()));
-            alert.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                prefs.writeBoolean(String.valueOf(alert.getText()), alert.isChecked());
-                SettingValue(6, isChecked);
-            });
-            
-            Switch nobot = mFloatingView.findViewById(R.id.espskipbot);
-            nobot.setChecked(prefs.readBoolean((String) nobot.getText()));
-            SettingValue(7, prefs.readBoolean((String) nobot.getText()));
-            nobot.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                prefs.writeBoolean(String.valueOf(nobot.getText()), nobot.isChecked());
-                SettingValue(7, isChecked);
-            });
-            
-            int savedIdd = prefs.readInt("radio_box_id", -1);
-            if (savedIdd != -1) {
-                View v = mFloatingView.findViewById(savedIdd);
-            
-                if (v instanceof RadioButton) {
-                    RadioButton savedBtnn = (RadioButton) v;
-                    savedBtnn.setChecked(true);
-            
-                    Object tag = savedBtnn.getTag();
-                    if (tag != null) {
-                        SettingValueI(1, Integer.parseInt(tag.toString()));
-                    }
-                }
-            }
-            
-            RadioGroup radiooBox = mFloatingView.findViewById(R.id.radiobox);
-            radiooBox.setOnCheckedChangeListener((group, checkedId) -> {
-                if (checkedId != -1) {
-                    View v = mFloatingView.findViewById(checkedId);
-            
-                    if (v instanceof RadioButton) {
-                        RadioButton btn = (RadioButton) v;
-            
-                        Object tag = btn.getTag();
-                        if (tag != null) {
-                            SettingValueI(1, Integer.parseInt(tag.toString()));
-                        }
-            
-                        prefs.writeInt("radio_box_id", checkedId);
-                    }
-                }
-            });
-            
-            int savedId = prefs.readInt("radio_line_id", -1);
-            if (savedId != -1) {
-                View v = mFloatingView.findViewById(savedId);
-            
-                if (v instanceof RadioButton) {
-                    RadioButton savedBtn = (RadioButton) v;
-                    savedBtn.setChecked(true);
-            
-                    Object tag = savedBtn.getTag();
-                    if (tag != null) {
-                        SettingValueI(2, Integer.parseInt(tag.toString()));
-                    }
-                }
-            }
-            
-            RadioGroup radiooLine = mFloatingView.findViewById(R.id.radioline);
-            radiooLine.setOnCheckedChangeListener((group, checkedId) -> {
-                if (checkedId != -1) {
-                    View v = mFloatingView.findViewById(checkedId);
-            
-                    if (v instanceof RadioButton) {
-                        RadioButton btn = (RadioButton) v;
-            
-                        Object tag = btn.getTag();
-                        if (tag != null) {
-                            SettingValueI(2, Integer.parseInt(tag.toString()));
-                        }
-            
-                        prefs.writeInt("radio_line_id", checkedId);
-                    }
-                }
-            });
-            
-            Switch aimsilent = mFloatingView.findViewById(R.id.AimSilent);
-            aimsilent.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                SettingValue(8, isChecked);
-            });
-            
-            int savedId2 = prefs.readInt("radio_aimpos_id", -1);
-            if (savedId2 != -1) {
-                View v = mFloatingView.findViewById(savedId2);
-            
-                if (v instanceof RadioButton) {
-                    RadioButton savedBtn = (RadioButton) v;
-                    savedBtn.setChecked(true);
-            
-                    Object tag = savedBtn.getTag();
-                    if (tag != null) {
-                        SettingValueI(3, Integer.parseInt(tag.toString()));
-                    }
-                }
-            }
-            
-            RadioGroup radioAimPos = mFloatingView.findViewById(R.id.radioaimpos);
-            radioAimPos.setOnCheckedChangeListener((group, checkedId) -> {
-                if (checkedId != -1) {
-                    View v = mFloatingView.findViewById(checkedId);
-            
-                    if (v instanceof RadioButton) {
-                        RadioButton btn = (RadioButton) v;
-            
-                        Object tag = btn.getTag();
-                        if (tag != null) {
-                            SettingValueI(3, Integer.parseInt(tag.toString()));
-                        }
-            
-                        prefs.writeInt("radio_aimpos_id", checkedId);
-                    }
-                }
-            });
-            
-            final TextView rangs = mFloatingView.findViewById(R.id.textfov);
-            final SeekBar range = mFloatingView.findViewById(R.id.aimrange); // Dapatkan referensi SeekBar "range" di sini
-    
-            int savedFovValue = prefs.readInt("fov", -1); // Gunakan default value yang masuk akal, misal 50 jika -1 tidak cocok
-            if (savedFovValue != -1) {
-                range.setProgress(savedFovValue); // Atur progress SeekBar yang benar
-                Range(savedFovValue);             // Panggil native method Anda dengan nilai yang dimuat
-                rangs.setText(String.valueOf(savedFovValue)); // Perbarui TextView
-            }
-    
-            range.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    Range(progress);
-                    rangs.setText(String.valueOf(progress));
-                    prefs.writeInt("fov", progress);
-                }
-    
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-                    // Tidak ada perubahan di sini
-                }
-    
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-                    // Tidak ada perubahan di sini
-                }
-            });
-        }
     }
 
     @SuppressLint("InflateParams")
     void createOver() {
+        mFloatingView = new FrameLayout(this);
+        mFloatingView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        
+        RelativeLayout logoView = new RelativeLayout(this);
+        logoView.setLayoutParams(new LinearLayout.LayoutParams(dp(50), dp(50)));
+        ImageView logoImage = new ImageView(this);
+        logoImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        logoImage.setImageDrawable(getDrawable(R.drawable.yogs));
+        logoView.addView(logoImage);
+        mFloatingView.addView(logoView);
+        
+        CardView espView = new CardView(this);
+        espView.setLayoutParams(new LinearLayout.LayoutParams(dp(350), dp(350)));
+        espView.setCardElevation(10);
+        espView.setCardBackgroundColor(getColor(R.color.dark));
+        espView.setRadius(16);
+        
+        LinearLayout mnulyt = new LinearLayout(this);
+        LinearLayout.LayoutParams anjinnn = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        anjinnn.setMargins(0, dp(8), 0, 0);
+        mnulyt.setLayoutParams(anjinnn);
+        mnulyt.setPadding(dp(8), dp(8), dp(8), dp(8));
+        mnulyt.setOrientation(LinearLayout.VERTICAL);
+        
+        LinearLayout titlelyt = new LinearLayout(this);
+        titlelyt.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        titlelyt.setPadding(dp(10), dp(10), dp(10), dp(10));
+        titlelyt.setGravity(Gravity.CENTER);
+        titlelyt.setBackground(getDrawable(R.drawable.bg_button));
+        
+        TextView title = new TextView(this);
+        title.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        title.setTextSize(16);
+        title.setTextColor(Color.WHITE);
+        title.setText("YOGS INJECTOR");
+        title.setTypeface(null, Typeface.BOLD);
+        
+        titlelyt.addView(title);
+        mnulyt.addView(titlelyt);
+        
+        LinearLayout featurelyt = new LinearLayout(this);
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params1.setMargins(dp(8), dp(8), dp(8), dp(8));
+        featurelyt.setLayoutParams(params1);
+        featurelyt.setOrientation(LinearLayout.VERTICAL);
+        
+        ScrollView scrl = new ScrollView(this);
+        LinearLayout.LayoutParams scrollParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0
+        );
+        scrollParams.weight = 1f;
+        scrl.setLayoutParams(scrollParams);
+        scrl.setScrollBarSize(0);
+        
+        LinearLayout featurelyt2 = new LinearLayout(this);
+        featurelyt2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        featurelyt2.setOrientation(LinearLayout.VERTICAL);
+        
+        featureList(GetFeatureList(), featurelyt2);
+        
+        scrl.addView(featurelyt2);
+        featurelyt.addView(scrl);
+        mnulyt.addView(featurelyt);
+        espView.addView(mnulyt);
+        mFloatingView.addView(espView);
+        
         int LAYOUT_FLAG;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
@@ -280,50 +165,16 @@ public class Floating extends Service {
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mWindowManager.addView(mFloatingView, params);
 
-        TextView closeBtn = mFloatingView.findViewById(R.id.closetext);
-        closeBtn.setOnClickListener(view -> {
+        title.setOnClickListener(view -> {
             espView.setVisibility(View.GONE);
             logoView.setVisibility(View.VISIBLE);
         });
 
-        Button prevBtn = mFloatingView.findViewById(R.id.prevtab);
-        Button nextBtn = mFloatingView.findViewById(R.id.nexttab);
-        
-        texttab = mFloatingView.findViewById(R.id.texttab);
-        
-        texttab.setText("ESP");
-        
-        espmenu = mFloatingView.findViewById(R.id.espmenu);
-        aimmenu = mFloatingView.findViewById(R.id.aimmenu);
-        setmenu = mFloatingView.findViewById(R.id.setmenu);
-        
-        if (Overlay.isConnected()) {
-            espmenu.setVisibility(View.VISIBLE);
-            aimmenu.setVisibility(View.GONE);
-            setmenu.setVisibility(View.GONE);
-        } else {
-            espmenu.setVisibility(View.GONE);
-            aimmenu.setVisibility(View.GONE);
-            setmenu.setVisibility(View.GONE);
-        }
-        
         espView.setVisibility(View.GONE);
-
-        int totalTab = 3;
-
-        nextBtn.setOnClickListener(v -> {
-            int newTab = (currentTab + 1) % totalTab;
-            showTab(newTab, true);
-        });
-        
-        prevBtn.setOnClickListener(v -> {
-            int newTab = (currentTab - 1 + totalTab) % totalTab;
-            showTab(newTab, false);
-        });
 
         final GestureDetector gestureDetector = new GestureDetector(this, new SingleTapConfirm());
 
-        mFloatingView.findViewById(R.id.logo).setOnTouchListener(new View.OnTouchListener() {
+        logoView.setOnTouchListener(new View.OnTouchListener() {
             private int initialX;
             private int initialY;
             private float initialTouchX;
@@ -351,11 +202,11 @@ public class Floating extends Service {
                             params.y = initialY + (int) (event.getRawY() - initialTouchY);
                             mWindowManager.updateViewLayout(mFloatingView, params);
                             return true;
-                        case MotionEvent.ACTION_UP:
+                        /*case MotionEvent.ACTION_UP:
                             alphaAnimator = ObjectAnimator.ofFloat(v, "alpha", 0.5f);
                             alphaAnimator.setDuration(500); // Adjust the duration as desired
                             alphaAnimator.start();
-                            return true;
+                            return true;*/
                     }
                     return false;
                 }
@@ -363,7 +214,7 @@ public class Floating extends Service {
         });
 
 
-        mFloatingView.findViewById(R.id.menulayout).setOnTouchListener(new View.OnTouchListener() {
+        espView.setOnTouchListener(new View.OnTouchListener() {
             private int initialX;
             private int initialY;
             private float initialTouchX;
@@ -390,53 +241,248 @@ public class Floating extends Service {
         });
     }
     
-    private LinearLayout getTab(int index) {
-        switch (index) {
-            case 0: 
-                texttab.setText("ESP");
-                return espmenu;
-            case 1: 
-                texttab.setText("AIM");
-                return aimmenu;
-            case 2: 
-                texttab.setText("SETTING");
-                return setmenu;
+    private void featureList(String[] listFT, LinearLayout linearLayout) {
+        //Currently looks messy right now. Let me know if you have improvements
+        int featNum, subFeat = 0;
+        LinearLayout llBak = linearLayout;
+
+        for (int i = 0; i < listFT.length; i++) {
+            boolean switchedOn = false;
+            //Log.i("featureList", listFT[i]);
+            String feature = listFT[i];
+            if (feature.contains("_True")) {
+                switchedOn = true;
+                feature = feature.replaceFirst("_True", "");
+            }
+
+            linearLayout = llBak;
+            String[] str = feature.split("_");
+
+            //Assign feature number
+            if (TextUtils.isDigitsOnly(str[0]) || str[0].matches("-[0-9]*")) {
+                featNum = Integer.parseInt(str[0]);
+                feature = feature.replaceFirst(str[0] + "_", "");
+                subFeat++;
+            } else {
+                //Subtract feature number. We don't want to count ButtonLink, Category, RichTextView and RichWebView
+                featNum = i - subFeat;
+            }
+            String[] strSplit = feature.split("_");
+            switch (strSplit[0]) {
+                case "Toggle":
+                    addSwitch(strSplit[1], featNum, switchedOn, linearLayout);
+                    break;
+                case "Seekbar":
+                    addSeekbar(strSplit[1], featNum, switchedOn, Integer.parseInt(strSplit[2]), linearLayout);
+                    break;
+                case "RadioButton":
+                    addRadioButton(strSplit[1], featNum, switchedOn, strSplit[2], linearLayout);
+                    break;
+                case "TitleMenu":
+                    addText(strSplit[1], linearLayout);
+                    break;
+            }
         }
-        return espmenu;
     }
     
-    private void showTab(int newTab, boolean isNext) {
-        LinearLayout current = getTab(currentTab);
-        LinearLayout next = getTab(newTab);
-    
-        Animation in, out;
-    
-        if (isNext) {
-            in = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
-            out = AnimationUtils.loadAnimation(this, R.anim.slide_out_left);
-        } else {
-            in = AnimationUtils.loadAnimation(this, R.anim.slide_in_left);
-            out = AnimationUtils.loadAnimation(this, R.anim.slide_out_right);
+    private void addSwitch(String name, int featnum, boolean isautosave, LinearLayout view) {
+        Switch n = new Switch(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(dp(6), dp(6), dp(6), dp(6));
+        n.setLayoutParams(params);
+        n.setBackgroundResource(R.drawable.bg_switch);
+        n.setPadding(dp(10), dp(10), dp(10), dp(10));
+        n.setTextSize(15);
+        n.setTextColor(Color.WHITE);
+        n.setText(name);
+        if (isautosave) {
+            n.setChecked(prefs.readBoolean(name));
+            Changes(this, featnum, name, 0, 0, prefs.readBoolean(name), null);
         }
+        
+        n.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Changes(this, featnum, name, 0, 0, isChecked, null);
+            if (isautosave) {
+                prefs.writeBoolean(name, n.isChecked());
+            }
+        });
+        
+        view.addView(n);
+    }
     
-        // SET NEXT DULU
-        next.setVisibility(View.VISIBLE);
-        next.startAnimation(in);
-    
-        // HANDLE CURRENT
-        out.setAnimationListener(new Animation.AnimationListener() {
+    private void addSeekbar(String name, int featnum, boolean isautosave, int max, LinearLayout view) {
+        LinearLayout texlyt = new LinearLayout(this);
+        LinearLayout.LayoutParams paramss = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        paramss.setMargins(dp(6), dp(6), dp(6), dp(6));
+        texlyt.setLayoutParams(paramss);
+        texlyt.setBackgroundResource(R.drawable.bg_switch);
+        texlyt.setPadding(dp(10), dp(10), dp(10), dp(10));
+        texlyt.setOrientation(LinearLayout.VERTICAL);
+        
+        LinearLayout textlyt = new LinearLayout(this);
+        LinearLayout.LayoutParams paramsss = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        textlyt.setLayoutParams(paramsss);
+        textlyt.setOrientation(LinearLayout.HORIZONTAL);
+        
+        TextView sTitle = new TextView(this);
+        LinearLayout.LayoutParams paramssss = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        sTitle.setLayoutParams(paramssss);
+        sTitle.setText(name + ": ");
+        sTitle.setTextSize(15);
+        sTitle.setTextColor(Color.WHITE);
+        
+        TextView sTitlee = new TextView(this);
+        sTitlee.setLayoutParams(paramssss);
+        if (isautosave) {
+            sTitlee.setText(String.valueOf(prefs.readInt(name, -1)));
+        }
+        sTitlee.setTextSize(15);
+        sTitlee.setTextColor(Color.WHITE);
+        
+        textlyt.addView(sTitle);
+        textlyt.addView(sTitlee);
+        texlyt.addView(textlyt);
+        
+        SeekBar s = new SeekBar(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        s.setLayoutParams(params);
+        s.setMax(max);
+        
+        int slidervalue = 0;
+
+        if (isautosave) {
+            slidervalue = prefs.readInt(name, 0);
+        }
+        
+        sTitlee.setText(String.valueOf(slidervalue));
+        s.setProgress(slidervalue);
+        Changes(mContext, featnum, name, slidervalue, 0, false, null);
+        
+        s.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onAnimationEnd(Animation animation) {
-                current.setVisibility(View.GONE); // ✅ pindah ke sini
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Changes(mContext, featnum, name, progress, 0, false, null);
+                sTitlee.setText(String.valueOf(progress));
+                prefs.writeInt(name, progress);
             }
     
-            @Override public void onAnimationStart(Animation animation) {}
-            @Override public void onAnimationRepeat(Animation animation) {}
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Tidak ada perubahan di sini
+            }
+    
+                @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Tidak ada perubahan di sini
+            }
+        });
+        
+        texlyt.addView(s);
+        view.addView(texlyt);
+    }
+    
+    private void addRadioButton(String name, int featnum, boolean isautosave, String list, LinearLayout view) {
+        List<String> lists = new LinkedList<>(Arrays.asList(list.split(",")));
+    
+        LinearLayout texlyt = new LinearLayout(this);
+        LinearLayout.LayoutParams paramss = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        paramss.setMargins(dp(6), dp(6), dp(6), dp(6));
+        texlyt.setLayoutParams(paramss);
+        texlyt.setBackgroundResource(R.drawable.bg_switch);
+        texlyt.setPadding(dp(10), dp(10), dp(10), dp(10));
+        texlyt.setOrientation(LinearLayout.VERTICAL);
+    
+        TextView title = new TextView(this);
+        LinearLayout.LayoutParams paramsss = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        title.setLayoutParams(paramsss);
+        title.setText(name);
+        title.setTextSize(14);
+        title.setTextColor(Color.GREEN);
+    
+        RadioGroup group = new RadioGroup(this);
+        group.setLayoutParams(paramsss);
+        group.setOrientation(RadioGroup.VERTICAL);
+    
+        // 🔹 Buat RadioButton
+        for (int i = 0; i < lists.size(); i++) {
+            RadioButton button = new RadioButton(this);
+            button.setLayoutParams(paramsss);
+            button.setText(lists.get(i));
+            button.setTextSize(14);
+            button.setTextColor(Color.WHITE);
+            button.setTag(i); // simpan index
+            group.addView(button);
+        }
+    
+        // 🔹 LOAD DATA (autosave)
+        int savedIndex = 0;
+        if (isautosave) {
+            savedIndex = prefs.readInt(name, 0);
+        }
+    
+        // 🔹 Set checked sesuai savedIndex
+        if (group.getChildCount() > savedIndex) {
+            RadioButton btn = (RadioButton) group.getChildAt(savedIndex);
+            btn.setChecked(true);
+            Changes(mContext, featnum, name, Integer.parseInt(btn.getTag().toString()), 0, false, null);
+        }
+    
+        // 🔹 Listener perubahan
+        group.setOnCheckedChangeListener((grp, checkedId) -> {
+            if (checkedId != -1) {
+                RadioButton btn = grp.findViewById(checkedId);
+    
+                if (btn != null) {
+                    Object tag = btn.getTag();
+                    if (tag != null) {
+                        int index = Integer.parseInt(tag.toString());
+    
+                        // kirim ke native / fitur
+                        Changes(mContext, featnum, name, index, 0, false, null);
+    
+                        // autosave
+                        if (isautosave) {
+                            prefs.writeInt(name, index);
+                        }
+                    }
+                }
+            }
         });
     
-        current.startAnimation(out);
+        // 🔹 Tambahkan ke layout
+        texlyt.addView(title);
+        texlyt.addView(group);
+        view.addView(texlyt);
+    }
     
-        currentTab = newTab;
+    private void addText(String name, LinearLayout view) {
+        LinearLayout texlyt = new LinearLayout(this);
+        LinearLayout.LayoutParams paramss = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        texlyt.setLayoutParams(paramss);
+        texlyt.setGravity(Gravity.CENTER);
+        
+        TextView text = new TextView(mContext);
+        text.setLayoutParams(paramss);
+        text.setText(name);
+        text.setTextSize(14);
+        text.setTextColor(Color.WHITE);
+        text.setGravity(Gravity.CENTER);
+        
+        texlyt.addView(text);
+        view.addView(texlyt);
+    }
+    
+    private int dp(int value) {
+        return (int) (value * getResources().getDisplayMetrics().density);
     }
 
     class SingleTapConfirm extends GestureDetector.SimpleOnGestureListener {

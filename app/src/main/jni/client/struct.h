@@ -23,6 +23,7 @@ struct Options {
     bool SilentAim;
     int fov;
     int AimPos;
+    bool AimLine;
 };
 
 struct Request {
@@ -44,6 +45,7 @@ struct PlayerData {
 struct Response {
     bool Success;
     int PlayerCount;
+    Vector3 targetPos;
     PlayerData Players[100];
 };
 

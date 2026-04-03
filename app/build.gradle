@@ -4,6 +4,8 @@ plugins {
     id 'org.lsposed.lsparanoid'
 }
 
+apply from: '../signing.gradle'
+
 android {
     namespace 'com.loader.yogs'
     compileSdk 34
@@ -22,18 +24,33 @@ android {
         ndk {
             abiFilters 'arm64-v8a'
         }
+        
+        multiDexEnabled false
     }
 
     buildTypes {
-        debug {
-            debuggable true
-            jniDebuggable true
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-
         release {
             minifyEnabled true
+            multiDexEnabled true
+            debuggable true
+            jniDebuggable false
+            renderscriptDebuggable true
+            shrinkResources true
+            zipAlignEnabled true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [randomName: "VIP LOADER"]
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            multiDexEnabled false
+            debuggable true
+            jniDebuggable true
+            renderscriptDebuggable true
+            zipAlignEnabled false
+            signingConfig signingConfigs.debug
+            manifestPlaceholders = [randomName: "VIP LOADER"]
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -43,19 +60,16 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    
     externalNativeBuild {
-        cmake {
-            path 'src/main/jni/CMakeLists.txt'
-            version '3.22.1'
+        ndkBuild {
+            path file('src/main/jni/Android.mk')
         }
     }
 
-    ndkVersion '24.0.8215888'
+    ndkVersion '28.2.13676358'
     
     buildFeatures {
         viewBinding true
-        
     }
 }
 

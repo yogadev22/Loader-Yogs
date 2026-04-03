@@ -7,7 +7,7 @@
 
 Request request;
 Response response;
-Options options{false, 0, 0};
+Options options{false, 0, 0, false};
 
 int isPlayerLine = 0, isPlayerBox = 0;
 bool isPlayerLinee, isPlayerBoxx, isr360Alert, isPlayerHealth, isPlayerName, isPlayerDist, isNoBot;
@@ -29,6 +29,12 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
             
             if (options.SilentAim) {
                 esp.DrawCircle(Color(255, 0, 0, 255), Vector2(screenWidth / 2, screenHeight / 2), options.fov, 1.0f);
+            }
+            
+            if (options.AimLine) {
+                if (response.targetPos.Z > 0) {
+                    esp.DrawLine(Color(255, 255, 255, 255), 1.0f, Vector2(screenWidth / 2, screenHeight / 2), Vector2(response.targetPos.X, response.targetPos.Y));
+                }
             }
     
             for (int i = 0; i < response.PlayerCount; i++) {
@@ -63,7 +69,7 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                 if (player.HeadPos.Z > 0) {
                     if (isPlayerLinee) {
                         if (isPlayerLine == 0) {
-                            esp.DrawLine(clrEnemy, 1.5f, Vector2(screenWidth / 2, 105), Vector2(rect.x + rect.w / 2.0f, rect.y));
+                            esp.DrawLine(clrEnemy, 1.5f, Vector2(screenWidth / 2, 105), Vector2(rect.x + rect.w / 2.0f, rect.y - 16));
                         } else if (isPlayerLine == 1) {
                             esp.DrawLine(clrEnemy, 1.5f, Vector2(screenWidth / 2, screenHeight / 2), Vector2(rect.x + rect.w / 2.0f, rect.y));
                         } else if (isPlayerLine == 2) {
@@ -115,7 +121,7 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                     }
                 }
     
-                if (player.HeadPos.Z < 0) {
+                if (isr360Alert && player.HeadPos.Z < 0) {
                     if (!isr360Alert)
                         continue;
     
@@ -222,13 +228,12 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
             char bt[10];
             sprintf(bt, "%d", botCount);
     
+            esp.DrawOTH(Vector2(screenWidth / 2 - (80), 67), ENEM_ICON);
+            esp.DrawOTH(Vector2(screenWidth / 2, 67), BOT_ICON);
     
-            esp.DrawOTH(Vector2(screenWidth / 2 - (80), 60), ENEM_ICON);
-            esp.DrawOTH(Vector2(screenWidth / 2, 60), BOT_ICON);
+            esp.DrawText(Color(255, 255, 255, 255), cn, Vector2(screenWidth / 2 - (20), 94), 23);
     
-            esp.DrawText(Color(255, 255, 255, 255), cn, Vector2(screenWidth / 2 - (20), 87), 23);
-    
-            esp.DrawText(Color(255, 255, 255, 255), bt, Vector2(screenWidth / 2 + (50), 87), 23);
+            esp.DrawText(Color(255, 255, 255, 255), bt, Vector2(screenWidth / 2 + (50), 94), 23);
         }
     }
 }
