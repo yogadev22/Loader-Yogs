@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             if (launchIntent != null) {
                 context.startActivity(launchIntent);
             }
-            Thread.sleep(3000);
+            Thread.sleep(5000);
             startService(new Intent(MainActivity.this, Overlay.class));
             startService(new Intent(MainActivity.this, Floating.class));
         } catch (Exception e) {

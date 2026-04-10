@@ -7,10 +7,11 @@
 
 Request request;
 Response response;
-Options options{false, 0, 0, false};
+Options options{false, 0, 0, false, false};
+int Game;
 
 int isPlayerLine = 0, isPlayerBox = 0;
-bool isPlayerLinee, isPlayerBoxx, isr360Alert, isPlayerHealth, isPlayerName, isPlayerDist, isNoBot;
+bool isPlayerLinee, isPlayerWeapon, isPlayerBoxx, isr360Alert, isPlayerHealth, isPlayerName, isPlayerDist, isNoBot;
 Color clrEnemy, clrFilled, clrEdge, clrBox, clrSkeleton, clrHealth;
 char extra[30];
 
@@ -69,7 +70,7 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                 if (player.HeadPos.Z > 0) {
                     if (isPlayerLinee) {
                         if (isPlayerLine == 0) {
-                            esp.DrawLine(clrEnemy, 1.5f, Vector2(screenWidth / 2, 105), Vector2(rect.x + rect.w / 2.0f, rect.y - 16));
+                            esp.DrawLine(clrEnemy, 1.5f, Vector2(screenWidth / 2, 110), Vector2(rect.x + rect.w / 2.0f, rect.y - 16));
                         } else if (isPlayerLine == 1) {
                             esp.DrawLine(clrEnemy, 1.5f, Vector2(screenWidth / 2, screenHeight / 2), Vector2(rect.x + rect.w / 2.0f, rect.y));
                         } else if (isPlayerLine == 2) {
@@ -110,6 +111,10 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
     
                     if (isPlayerName) {
                         esp.DrawText(Color(255, 255, 255, 255), player.Name, Vector2(rect.x + rect.w / 2.0f, rect.y - 5), 15);
+                    }
+                    
+                    if (isPlayerWeapon) {
+                        esp.DrawText(Color(255, 255, 255, 255), player.WeaponName.c_str(), Vector2(rect.x + rect.w / 2.0f, rect.y - 9), 15);
                     }
     
                     if (isPlayerDist) {

@@ -29,18 +29,12 @@ import org.lsposed.lsparanoid.Obfuscate;
 public class ESPView extends View implements Runnable {
 
     private Paint boxFillPaint,
-	DistancePaint,
 	mTextPaint,
 	mPaintBitmap,
 	mPaintBitmap1,
-	mNamePaint,
-	mTeamPaint,
-	weaponPaint,
 	linePaint,
 	boxPaint,
-	mItemsPaint,
-	mVehiclesPaint;
-	Paint mStrokePaint;
+    mStrokePaint;
     private Bitmap botBitmap, lootBitmap, airdropBitmap, vehicleBitmap, boatBitmap;
     private Thread mThread;
     static long sleepTime;
@@ -74,8 +68,6 @@ public class ESPView extends View implements Runnable {
 	public void ResetItemCount() {
 		itemCount = 2;
 	}
-    
-    Typeface typeface;
 
     public ESPView(Context context) {
         super(context, null, 0);
@@ -93,11 +85,6 @@ public class ESPView extends View implements Runnable {
             setLayerType(View.LAYER_TYPE_HARDWARE, null);
             mHardwareAccelerated = true;
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Safe to call getFont() on API 26+
-            typeface = getResources().getFont(R.font.mfontx);
-        }
     }
 
     @Override
@@ -106,8 +93,8 @@ public class ESPView extends View implements Runnable {
         if (canvas == null || rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) {
             return;
         }
+        
         if (!mHardwareAccelerated) {
-            // Clear the canvas only if hardware acceleration is not enabled
             ClearCanvas(canvas);
         }
 
@@ -143,9 +130,6 @@ public class ESPView extends View implements Runnable {
 	}
 
     public void InitializePaints() {
-        // =======================================================
-        // Credit Text
-        // =======================================================
         mStrokePaint = new Paint();
         mStrokePaint.setStyle(Style.STROKE);
         mStrokePaint.setAntiAlias(true);
@@ -169,9 +153,6 @@ public class ESPView extends View implements Runnable {
 		linePaint.setAlpha(200);
         linePaint.setStyle(Style.STROKE);
 
-        // =======================================================
-        // Enemy Box
-        // =======================================================
         boxPaint = new Paint();
         boxPaint.setAntiAlias(true);
         boxPaint.setStyle(Style.STROKE);
@@ -180,75 +161,13 @@ public class ESPView extends View implements Runnable {
         boxFillPaint.setAntiAlias(true);
         boxFillPaint.setStyle(Style.FILL);
 
-        // =======================================================
-        mVehiclesPaint = new Paint();
-        mVehiclesPaint.setAntiAlias(true);
-        mVehiclesPaint.setTextAlign(Align.CENTER);
-		int shadowColor5 = Color.argb(200, 0, 0, 0);
-        mVehiclesPaint.setShadowLayer(7, 0, 0, shadowColor5);
-        mVehiclesPaint.setColor(Color.rgb(255, 168, 207));
-        mVehiclesPaint.setTypeface(typeface);
-
-        // =======================================================
-        mItemsPaint = new Paint();
-        mItemsPaint.setAntiAlias(true);
-		int shadowColor4 = Color.argb(200, 0, 0, 0);
-        mItemsPaint.setShadowLayer(7, 0, 0, shadowColor4);
-		mItemsPaint.setColor(Color.rgb(255, 168, 207));
-        mItemsPaint.setTextAlign(Align.CENTER);
-        mItemsPaint.setTypeface(typeface);
-
-        // =======================================================
         mTextPaint = new Paint();
         mTextPaint.setStyle(Style.FILL_AND_STROKE);
 	    mTextPaint.setAntiAlias(true);
         mTextPaint.setColor(Color.rgb(0, 0, 0));
 		mStrokePaint.setStrokeWidth(0.5f);
         mTextPaint.setTextAlign(Align.CENTER);
-
-        // =======================================================
-        mNamePaint = new Paint();
-        mNamePaint.setAntiAlias(true);
-		int shadowColor3 = Color.argb(200, 0, 0, 0);
-        mNamePaint.setShadowLayer(7, 0, 0, shadowColor3);
-        mNamePaint.setTextAlign(Align.CENTER);
-		mNamePaint.setColor(Color.WHITE);
-		mNamePaint.setTextSize(mScaleY * 30);
-		mNamePaint.setAlpha(200);
-        mNamePaint.setTypeface(Typeface.create(typeface, Typeface.NORMAL));
-		
-		mTeamPaint = new Paint();
-        mTeamPaint.setAntiAlias(true);
-		int shadowColor6 = Color.argb(200, 0, 0, 0);
-        mTeamPaint.setShadowLayer(7, 0, 0, shadowColor6);
-        mTeamPaint.setTextAlign(Align.CENTER);
-		mTeamPaint.setTextSize(mScaleY * 31);
-		mTeamPaint.setAlpha(200);
-        mTeamPaint.setTypeface(Typeface.create(typeface, Typeface.BOLD));
-
-        // =======================================================
-        DistancePaint = new Paint();
-        DistancePaint.setAntiAlias(true);
-		int shadowColor = Color.argb(200, 0, 0, 0); // 128 is the alpha value (0-255)
-        DistancePaint.setShadowLayer(7, 0, 0, shadowColor);
-        DistancePaint.setTextAlign(Align.CENTER);
-        DistancePaint.setColor(Color.rgb(255, 175, 20));
-		DistancePaint.setTextSize(mScaleY * 30);
-		DistancePaint.setAlpha(208);
-        DistancePaint.setTypeface(Typeface.create(typeface, Typeface.BOLD));
-
-        // =======================================================
-
-        weaponPaint = new Paint();
-        weaponPaint.setAntiAlias(true);
-        weaponPaint.setTextAlign(Align.CENTER);
-		int shadowColor1 = Color.argb(200, 0, 0, 0);
-        weaponPaint.setShadowLayer(7, 0, 0, shadowColor1);
-        weaponPaint.setColor(Color.rgb(255, 175, 20));
-		weaponPaint.setAlpha(208);
-		weaponPaint.setTextSize(mScaleY * 29);
-        weaponPaint.setTypeface(Typeface.create(typeface, Typeface.BOLD));
-		
+        
 		p = new Paint();
         final int bitmap_count_oth = OTHER.length;
         for (int i = 0 ; i < bitmap_count_oth ; i++) {
@@ -279,164 +198,15 @@ public class ESPView extends View implements Runnable {
         cvs.drawRect(x, y, width, height, boxPaint);
     }
 	
-	public void DrawRect2(Canvas cvs, int a, int r, int g, int b, float stroke, float x, float y, float width, float height) {
-        boxPaint.setStrokeWidth(stroke);
-        boxPaint.setColor(Color.rgb(r, g, b));
-        boxPaint.setAlpha(a);
-        cvs.drawRect(x, y, width, height, boxPaint);
-    }
-
     public void DrawFilledRect(Canvas cvs, int a, int r, int g, int b, float x, float y, float width, float height) {
         boxFillPaint.setARGB(a, r, g, b);
         cvs.drawRect(x, y, width, height, boxFillPaint);
-    }
-	
-	public void DrawFilledRect2(Canvas cvs, int a, int r, int g, int b, float x, float y, float width, float height) {
-        boxFillPaint.setColor(Color.rgb(r, g, b));
-        boxFillPaint.setAlpha(a);
-        cvs.drawRect(x, y, width, height, boxFillPaint);
-    }
-
-    public void DebugText(String s) {
-        System.out.println(s);
     }
 
     public void DrawText(Canvas cvs, int a, int r, int g, int b, String txt, float posX, float posY, float size) {
         mTextPaint.setARGB(a, r, g, b);
         mTextPaint.setTextSize(size);
         cvs.drawText(txt, posX, posY, mTextPaint);
-    }
-
-    public void DrawText1(Canvas cvs, int a, int r, int g, int b, String txt, float posX, float posY, float size) {
-        mTextPaint.setARGB(a, r, g, b);
-        mTextPaint.setShadowLayer(7, 0, 0, Color.BLACK);
-
-        if (getRight() > 1920 || getBottom() > 1920)
-            mTextPaint.setTextSize(4 + size);
-        else if (getRight() == 1920 || getBottom() == 1920)
-            mTextPaint.setTextSize(2 + size);
-        else
-            mTextPaint.setTextSize(size);
-
-        cvs.drawText(txt, posX, posY, mTextPaint);
-    }
-
-    public void DrawWeapon(Canvas cvs, int a, int r, int g, int b, int id, int ammo, int maxammo, float posX, float posY, float size) {
-        String wname = getWeapon(id);
-        if (wname != null) {
-			weaponPaint.setARGB(a, r, g, b);
-			weaponPaint.setTextSize(size);
-            cvs.drawText(wname, posX, posY, weaponPaint);
-        }
-    }
-
-    public void DrawTextName(Canvas cvs, int a, int r, int g, int b, float posX, float posY, float size, boolean isInGame) {
-        mTextPaint.setARGB(a, r, g, b);
-        mTextPaint.setTextSize(size);
-		mTextPaint.setShadowLayer(0, 0, 0, Color.TRANSPARENT);
-        if (SystemClock.uptimeMillis() - mFPSTime > 1000) {
-            mFPSTime = SystemClock.uptimeMillis();
-            mFPS = mFPSCounter;
-            mFPSCounter = 0;
-        } else {
-            mFPSCounter++;
-        }
-        cvs.drawText("", posX, posY, mTextPaint);
-    }
-
-    public void DrawDistance(Canvas cvs, float distance, float posX, float posY, float size) {
-        cvs.drawText(String.valueOf((int) distance + "m"), posX, posY, DistancePaint);
-    }
-
-    public void DrawName(Canvas cvs, int a, int r, int g, int b, String nametxt, int teamid, float posX, float posY, float size) {
-		// decode nama
-		String[] namesp = nametxt.split(":");
-		char[] nameint = new char[namesp.length];
-		for (int i = 0; i < namesp.length; i++)
-			nameint[i] = (char) Integer.parseInt(namesp[i]);
-		String realname = new String(nameint);
-		String teamidi = String.valueOf(teamid);
-
-		// atur ukuran teks
-		mTextPaint.setTextSize(size);
-		mTextPaint.setARGB(a, r, g, b);
-		mTextPaint.setTypeface(Typeface.create(typeface, Typeface.BOLD));
-		cvs.drawText(teamidi + " " + realname, posX, posY, mTextPaint);
-	}
-
-    public void DrawEnemyCount(Canvas cvs, int a, int r, int g, int b, int x, int y, int width, int height) {
-        int colors[] = { Color.TRANSPARENT, Color.rgb(r, g, b), Color.TRANSPARENT };
-        GradientDrawable mDrawable = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors);
-        mDrawable.setShape(GradientDrawable.RECTANGLE);
-        mDrawable.setGradientRadius(2.0f * 60);
-        Rect mRect = new Rect(x, y, width, height);
-        mDrawable.setBounds(mRect);
-        cvs.save();
-        mDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-        mDrawable.draw(cvs);
-        cvs.restore();
-    }
-
-    public void DrawItems(Canvas cvs, String itemName, float distance, float posX, float posY) {
-        /*sAr = false;
-        String realItemName = getItemName(itemName);
-        if (realItemName != null && !realItemName.equals("")) {
-            mItemsPaint.setTextSize(mScaleY * 25);
-            if (realItemName.equals("Loot")) {
-                if (distance < 150) {
-                    cvs.drawBitmap(lootBitmap, posX - 25, posY - (54 * mScaleY), mPaintBitmap1);
-                    cvs.drawText(realItemName + " (" + (int) distance + ")", posX, posY - 8, mItemsPaint);
-                }
-            }
-            else if (realItemName.equals("DropPlane")) {
-                cvs.drawText(realItemName + " (" + (int) distance + ")", posX, posY - 8, mItemsPaint);
-            }
-            else if (realItemName.equals("AirDrop")) {
-                cvs.drawBitmap(airdropBitmap, posX - 25, posY - (54 * mScaleY), mPaintBitmap1);
-                cvs.drawText(realItemName + " (" + (int) distance + ")", posX, posY - 8, mItemsPaint);
-            }
-            else {
-                mItemsPaint.setARGB(135, 44, 234, 115);
-                mItemsPaint.setShadowLayer(3, 0, 0, Color.TRANSPARENT);
-                cvs.drawCircle(posX, posY, 7, mItemsPaint);
-                mItemsPaint.setColor(Color.rgb(255, 168, 207));
-                mItemsPaint.setShadowLayer(6, 0, 0, Color.BLACK);
-                cvs.drawText(realItemName + " (" + (int) distance + ")", posX, posY - 8, mItemsPaint);
-            }
-        }*/
-    }
-
-    public void DrawListItem(Canvas cvs, int a, int r, int g, int b, int itemID, int count, float posX, float posY) {
-        /*String realItemName = getItemName(itemID);
-        mTextPaint.setARGB(a, r, g, b);
-        mTextPaint.setTextSize(24);
-        if (realItemName != null && !realItemName.equals("")) {
-            itemCount = itemCount + 1;
-            if (count == 1) {
-                cvs.drawText(realItemName, posX, posY - itemCount * 24, mTextPaint);
-            } else {
-                cvs.drawText(realItemName + " • " + count, posX, posY - itemCount * 24, mTextPaint);
-            }
-        }*/
-    }
-
-    public void DrawVehicles(Canvas cvs, String itemName, float distance, float health, float fuel, float posX, float posY) {
-        /*String realVehicleName = getVehicleName(itemName);
-        mVehiclesPaint.setTextSize(mScaleY * 26);
-        if (realVehicleName != null && !realVehicleName.equals("")) {
-            if (realVehicleName.equals("Boat")) {
-                cvs.drawBitmap(boatBitmap, posX - 25, posY - (56 * mScaleY), mPaintBitmap1);
-                cvs.drawText(realVehicleName + " (" + (int) distance + ")", posX, posY - 8, mVehiclesPaint);
-            }
-            else if (realVehicleName.equals("AquaRail")) {
-                cvs.drawBitmap(boatBitmap, posX - 25, posY - (56 * mScaleY), mPaintBitmap1);
-                cvs.drawText(realVehicleName + " (" + (int) distance + ")", posX, posY - 8, mVehiclesPaint);
-            }
-            else {
-                cvs.drawBitmap(vehicleBitmap, posX - 25, posY - (56 * mScaleY), mPaintBitmap1);
-                cvs.drawText(realVehicleName + " (" + (int) distance + ")", posX, posY - 8, mVehiclesPaint);
-            }
-        }*/
     }
 
     public void DrawCircle(Canvas cvs, int a, int r, int g, int b, float posX, float posY, float radius, float strokeZ) {
@@ -468,108 +238,6 @@ public class ESPView extends View implements Runnable {
         R.drawable.ic_warning,
         R.drawable.ic_boot
     };
-
-    private String getWeapon(int id) {
-        // AR and SMG
-        if (id == 101006)
-            return "AUG";
-        if (id == 101008)
-            return "M762";
-        if (id == 101003)
-            return "SCARL";
-        if (id == 101004)
-            return "M416";
-        if (id == 101002)
-            return "M16A4";
-        if (id == 101009)
-            return "Mk47";
-        if (id == 101010)
-            return "G36C";
-        if (id == 101007)
-            return "QBZ";
-        if (id == 101001)
-            return "AKM";
-        if (id == 101005)
-            return "Groza";
-        if (id == 102005)
-            return "Bizon";
-        if (id == 102004)
-            return "TommyGun";
-        if (id == 102007)
-            return "MP5K";
-        if (id == 102002)
-            return "UMP45";
-        if (id == 102003)
-            return "Vector";
-        if (id == 102001)
-            return "Uzi";
-        if (id == 105002)
-            return "DP28";
-        if (id == 105001)
-            return "M249";
-
-        // Snipers
-        if (id == 103003)
-            return "AWM";
-        if (id == 103010)
-            return "QBU";
-        if (id == 103009)
-            return "SLR";
-        if (id == 103004)
-            return "SKS";
-        if (id == 103006)
-            return "Mini14";
-        if (id == 103002)
-            return "M24";
-        if (id == 103001)
-            return "Kar98";
-        if (id == 103005)
-            return "VSS";
-        if (id == 103008)
-            return "Win94";
-        if (id == 103007)
-            return "Mk14";
-
-        // Shotguns and Hand weapons
-        if (id == 104003)
-            return "S12K";
-        if (id == 104004)
-            return "DBS";
-        if (id == 104001)
-            return "S686";
-        if (id == 104002)
-            return "S1897";
-        if (id == 108003)
-            return "Sickle";
-        if (id == 108001)
-            return "Machete";
-        if (id == 108002)
-            return "Crowbar";
-        if (id == 107001)
-            return "CrossBow";
-        if (id == 108004)
-            return "Pan";
-
-        // Pistols
-        if (id == 106006)
-            return "SawedOff";
-        if (id == 106003)
-            return "R1895";
-        if (id == 106008)
-            return "Vz61";
-        if (id == 106001)
-            return "P92";
-        if (id == 106004)
-            return "P18C";
-        if (id == 106005)
-            return "R45";
-        if (id == 106002)
-            return "P1911";
-        if (id == 106010)
-            return "DesertEagle";
-
-        return null;
-    }
 	
 	public static Bitmap scale(Bitmap bitmap, int maxWidth, int maxHeight) {
         // Determine the constrained dimension, which determines both dimensions.
@@ -600,4 +268,3 @@ public class ESPView extends View implements Runnable {
         return scaledBitmap;
     }
 }
-

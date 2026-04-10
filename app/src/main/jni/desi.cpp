@@ -1,20 +1,20 @@
 #include <jni.h>
 #include <string>
 #include "obfuscate.h"
-#include "../sharedjni/Login.h"
+#include "rLogin/Login.h"
 #include "Hacks.h"
 
 ESP espOverlay;
 int type = 1, utype = 2;
 
-extern "C" JNIEXPORT void JNICALL DrawOn(JNIEnv * env, jclass, jobject espView, jobject canvas) {
+void DrawOn(JNIEnv * env, jclass, jobject espView, jobject canvas) {
 	espOverlay = ESP(env, espView, canvas);
 	if (espOverlay.isValid()) {
 		DrawESP(espOverlay, espOverlay.getWidth(), espOverlay.getHeight());
 	}
 }
 
-extern "C" JNIEXPORT void JNICALL Closee(JNIEnv *, jobject) {
+void Closee(JNIEnv *, jobject) {
 	Close();
 }
 
@@ -34,6 +34,7 @@ jobjectArray GetFeatureList(JNIEnv *env, jobject context) {
             OBFUSCATE("8_RadioButton_True_Box Style_Stroke, Filled"),
             OBFUSCATE("TitleMenu_AIM FEATURES"),
             OBFUSCATE("9_Toggle_Silent Aim"),
+            OBFUSCATE("14_Toggle_Aim Collider"),
             OBFUSCATE("10_RadioButton_True_Target Position_Head, Neck, Chest"),
             OBFUSCATE("11_Seekbar_True_Aim Fov_500"),
             OBFUSCATE("12_Toggle_Aim Line")
@@ -91,16 +92,19 @@ void Changes(JNIEnv *env, jclass clazz, jobject obj, jint featNum, jstring featN
         case 12:
             options.AimLine = boolean;
             break;
+        case 14:
+            options.AimCollider = boolean;
+            break;
         default:
             break;
     }
 }
 
-extern "C" JNIEXPORT jboolean JNICALL isConnected(JNIEnv *, jobject) {
+bool isConnected(JNIEnv *, jobject) {
     return connected;
 }
 
-extern "C" JNIEXPORT jboolean JNICALL getReady(JNIEnv *, jobject) {
+bool getReady(JNIEnv *, jobject) {
 	int sockCheck = 1;
 	if (!Create()) {
 		perror("Creation failed");

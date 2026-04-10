@@ -5,6 +5,7 @@
 #include "socket.h"
 #include "struct.h"
 #include "Quaternion.hpp"
+#include "Matrix4x4.hpp"
 
 #define PI 3.141592653589793238
 
@@ -31,6 +32,8 @@
 #else
     #error "Architecture not supported"
 #endif
+
+int screenWidth, screenHeight;
 
 uintptr_t FindLibrary(const char* name, int index) {
     int i = 0;
@@ -242,20 +245,27 @@ void getUTF8(char* dst, uintptr_t addr) {
     dst[j] = '\0';
 }
 
-static auto WorldToScreen(D3DMatrix viewMatrix, Vector3 ScreenPos, int g_screenWidth, int g_screenHeight) {
-    auto result = Vector3(-1, -1, -1);
+std::atomic<bool> keepAiming{false};
+std::thread aimThread;
+Vector3 currentBestTargetPos = Vector3::Zero();
 
-    auto v9 = (ScreenPos.X * viewMatrix._11) + (ScreenPos.Y * viewMatrix._21) + (ScreenPos.Z * viewMatrix._31) + viewMatrix._41;
-    auto v10 = (ScreenPos.X * viewMatrix._12) + (ScreenPos.Y * viewMatrix._22) + (ScreenPos.Z * viewMatrix._32) + viewMatrix._42;
-    auto v12 = (ScreenPos.X * viewMatrix._14) + (ScreenPos.Y * viewMatrix._24) + (ScreenPos.Z * viewMatrix._34) + viewMatrix._44;
-    auto v13 = (float)g_screenWidth / 2.0f;
-    auto v14 = (float)g_screenHeight / 2.0f;
+void ContinuousAim(uintptr_t oneself) {
+    while (keepAiming) {
+        uint64_t aimingInfo = Read<uint64_t>(oneself + 0xd80);
+        if (aimingInfo) {
+            Vector3 startPos = Read<Vector3>(aimingInfo + 0x4c); // old
+            Vector3 dir = currentBestTargetPos - startPos;  
+            Write<Vector3>(aimingInfo + 0x40, dir);
+        }
+    }  
+}
 
-    result.X = v13 + (v13 * v9) / v12;
-    result.Y = v14 - (v14 * v10) / v12;
-    result.Z = v12;
-
-    return result;
+Vector3 WorldToScreen(Matrix4x4 _vMatrix, Vector3 from) {
+    Vector3 to = Vector3::Zero();
+    auto viewMatrix = _vMatrix.MultiplyPoint(from);
+    auto screenPos = Vector3(viewMatrix.X + 1.0f, viewMatrix.Y + 1.0f, viewMatrix.Z + 1.0f) / 2.0f;
+    to = Vector3(screenPos.X * screenWidth, screenHeight - (screenPos.Y * screenHeight), viewMatrix.Z);
+    return to;
 }
 
 #endif

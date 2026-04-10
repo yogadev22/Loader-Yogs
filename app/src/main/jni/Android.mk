@@ -2,25 +2,25 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libcurl
-LOCAL_SRC_FILES := sharedjni/curl/curl-android-$(TARGET_ARCH_ABI)/lib/libcurl.a
+LOCAL_SRC_FILES := rLogin/curl/curl-android-$(TARGET_ARCH_ABI)/lib/libcurl.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libssl
-LOCAL_SRC_FILES := sharedjni/curl/openssl-android-$(TARGET_ARCH_ABI)/lib/libssl.a
+LOCAL_SRC_FILES := rLogin/curl/openssl-android-$(TARGET_ARCH_ABI)/lib/libssl.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libcrypto
-LOCAL_SRC_FILES := sharedjni/curl/openssl-android-$(TARGET_ARCH_ABI)/lib/libcrypto.a
+LOCAL_SRC_FILES := rLogin/curl/openssl-android-$(TARGET_ARCH_ABI)/lib/libcrypto.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := yogs
 
-LOCAL_SRC_FILES := client/desi.cpp \
-        sharedjni/Tools.cpp \
-        sharedjni/Log.cpp
+LOCAL_SRC_FILES := desi.cpp \
+        rLogin/Tools.cpp \
+        rLogin/Log.cpp
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)
 
@@ -34,8 +34,8 @@ LOCAL_ARM_MODE := arm
 LOCAL_LDFLAGS += -Wl,--gc-sections
 LOCAL_LDFLAGS += -L$(SYSROOT)/usr/lib -lz -llog
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/sharedjni/curl/curl-android-$(TARGET_ARCH_ABI)/include
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/sharedjni/curl/openssl-android-$(TARGET_ARCH_ABI)/include
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/rLogin/curl/curl-android-$(TARGET_ARCH_ABI)/include
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/rLogin/curl/openssl-android-$(TARGET_ARCH_ABI)/include
 
 LOCAL_CPP_FEATURES                      := exceptions
 LOCAL_LDLIBS                            := -llog -landroid -lz
