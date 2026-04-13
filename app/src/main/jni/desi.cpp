@@ -1,6 +1,7 @@
 #include <jni.h>
 #include <string>
 #include "obfuscate.h"
+const char* name = "";
 #include "rLogin/Login.h"
 #include "Hacks.h"
 
@@ -20,34 +21,66 @@ void Closee(JNIEnv *, jobject) {
 
 jobjectArray GetFeatureList(JNIEnv *env, jobject context) {
     jobjectArray ret;
-
-    const char *features[] = {
+    
+    if (strcmp(name, "FFMAX") == 0) {
+        const char *features[] = {
             OBFUSCATE("TitleMenu_ESP FEATURES"),
-            OBFUSCATE("0_Toggle_True_ESP Line"),
-            OBFUSCATE("1_Toggle_True_ESP Box"),
-            OBFUSCATE("2_Toggle_True_ESP Name"),
-            OBFUSCATE("3_Toggle_True_ESP Distance"),
-            OBFUSCATE("4_Toggle_True_ESP Health"),
-            OBFUSCATE("5_Toggle_True_ESP 360 Alert"),
-            OBFUSCATE("6_Toggle_True_ESP Skip Bot"),
-            OBFUSCATE("7_RadioButton_True_Line Position_Top, Mid, Bottom"),
-            OBFUSCATE("8_RadioButton_True_Box Style_Stroke, Filled"),
+            OBFUSCATE("0_Toggle_True_ESP Line_FFMAX"),
+            OBFUSCATE("1_Toggle_True_ESP Box_FFMAX"),
+            OBFUSCATE("2_Toggle_True_ESP Name_FFMAX"),
+            OBFUSCATE("3_Toggle_True_ESP Distance_FFMAX"),
+            OBFUSCATE("4_Toggle_True_ESP Health_FFMAX"),
+            OBFUSCATE("5_Toggle_True_ESP 360 Alert_FFMAX"),
+            OBFUSCATE("6_Toggle_True_ESP Skip Bot_FFMAX"),
+            OBFUSCATE("7_RadioButton_True_Line Position_Top, Mid, Bottom_FFMAX"),
+            OBFUSCATE("8_RadioButton_True_Box Style_Stroke, Filled_FFMAX"),
             OBFUSCATE("TitleMenu_AIM FEATURES"),
-            OBFUSCATE("9_Toggle_Silent Aim"),
-            OBFUSCATE("14_Toggle_Aim Collider"),
-            OBFUSCATE("10_RadioButton_True_Target Position_Head, Neck, Chest"),
-            OBFUSCATE("11_Seekbar_True_Aim Fov_500"),
-            OBFUSCATE("12_Toggle_Aim Line")
-    };
-
-    int Total_Feature = (sizeof features / sizeof features[0]);
-    ret = (jobjectArray)
+            OBFUSCATE("9_Toggle_Silent Aim_FFMAX"),
+            OBFUSCATE("14_Toggle_Aim Collider_FFMAX"),
+            OBFUSCATE("10_RadioButton_True_Target Position_Head, Neck, Chest_FFMAX"),
+            OBFUSCATE("11_Seekbar_True_Aim Fov_500_FFMAX"),
+            OBFUSCATE("12_Toggle_Aim Line_FFMAX")
+        };
+        
+        int Total_Feature = (sizeof features / sizeof features[0]);
+        ret = (jobjectArray)
             env->NewObjectArray(Total_Feature, env->FindClass(OBFUSCATE("java/lang/String")),
                                 env->NewStringUTF(""));
 
-    for (int i = 0; i < Total_Feature; i++)
-        env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
+        for (int i = 0; i < Total_Feature; i++)
+            env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
+    } else if (strcmp(name, "MLBB") == 0) {
+        const char *features[] = {
+            OBFUSCATE("TitleMenu_ESP FEATURES"),
+            OBFUSCATE("0_Toggle_True_ESP Line_MLBB"),
+            OBFUSCATE("1_Toggle_True_ESP Box_MLBB"),
+            OBFUSCATE("2_Toggle_True_ESP Name_MLBB"),
+            OBFUSCATE("3_Toggle_True_ESP Distance_MLBB"),
+            OBFUSCATE("4_Toggle_True_ESP Health_MLBB"),
+            OBFUSCATE("5_Toggle_True_ESP 360 Alert_MLBB"),
+            OBFUSCATE("6_Toggle_True_ESP Skip Bot_MLBB"),
+            OBFUSCATE("7_RadioButton_True_Line Position_Top, Mid, Bottom_MLBB"),
+            OBFUSCATE("8_RadioButton_True_Box Style_Stroke, Filled_MLBB"),
+            OBFUSCATE("TitleMenu_AIM FEATURES"),
+            OBFUSCATE("15_Toggle_Auto Retri_MLBB"),
+            OBFUSCATE("20_Toggle_Show Touch_MLBB"),
+            OBFUSCATE("16_Seekbar_True_Touch Range_600_MLBB"),
+            OBFUSCATE("17_Seekbar_True_Touch Pos Y_1000_MLBB"),
+            OBFUSCATE("18_Seekbar_True_Touch Pos X_1700_MLBB"),
+            OBFUSCATE("19_Toggle_True_Rotation Screen_MLBB")
+        };
+        
+        int Total_Feature = (sizeof features / sizeof features[0]);
+        ret = (jobjectArray)
+            env->NewObjectArray(Total_Feature, env->FindClass(OBFUSCATE("java/lang/String")),
+                                env->NewStringUTF(""));
 
+        for (int i = 0; i < Total_Feature; i++)
+            env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
+    } else {
+        ret = env->NewObjectArray(0, env->FindClass("java/lang/String"), env->NewStringUTF(""));
+    }
+    
     return (ret);
 }
 
@@ -95,6 +128,24 @@ void Changes(JNIEnv *env, jclass clazz, jobject obj, jint featNum, jstring featN
         case 14:
             options.AimCollider = boolean;
             break;
+        case 15:
+            options.AutoRetri = boolean;
+            break;
+        case 16:
+            options.touchSize = value;
+            break;
+        case 17:
+            options.touchX = value;
+            break;
+        case 18:
+            options.touchY = value;
+            break;
+        case 19:
+            options.InputInversion = boolean;
+            break;
+        case 20:
+            isShowTouch = boolean;
+            break;
         default:
             break;
     }
@@ -129,7 +180,7 @@ bool getReady(JNIEnv *, jobject) {
 
 int Register1(JNIEnv *env) {
 	JNINativeMethod methods[] = {
-			{"native_Check", "(Landroid/content/Context;Ljava/lang/String;)Ljava/lang/String;", (void *) native_Check}
+			{"native_Check", "(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;", (void *) native_Check}
 	};
 	jclass clazz = env->FindClass("com/loader/yogs/LoginActivity");
 	if (!clazz)

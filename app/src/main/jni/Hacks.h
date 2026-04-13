@@ -11,7 +11,7 @@ Options options{false, 0, 0, false, false};
 int Game;
 
 int isPlayerLine = 0, isPlayerBox = 0;
-bool isPlayerLinee, isPlayerWeapon, isPlayerBoxx, isr360Alert, isPlayerHealth, isPlayerName, isPlayerDist, isNoBot;
+bool isShowTouch, isPlayerLinee, isPlayerWeapon, isPlayerBoxx, isr360Alert, isPlayerHealth, isPlayerName, isPlayerDist, isNoBot;
 Color clrEnemy, clrFilled, clrEdge, clrBox, clrSkeleton, clrHealth;
 char extra[30];
 
@@ -36,6 +36,12 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
                 if (response.targetPos.Z > 0) {
                     esp.DrawLine(Color(255, 255, 255, 255), 1.0f, Vector2(screenWidth / 2, screenHeight / 2), Vector2(response.targetPos.X, response.targetPos.Y));
                 }
+            }
+            
+            if (isShowTouch) {
+                float py = screenHeight / 2;
+                float px = screenWidth / 2;
+                esp.DrawFilledRect(Color(0, 255, 0, 50), Vector2(request.options.touchY - request.options.touchSize / 2, py * 2 - request.options.touchX + request.options.touchSize / 2), Vector2(request.options.touchY + request.options.touchSize / 2, py * 2 - request.options.touchX - request.options.touchSize / 2));
             }
     
             for (int i = 0; i < response.PlayerCount; i++) {
@@ -89,10 +95,10 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
     
                     if (isPlayerHealth) {
                         int currentHP = player.Health;
-                        int maxHP = 200;
+                        int maxHP = player.HealthMax;
                         
-                        float hpPercent = (float)currentHP / (float)maxHP;
-                    
+                        float hpPercent = maxHP > 0 ? (float) currentHP / maxHP : 0;
+                        
                         Color hpColor;
                         if (player.isKnocked) {
                             hpColor = Color(255, 0, 0, 255); 
@@ -111,10 +117,6 @@ void DrawESP(ESP esp, int screenWidth, int screenHeight) {
     
                     if (isPlayerName) {
                         esp.DrawText(Color(255, 255, 255, 255), player.Name, Vector2(rect.x + rect.w / 2.0f, rect.y - 5), 15);
-                    }
-                    
-                    if (isPlayerWeapon) {
-                        esp.DrawText(Color(255, 255, 255, 255), player.WeaponName.c_str(), Vector2(rect.x + rect.w / 2.0f, rect.y - 9), 15);
                     }
     
                     if (isPlayerDist) {

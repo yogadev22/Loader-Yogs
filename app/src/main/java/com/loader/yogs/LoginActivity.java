@@ -31,6 +31,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.topjohnwu.superuser.Shell;
 import org.lsposed.lsparanoid.Obfuscate;
 
 @Obfuscate
@@ -43,12 +44,26 @@ public class LoginActivity extends AppCompatActivity {
     private static final String USER = "USER";
     private static final String PASS = "PASS";
     private FPrefs prefs;
-
+    String gamename = "";
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         prefs = FPrefs.with(LoginActivity.this);
+        
+        /*if (!Shell.rootAccess()) {
+            AlertDialog newdial = new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
+                    .setCancelable(false)
+                    .setMessage("ROOT REQUIRED!")
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        finish(); // Tutup activity
+                        System.exit(0); // Hentikan aplikasi
+                    })
+                    .create();
+            
+            newdial.show();
+        }*/
         
         RelativeLayout basepage = new RelativeLayout(this);
         basepage.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
@@ -155,13 +170,16 @@ public class LoginActivity extends AppCompatActivity {
         gameSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selected = parent.getItemAtPosition(position).toString();
-                if (selected == "PUBG") {
-                    
-                } else if (selected == "Free Fire") {
-                    
-                } else if (selected == "Mobile Legends") {
-                    
+                String selectedText = parent.getItemAtPosition(position).toString();
+                if (selectedText.equals("PUBG")) {
+                    gamename = "PUBG";
+                    MainActivity.gamepackage = "com.tencent.ig";
+                } else if (selectedText.equals("Free Fire")) {
+                    gamename = "FFMAX";
+                    MainActivity.gamepackage = "com.dts.freefiremax";
+                } else if (selectedText.equals("Mobile Legends")) {
+                    gamename = "MLBB";
+                    MainActivity.gamepackage = "com.mobile.legends";
                 }
             }
         
@@ -198,7 +216,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 String combinedKey = userKey + ":" + passKey;
 
-                Login(LoginActivity.this, combinedKey);
+                Login(LoginActivity.this, combinedKey, gamename);
             } else if (textUsername.getText().toString().isEmpty()) {
                 Toast.makeText(LoginActivity.this, "Please enter username!", Toast.LENGTH_SHORT).show();
             } else if (textPassword.getText().toString().isEmpty()) {
@@ -235,7 +253,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void Login(final Context m_Context, final String userKey) {
+    private void Login(final Context m_Context, final String userKey, final String game) {
         AppFunction.ShowLoadingAnimation(m_Context);
 
         final Handler loginHandler = new Handler() {
@@ -264,7 +282,7 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         new Thread(() -> {
-            String result = native_Check(m_Context, userKey);
+            String result = native_Check(m_Context, userKey, game);
             if ("OK".equals(result)) {
                 loginHandler.sendEmptyMessage(0);
             } else {
@@ -276,7 +294,7 @@ public class LoginActivity extends AppCompatActivity {
         }).start();
     }
 
-    private static native String native_Check(Context context, String userKey);
+    private static native String native_Check(Context context, String userKey, String GameSelected);
 
     @Override
     protected void onDestroy() {

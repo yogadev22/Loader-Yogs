@@ -2,7 +2,9 @@ package com.loader.yogs;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private String daemonPath64;
     private static final int REQUEST_MANAGE_STORAGE_PERMISSION = 100;
     private static final int REQUEST_MANAGE_UNKNOWN_APP_SOURCES = 200;
-
+    public static String gamepackage = "";
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +63,12 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, 123);
         }
 
+        binding.mode.setText(gamepackage);
+        binding.mode.setTextColor(Color.GREEN);
+
         if (Shell.rootAccess()) {
-            binding.mode.setText("Root");
-            binding.mode.setTextColor(Color.RED);
             daemon64 = "su -c " + getFilesDir().getPath()  + "/fuck";
         } else {
-            binding.mode.setText("Container");
-            binding.mode.setTextColor(Color.GREEN);
             daemon64 = getFilesDir().getPath()  + "/fuck";
         }
 
@@ -89,12 +90,12 @@ public class MainActivity extends AppCompatActivity {
     private void Initialize(final Context context) {
         try {
             PackageManager packageManager = context.getPackageManager();
-            Intent launchIntent = packageManager.getLaunchIntentForPackage("com.dts.freefiremax");
+            Intent launchIntent = packageManager.getLaunchIntentForPackage(gamepackage);
             if (launchIntent != null) {
                 context.startActivity(launchIntent);
             }
-            Thread.sleep(5000);
-            startService(new Intent(MainActivity.this, Overlay.class));
+            Thread.sleep(3000);
+            //startService(new Intent(MainActivity.this, Overlay.class));
             startService(new Intent(MainActivity.this, Floating.class));
         } catch (Exception e) {
             e.printStackTrace();

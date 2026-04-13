@@ -1,5 +1,6 @@
 package com.loader.yogs;
 
+import android.app.ActivityManager;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -53,7 +54,6 @@ public class Floating extends Service {
     Context mContext;
     private FrameLayout mFloatingView;
     private WindowManager mWindowManager;
-
     int currentTab = 0;
     
     TextView texttab;
@@ -142,7 +142,23 @@ public class Floating extends Service {
         featurelyt2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         featurelyt2.setOrientation(LinearLayout.VERTICAL);
         
-        featureList(GetFeatureList(), featurelyt2);
+        Button n = new Button(this);
+        LinearLayout.LayoutParams paramss2ss = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        paramss2ss.setMargins(dp(6), dp(6), dp(6), dp(6));
+        n.setLayoutParams(paramss2ss);
+        n.setBackgroundResource(R.drawable.bg_switch);
+        n.setPadding(dp(5), dp(5), dp(5), dp(5));
+        n.setTextSize(15);
+        n.setTextColor(Color.WHITE);
+        n.setText("START MENU");
+        
+        n.setOnClickListener(view -> {
+            startService(new Intent(this, Overlay.class));
+            n.setVisibility(View.GONE);
+            featureList(GetFeatureList(), featurelyt2);
+        });
+        
+        featurelyt2.addView(n);
         
         scrl.addView(featurelyt2);
         featurelyt.addView(scrl);
@@ -270,13 +286,13 @@ public class Floating extends Service {
             String[] strSplit = feature.split("_");
             switch (strSplit[0]) {
                 case "Toggle":
-                    addSwitch(strSplit[1], featNum, switchedOn, linearLayout);
+                    addSwitch(strSplit[1], featNum, switchedOn, strSplit[2], linearLayout);
                     break;
                 case "Seekbar":
-                    addSeekbar(strSplit[1], featNum, switchedOn, Integer.parseInt(strSplit[2]), linearLayout);
+                    addSeekbar(strSplit[1], featNum, switchedOn, strSplit[3], Integer.parseInt(strSplit[2]), linearLayout);
                     break;
                 case "RadioButton":
-                    addRadioButton(strSplit[1], featNum, switchedOn, strSplit[2], linearLayout);
+                    addRadioButton(strSplit[1], featNum, switchedOn, strSplit[3], strSplit[2], linearLayout);
                     break;
                 case "TitleMenu":
                     addText(strSplit[1], linearLayout);
@@ -285,7 +301,7 @@ public class Floating extends Service {
         }
     }
     
-    private void addSwitch(String name, int featnum, boolean isautosave, LinearLayout view) {
+    private void addSwitch(String name, int featnum, boolean isautosave, String gamename, LinearLayout view) {
         Switch n = new Switch(this);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(dp(6), dp(6), dp(6), dp(6));
@@ -296,21 +312,21 @@ public class Floating extends Service {
         n.setTextColor(Color.WHITE);
         n.setText(name);
         if (isautosave) {
-            n.setChecked(prefs.readBoolean(name));
-            Changes(this, featnum, name, 0, 0, prefs.readBoolean(name), null);
+            n.setChecked(prefs.readBoolean(gamename + "_" + name));
+            Changes(this, featnum, name, 0, 0, prefs.readBoolean(gamename + "_" + name), null);
         }
         
         n.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Changes(this, featnum, name, 0, 0, isChecked, null);
             if (isautosave) {
-                prefs.writeBoolean(name, n.isChecked());
+                prefs.writeBoolean(gamename + "_" + name, n.isChecked());
             }
         });
         
         view.addView(n);
     }
     
-    private void addSeekbar(String name, int featnum, boolean isautosave, int max, LinearLayout view) {
+    private void addSeekbar(String name, int featnum, boolean isautosave, String gamename, int max, LinearLayout view) {
         LinearLayout texlyt = new LinearLayout(this);
         LinearLayout.LayoutParams paramss = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         paramss.setMargins(dp(6), dp(6), dp(6), dp(6));
@@ -334,7 +350,7 @@ public class Floating extends Service {
         TextView sTitlee = new TextView(this);
         sTitlee.setLayoutParams(paramssss);
         if (isautosave) {
-            sTitlee.setText(String.valueOf(prefs.readInt(name, -1)));
+            sTitlee.setText(String.valueOf(prefs.readInt(gamename + "_" + name, -1)));
         }
         sTitlee.setTextSize(15);
         sTitlee.setTextColor(Color.WHITE);
@@ -351,7 +367,7 @@ public class Floating extends Service {
         int slidervalue = 0;
 
         if (isautosave) {
-            slidervalue = prefs.readInt(name, 0);
+            slidervalue = prefs.readInt(gamename + "_" + name, 0);
         }
         
         sTitlee.setText(String.valueOf(slidervalue));
@@ -363,7 +379,7 @@ public class Floating extends Service {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 Changes(mContext, featnum, name, progress, 0, false, null);
                 sTitlee.setText(String.valueOf(progress));
-                prefs.writeInt(name, progress);
+                prefs.writeInt(gamename + "_" + name, progress);
             }
     
             @Override
@@ -381,7 +397,7 @@ public class Floating extends Service {
         view.addView(texlyt);
     }
     
-    private void addRadioButton(String name, int featnum, boolean isautosave, String list, LinearLayout view) {
+    private void addRadioButton(String name, int featnum, boolean isautosave, String gamename, String list, LinearLayout view) {
         List<String> lists = new LinkedList<>(Arrays.asList(list.split(",")));
     
         LinearLayout texlyt = new LinearLayout(this);
@@ -423,7 +439,7 @@ public class Floating extends Service {
         // 🔹 LOAD DATA (autosave)
         int savedIndex = 0;
         if (isautosave) {
-            savedIndex = prefs.readInt(name, 0);
+            savedIndex = prefs.readInt(gamename + "_" + name, 0);
         }
     
         // 🔹 Set checked sesuai savedIndex
@@ -448,7 +464,7 @@ public class Floating extends Service {
     
                         // autosave
                         if (isautosave) {
-                            prefs.writeInt(name, index);
+                            prefs.writeInt(gamename + "_" + name, index);
                         }
                     }
                 }

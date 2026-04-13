@@ -18,6 +18,11 @@ struct Options {
     int AimPos;
     bool AimLine;
     bool AimCollider;
+    bool AutoRetri;
+    int touchSize;
+    int touchX;
+    int touchY;
+    bool InputInversion;
 };
 
 struct Request {
@@ -30,6 +35,7 @@ struct PlayerData {
     Vector3 HeadPos;
     Vector3 RootPos;
     int Health;
+    int HealthMax;
     bool isKnocked;
     char Name[64];
     float Distance;
@@ -40,6 +46,7 @@ struct PlayerData {
 struct Response {
     bool Success;
     int PlayerCount;
+    int MonsterCount;
     Vector3 targetPos;
     PlayerData Players[100];
 };

@@ -69,7 +69,8 @@
   /data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/thread \
   /data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/cmath \
   jni/struct.h jni/Vector2.hpp jni/Vector3.hpp jni/Quaternion.hpp \
-  jni/Matrix4x4.hpp
+  jni/Matrix4x4.hpp jni/TouchInput.hpp \
+  /data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/list
 
 jni/support.h:
 
@@ -222,3 +223,7 @@ jni/Vector3.hpp:
 jni/Quaternion.hpp:
 
 jni/Matrix4x4.hpp:
+
+jni/TouchInput.hpp:
+
+/data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/list:
