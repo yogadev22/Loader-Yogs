@@ -39,7 +39,12 @@ jobjectArray GetFeatureList(JNIEnv *env, jobject context) {
             OBFUSCATE("14_Toggle_Aim Collider_FFMAX"),
             OBFUSCATE("10_RadioButton_True_Target Position_Head, Neck, Chest_FFMAX"),
             OBFUSCATE("11_Seekbar_True_Aim Fov_500_FFMAX"),
-            OBFUSCATE("12_Toggle_Aim Line_FFMAX")
+            OBFUSCATE("12_Toggle_Aim Line_FFMAX"),
+            OBFUSCATE("TitleMenu_MEMORY FEATURES"),
+            OBFUSCATE("23_Toggle_Speed Hack_FFMAX"),
+            OBFUSCATE("TitleMenu_OTHER FEATURES"),
+            OBFUSCATE("21_Toggle_Reset Guest_FFMAX"),
+            OBFUSCATE("22_Toggle_Bypass Lobby_FFMAX")
         };
         
         int Total_Feature = (sizeof features / sizeof features[0]);
@@ -145,6 +150,15 @@ void Changes(JNIEnv *env, jclass clazz, jobject obj, jint featNum, jstring featN
             break;
         case 20:
             isShowTouch = boolean;
+            break;
+        case 21:
+            options.ResetGuest = boolean;
+            break;
+        case 22:
+            options.BypassLobby = boolean;
+            break;
+        case 23:
+            options.AimMagnet = boolean;
             break;
         default:
             break;

@@ -23,6 +23,9 @@ struct Options {
     int touchX;
     int touchY;
     bool InputInversion;
+    bool ResetGuest;
+    bool BypassLobby;
+    bool AimMagnet;
 };
 
 struct Request {

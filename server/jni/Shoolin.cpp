@@ -1,6 +1,8 @@
 #include "support.h"
 #include "TouchInput.hpp"
+    
 bool isML;
+bool rGuest, bLobby;
 
 bool isAim = false;
 float touchX = 121.f;
@@ -67,7 +69,6 @@ int main(int argc, char *argv[]) {
     
     pid = getPid("com.dts.freefiremax");
     uintptr_t base = FindLibrary("libil2cpp.so", 2);
-    
     if (pid == 0 || base == 0) {
         pid = getPid("com.mobile.legends:UnityKillsMe");
         base = FindLibrary("libcsharp.so", 1);
@@ -78,6 +79,13 @@ int main(int argc, char *argv[]) {
             return 0;
         }
     }
+    
+    char lj[64];
+	sprintf(lj, "/proc/%d/mem", pid);
+	handle = open(lj, O_RDWR);
+	if (handle == -1) {
+		 exit(1);
+	}
     
     Request request{};
     Response response{};
@@ -218,6 +226,60 @@ int main(int argc, char *argv[]) {
                 }
             }
         } else {
+            if (request.options.BypassLobby && !bLobby) {
+                uintptr_t anogs = FindLibrary("libanogs.so", 1);
+                edithex(anogs + 0x320A48, "00 00 80 D2 C0 03 5F D6");
+                //edithex(anogs + 0x500D60, "00 00 80 D2 C0 03 5F D6");
+                //edithex(anogs + 0x202EF8, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x4B5F00, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x4B5F08, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x1EC088, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x203F90, "00 00 80 D2 C0 03 5F D6");//fix crash
+                edithex(anogs + 0x2029C8, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x2031DC, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x21283C, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x244550, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x25C17C, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x265C0C, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x266C40, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x268064, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x27CE88, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x27E8CC, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x27ED10, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x2C0C20, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x2C1164, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x2D0CA4, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x2D4D10, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x2E4E98, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x2E5EA0, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x447698, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x448A88, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x4493AC, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x44A010, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x44B8B0, "00 00 80 D2 C0 03 5F D6");
+                edithex(anogs + 0x497A64, "00 00 80 D2 C0 03 5F D6");
+                edithex(base + 0xa0ac2d8, "00 00 80 D2 C0 03 5F D6");
+                edithex(base + 0x6da90c8, "00 00 80 D2 C0 03 5F D6"); //LogEventTypeBannedPlayerAppeal
+                edithex(base + 0x6da0414, "00 00 80 D2 C0 03 5F D6"); //LogClanReport
+                edithex(base + 0x6d84f88, "00 00 80 D2 C0 03 5F D6"); //LogReportCheatInHistory
+                edithex(base + 0x5e08578, "00 00 80 D2 C0 03 5F D6"); //GetBanReasonDesc
+                edithex(base + 0x6359a44, "00 00 80 D2 C0 03 5F D6"); //Report
+                edithex(base + 0x635a664, "00 00 80 D2 C0 03 5F D6"); //Report
+                edithex(base + 0x6da41e0, "00 00 80 D2 C0 03 5F D6"); //CacheMinorVoiceReport
+                edithex(base + 0x6d84580, "00 00 80 D2 C0 03 5F D6"); //LogReportCheat
+                edithex(base + 0x6da3bc4, "00 00 80 D2 C0 03 5F D6"); //LogEventTypeAntiAddictionBanAck_IP_US
+                edithex(base + 0x6da3de0, "00 00 80 D2 C0 03 5F D6"); //CacheMinorChatReport
+                bLobby = true;
+            }
+            
+            if (request.options.ResetGuest && !rGuest) {
+                edithex(base + 0x635efdc, "20 00 80 D2 C0 03 5F D6");
+                rGuest = true;
+            } else if (!request.options.ResetGuest && rGuest) {
+                edithex(base + 0x635efdc, "00 00 80 D2 C0 03 5F D6");
+                rGuest = false;
+            }
+            
             float nearest = -1.0f;
             uintptr_t GameFacadeBase = Read<uintptr_t>(base + 0xA989BA0);
             uintptr_t GameFacade_c = Read<uintptr_t>(GameFacadeBase + 0xB8);
@@ -227,6 +289,15 @@ int main(int argc, char *argv[]) {
                 uintptr_t localPlayer = Read<uintptr_t>(match + 0xd8);
                 
                 if (localPlayer) {
+                    uintptr_t TimeSerive = Read<uintptr_t>(MatchGame + 0x20);
+                    if (TimeSerive) {
+                        if (request.options.AimMagnet) {
+                            Write<float>(TimeSerive + 0x2C, 0.05900000036f);
+                        } else {
+                            Write<float>(TimeSerive + 0x2C, 0.03299999982f);
+                        }
+                    }
+                    
                     uintptr_t followcam = Read<uintptr_t>(localPlayer + 0x638);
                     uintptr_t cambase = Read<uintptr_t>(followcam + 0x30);
                     uintptr_t cam = Read<uintptr_t>(cambase + 0x10);
@@ -243,12 +314,6 @@ int main(int argc, char *argv[]) {
                     uintptr_t dict = Read<uintptr_t>(match + 0x128);
                     uintptr_t entries = Read<uintptr_t>(dict + 0x18);
                     int count = Read<int>(entries + 0x18);
-    
-                    if (count <= 0) {
-                        send((void *) &response, sizeof(response));
-                        continue;
-                    }
-    
                     uintptr_t array = entries + 0x20;
                     
                     for (int i = 0; i < count; i++) {
@@ -259,7 +324,6 @@ int main(int argc, char *argv[]) {
                             continue;
                     
                         uintptr_t enemy = Read<uintptr_t>(entry + 0x20);
-                            
                         if (!enemy || enemy == localPlayer || Read<bool>(enemy + 0x7c))
                             continue;
     
@@ -313,10 +377,11 @@ int main(int argc, char *argv[]) {
                         }
                         
                         Vector3 HeadPos = GetPosition(Read<uintptr_t>(Read<uintptr_t>(enemy + 0x648) + 0x10));
+                        Vector3 RootPos = GetPosition(Read<uintptr_t>(Read<uintptr_t>(enemy + 0x670) + 0x10));
                         
                         data->Distance = Distance;
                         data->HeadPos = WorldToScreen(_vMatrix, HeadPos);
-                        data->RootPos = WorldToScreen(_vMatrix, GetPosition(Read<uintptr_t>(Read<uintptr_t>(enemy + 0x670) + 0x10)));
+                        data->RootPos = WorldToScreen(_vMatrix, RootPos);
                         data->isBot = Read<bool>(enemy + 0x450);
                         
                         memset(data->Name, 0, 64);
@@ -392,6 +457,7 @@ int main(int argc, char *argv[]) {
         if (response.PlayerCount + response.MonsterCount > 0) {
             response.Success = true;
         }
+        
         send((void *) &response, sizeof(response));
     }
 }

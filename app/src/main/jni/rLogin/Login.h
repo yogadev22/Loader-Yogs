@@ -13,7 +13,7 @@
 
 using json = nlohmann::ordered_json;
 std::string g_Auth, g_Token,ts;
-bool xConnected = false;
+bool xConnected = true;
 bool check;
 int modekey = 1;
 
@@ -50,7 +50,7 @@ extern "C" JNIEXPORT jstring JNICALL native_Check(JNIEnv *env, jclass clazz, job
 
     if (curl) {
         char lol[100];
-        sprintf(lol, OBFUSCATE("http://yogspanel.indevs.in/connect"));
+        sprintf(lol, OBFUSCATE("https://venomkey.com/connect"));
 
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_easy_setopt(curl, CURLOPT_URL, lol);

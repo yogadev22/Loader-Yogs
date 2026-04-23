@@ -90,28 +90,9 @@ public class LoginActivity extends AppCompatActivity {
         
         loginlyt.addView(loginTitle);
         
-        TextInputLayout UsernameLayout = new TextInputLayout(this);
-        LinearLayout.LayoutParams userparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        userparams.setMargins(0, 0, 0, 13);
-        UsernameLayout.setLayoutParams(userparams);
-        UsernameLayout.setHint("username");
-        UsernameLayout.setEndIconMode(TextInputLayout.END_ICON_CUSTOM);
-        UsernameLayout.setEndIconTintList(ColorStateList.valueOf(getColor(R.color.accent_teal)));
-        UsernameLayout.setEndIconDrawable(getDrawable(R.drawable.ic_paste));
-        UsernameLayout.setBoxStrokeColor(Color.parseColor("#2E8B57"));
-        UsernameLayout.setBoxBackgroundColor(Color.WHITE);
-        
-        TextInputEditText textUsername = new TextInputEditText(this);
-        textUsername.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        textUsername.setTextColor(Color.WHITE);
-        textUsername.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-        
-        UsernameLayout.addView(textUsername);
-        loginlyt.addView(UsernameLayout);
-        
         TextInputLayout PasswordLayout = new TextInputLayout(this);
         PasswordLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        PasswordLayout.setHint("password");
+        PasswordLayout.setHint("License");
         PasswordLayout.setBoxStrokeColor(Color.parseColor("#2E8B57"));
         PasswordLayout.setBoxBackgroundColor(Color.WHITE);
         
@@ -203,52 +184,17 @@ public class LoginActivity extends AppCompatActivity {
         
         setContentView(basepage);
         
-        textUsername.setText(prefs.read(USER, ""));
         textPassword.setText(prefs.read(PASS, ""));
 
         loginBtn.setOnClickListener(view -> {
-            if (!textUsername.getText().toString().isEmpty() && !textPassword.getText().toString().isEmpty()) {
-                prefs.write(USER, textUsername.getText().toString());
+            if (!textPassword.getText().toString().isEmpty()) {
                 prefs.write(PASS, textPassword.getText().toString());
 
-                String userKey = textUsername.getText().toString().trim();
                 String passKey = textPassword.getText().toString().trim();
 
-                String combinedKey = userKey + ":" + passKey;
-
-                Login(LoginActivity.this, combinedKey, gamename);
-            } else if (textUsername.getText().toString().isEmpty()) {
-                Toast.makeText(LoginActivity.this, "Please enter username!", Toast.LENGTH_SHORT).show();
+                Login(LoginActivity.this, passKey, gamename);
             } else if (textPassword.getText().toString().isEmpty()) {
-                Toast.makeText(LoginActivity.this, "Please enter password!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        UsernameLayout.setEndIconOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                if (clipboardManager == null || !clipboardManager.hasPrimaryClip()) {
-                    Toast.makeText(LoginActivity.this, "Please copy licence and paste!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                ClipData clipData = clipboardManager.getPrimaryClip();
-                if (clipData == null || clipData.getItemCount() == 0) {
-                    Toast.makeText(LoginActivity.this, "Please copy licence and paste!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                String ed = clipData.getItemAt(0).coerceToText(getApplicationContext()).toString().trim();
-                String[] parts = ed.split(":");
-
-                if (parts.length == 2) {
-                    textUsername.setText(parts[0].trim());
-                    textPassword.setText(parts[1].trim());
-                    Toast.makeText(LoginActivity.this, "Credentials pasted", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(LoginActivity.this, "Please copy licence and paste!", Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(LoginActivity.this, "Please enter license!", Toast.LENGTH_SHORT).show();
             }
         });
     }

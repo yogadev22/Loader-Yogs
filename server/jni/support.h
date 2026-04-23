@@ -6,6 +6,7 @@
 #include "struct.h"
 #include "Quaternion.hpp"
 #include "Matrix4x4.hpp"
+#include <unordered_map>
 
 #define PI 3.141592653589793238
 
@@ -34,6 +35,7 @@
 #endif
 
 int screenWidth, screenHeight;
+int handle;
 
 uintptr_t FindLibrary(const char* name, int index) {
     int i = 0;
@@ -74,6 +76,25 @@ T Read(uintptr_t address) {
         memset(&buf, 0, sizeof(T));
     }
     return buf;
+}
+
+int edithex(long int addr, const char *hex)
+{
+    unsigned char bytes[32];
+    int count = 0;
+
+    char buffer[128];
+    strcpy(buffer, hex); // copy dulu
+
+    char *token = strtok(buffer, " ");
+    while (token != NULL)
+    {
+        bytes[count++] = (unsigned char)strtoul(token, NULL, 16);
+        token = strtok(NULL, " ");
+    }
+
+    pwrite64(handle, bytes, count, addr);
+    return 0;
 }
 
 template<class T>
