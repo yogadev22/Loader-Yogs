@@ -74,8 +74,8 @@
   /data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/__hash_table \
   /data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/__node_handle \
   /data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/optional \
-  jni/TouchInput.hpp \
-  /data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/list
+  /data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/vector \
+  /data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/__split_buffer
 
 jni/support.h:
 
@@ -237,6 +237,6 @@ jni/Matrix4x4.hpp:
 
 /data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/optional:
 
-jni/TouchInput.hpp:
+/data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/vector:
 
-/data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/list:
+/data/user/0/com.itsaky.androidide/files/home/android-sdk/ndk/24.0.8215888/sources/cxx-stl/llvm-libc++/include/__split_buffer:

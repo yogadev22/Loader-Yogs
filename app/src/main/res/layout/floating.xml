@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:layout_height="wrap_content"
+     android:layout_width="wrap_content">
+
+    <RelativeLayout
+         android:layout_height="50dp"
+         android:layout_width="50dp"
+         android:id="@+id/logo">
+
+        <ImageView
+             android:layout_height="match_parent"
+             android:layout_width="match_parent"
+             android:src="@drawable/yogs"
+             android:scaleType="centerCrop" />
+
+    </RelativeLayout>
+
+    <androidx.cardview.widget.CardView
+         android:layout_height="350dp"
+         android:layout_width="350dp"
+         app:cardElevation="10dp"
+         app:cardBackgroundColor="@color/dark"
+         app:cardCornerRadius="16dp"
+         android:id="@+id/menulayout">
+
+        <LinearLayout
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:padding="8dp"
+             android:orientation="vertical">
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:background="@drawable/bg_button"
+                 android:gravity="center"
+                 android:padding="10dp"
+                 android:id="@+id/nhn">
+
+                <TextView
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="16sp"
+                     android:textColor="@color/white"
+                     android:id="@+id/closetext"
+                     android:text="YOGS INJECTOR"
+                     android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:orientation="vertical"
+                 android:layout_marginTop="8dp"
+                 android:id="@+id/espmenu">
+
+                <ScrollView
+                     android:layout_height="wrap_content"
+                     android:layout_width="match_parent"
+                     android:scrollbars="none"
+                     android:overScrollMode="never">
+
+                    <LinearLayout
+                         android:layout_height="wrap_content"
+                         android:layout_width="match_parent"
+                         android:orientation="vertical"
+                         android:id="@+id/menunya">
+
+                    </LinearLayout>
+
+                </ScrollView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>

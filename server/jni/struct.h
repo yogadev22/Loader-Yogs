@@ -10,6 +10,9 @@
 
 struct Vector4 {
     float X, Y, Z, W;
+    
+    Vector4() : X(0), Y(0), Z(0), W(0) {}
+    Vector4(float x, float y, float z, float w) : X(x), Y(y), Z(z), W(w) {}
 };
 
 struct Options {
@@ -25,7 +28,12 @@ struct Options {
     bool InputInversion;
     bool ResetGuest;
     bool BypassLobby;
+    bool noreload;
+    bool SpeedHack;
     bool AimMagnet;
+    bool GhostHack;
+    bool NoSwapWp;
+    bool flyhack;
 };
 
 struct Request {

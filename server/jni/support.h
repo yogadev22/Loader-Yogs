@@ -7,6 +7,10 @@
 #include "Quaternion.hpp"
 #include "Matrix4x4.hpp"
 #include <unordered_map>
+#include <vector>
+#include <android/log.h>
+
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, "anj", __VA_ARGS__)
 
 #define PI 3.141592653589793238
 
@@ -76,6 +80,88 @@ T Read(uintptr_t address) {
         memset(&buf, 0, sizeof(T));
     }
     return buf;
+}
+
+struct PatchData {
+    long int addr;
+    unsigned char orig[16];
+    int size;
+    bool active;
+};
+
+std::vector<PatchData> patches;
+
+PatchData* FindPatch(long int addr) {
+    for (auto &p : patches) {
+        if (p.addr == addr)
+            return &p;
+    }
+    return nullptr;
+}
+
+ssize_t readmem(long int addr, void *buf, size_t size) {
+    return pread64(handle, buf, size, addr);
+}
+
+void ApplyPatch(long int addr, const char *hex) {
+    unsigned char temp[32];
+    int count = 0;
+
+    char buffer[128];
+    strncpy(buffer, hex, sizeof(buffer) - 1);
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    char *token = strtok(buffer, " ");
+    while (token != NULL) {
+        temp[count++] = (unsigned char)strtoul(token, NULL, 16);
+        token = strtok(NULL, " ");
+    }
+
+    PatchData* p = FindPatch(addr);
+
+    if (!p) {
+        PatchData newPatch{};
+        newPatch.addr = addr;
+        newPatch.size = count;
+        newPatch.active = true;
+
+        readmem(addr, newPatch.orig, count); // simpan original
+        patches.push_back(newPatch);
+
+        pwrite64(handle, temp, count, addr);
+    } else if (!p->active) {
+        pwrite64(handle, temp, count, addr);
+        p->active = true;
+    }
+}
+
+template<typename T>
+void ApplyPatchT(long int addr, T value) {
+    PatchData* p = FindPatch(addr);
+
+    if (!p) {
+        PatchData newPatch{};
+        newPatch.addr = addr;
+        newPatch.size = sizeof(T);
+        newPatch.active = true;
+
+        readmem(addr, newPatch.orig, sizeof(T));
+        patches.push_back(newPatch);
+
+        pwrite64(handle, &value, sizeof(T), addr);
+    } else if (!p->active) {
+        pwrite64(handle, &value, sizeof(T), addr);
+        p->active = true;
+    }
+}
+
+void RestorePatch(long int addr) {
+    PatchData* p = FindPatch(addr);
+
+    if (p && p->active) {
+        pwrite64(handle, p->orig, p->size, addr);
+        p->active = false;
+    }
 }
 
 int edithex(long int addr, const char *hex)
@@ -289,4 +375,24 @@ Vector3 WorldToScreen(Matrix4x4 _vMatrix, Vector3 from) {
     return to;
 }
 
+static Vector3 savedPos;
+static bool flyThreadRunning = false;
+static std::thread flyThread;
+
+void FlyLoop(uintptr_t localPlayer) {
+    while (flyThreadRunning) {
+
+        uintptr_t lroottf = Read<uintptr_t>(Read<uintptr_t>(localPlayer + 0x670) + 0x10);
+        if (lroottf) {
+            uintptr_t transformObjValue = Read<uintptr_t>(lroottf + 0x10);
+            if (transformObjValue) {
+                uintptr_t matrixValue = Read<uintptr_t>(transformObjValue + 0x38);
+                if (matrixValue) {
+                    Vector3 flyheight = savedPos + Vector3(0.0f, 8.f, 0.0f);
+                    Write<Vector3>(matrixValue + 0x90, flyheight);
+                }
+            }
+        }
+    }
+}
 #endif
