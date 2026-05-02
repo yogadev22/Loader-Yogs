@@ -5,41 +5,39 @@ void *bypass(void *) {
     uintptr_t anogs = 0;
 
     while (!anogs) {
-        anogs = FindLibrary("libanogs.so", 1);
+        anogs = FindLibrary(oxorany("libanogs.so"), 1);
         sleep(1);
     }
 
     if (!bLobby) {
-        edithex(anogs + 0x320A48, "00 00 80 D2 C0 03 5F D6");
-        //edithex(anogs + 0x500D60, "00 00 80 D2 C0 03 5F D6");
-        //edithex(anogs + 0x202EF8, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x4B5F00, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x4B5F08, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x1EC088, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x203F90, "00 00 80 D2 C0 03 5F D6");//fix crash
-        edithex(anogs + 0x2029C8, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x2031DC, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x21283C, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x244550, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x25C17C, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x265C0C, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x266C40, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x268064, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x27CE88, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x27E8CC, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x27ED10, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x2C0C20, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x2C1164, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x2D0CA4, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x2D4D10, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x2E4E98, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x2E5EA0, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x447698, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x448A88, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x4493AC, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x44A010, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x44B8B0, "00 00 80 D2 C0 03 5F D6");
-        edithex(anogs + 0x497A64, "00 00 80 D2 C0 03 5F D6");
+        edithex(anogs + oxorany(0x320A48), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x4B5F00), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x4B5F08), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x1EC088), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x203F90), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x2029C8), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x2031DC), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x21283C), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x244550), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x25C17C), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x265C0C), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x266C40), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x268064), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x27CE88), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x27E8CC), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x27ED10), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x2C0C20), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x2C1164), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x2D0CA4), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x2D4D10), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x2E4E98), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x2E5EA0), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x447698), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x448A88), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x4493AC), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x44A010), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x44B8B0), oxorany("00 00 80 D2 C0 03 5F D6"));
+        edithex(anogs + oxorany(0x497A64), oxorany("00 00 80 D2 C0 03 5F D6"));
         bLobby = true;
     }
     
@@ -71,17 +69,17 @@ int main(int argc, char *argv[]) {
 		 exit(1);
 	}
     
-    edithex(base + 0xa0ac2d8, "00 00 80 D2 C0 03 5F D6");
-    edithex(base + 0x6da90c8, "00 00 80 D2 C0 03 5F D6"); //LogEventTypeBannedPlayerAppeal
-    edithex(base + 0x6da0414, "00 00 80 D2 C0 03 5F D6"); //LogClanReport
-    edithex(base + 0x6d84f88, "00 00 80 D2 C0 03 5F D6"); //LogReportCheatInHistory
-    edithex(base + 0x5e08578, "00 00 80 D2 C0 03 5F D6"); //GetBanReasonDesc
-    edithex(base + 0x6359a44, "00 00 80 D2 C0 03 5F D6"); //Report
-    edithex(base + 0x635a664, "00 00 80 D2 C0 03 5F D6"); //Report
-    edithex(base + 0x6da41e0, "00 00 80 D2 C0 03 5F D6"); //CacheMinorVoiceReport
-    edithex(base + 0x6d84580, "00 00 80 D2 C0 03 5F D6"); //LogReportCheat
-    edithex(base + 0x6da3bc4, "00 00 80 D2 C0 03 5F D6"); //LogEventTypeAntiAddictionBanAck_IP_US
-    edithex(base + 0x6da3de0, "00 00 80 D2 C0 03 5F D6"); //CacheMinorChatReport
+    edithex(base + oxorany(0xa0ac2d8), oxorany("00 00 80 D2 C0 03 5F D6"));
+    edithex(base + oxorany(0x6da90c8), oxorany("00 00 80 D2 C0 03 5F D6")); //LogEventTypeBannedPlayerAppeal
+    edithex(base + oxorany(0x6da0414), oxorany("00 00 80 D2 C0 03 5F D6")); //LogClanReport
+    edithex(base + oxorany(0x6d84f88), oxorany("00 00 80 D2 C0 03 5F D6")); //LogReportCheatInHistory
+    edithex(base + oxorany(0x5e08578), oxorany("00 00 80 D2 C0 03 5F D6")); //GetBanReasonDesc
+    edithex(base + oxorany(0x6359a44), oxorany("00 00 80 D2 C0 03 5F D6")); //Report
+    edithex(base + oxorany(0x635a664), oxorany("00 00 80 D2 C0 03 5F D6")); //Report
+    edithex(base + oxorany(0x6da41e0), oxorany("00 00 80 D2 C0 03 5F D6")); //CacheMinorVoiceReport
+    edithex(base + oxorany(0x6d84580), oxorany("00 00 80 D2 C0 03 5F D6")); //LogReportCheat
+    edithex(base + oxorany(0x6da3bc4), oxorany("00 00 80 D2 C0 03 5F D6")); //LogEventTypeAntiAddictionBanAck_IP_US
+    edithex(base + oxorany(0x6da3de0), oxorany("00 00 80 D2 C0 03 5F D6")); //CacheMinorChatReport
     
     Request request{};
     Response response{};
@@ -96,15 +94,15 @@ int main(int argc, char *argv[]) {
         response.PlayerCount = 0;
         
         if (request.options.ResetGuest) {
-            ApplyPatch(base + 0x635efdc, "20 00 80 D2 C0 03 5F D6");
+            ApplyPatch(base + oxorany(0x635efdc), oxorany("20 00 80 D2 C0 03 5F D6"));
         } else {
-            RestorePatch(base + 0x635efdc);
+            RestorePatch(base + oxorany(0x635efdc));
         }
         
         if (request.options.GhostHack) {
-            ApplyPatch(base + 0x70243a4, "00 00 80 D2 C0 03 5F D6");
+            ApplyPatch(base + oxorany(0x70243a4), oxorany("00 00 80 D2 C0 03 5F D6"));
         } else {
-            RestorePatch(base + 0x70243a4);
+            RestorePatch(base + oxorany(0x70243a4));
         }
            
         float nearest = -1.0f;
@@ -153,10 +151,10 @@ int main(int argc, char *argv[]) {
                     uintptr_t maybeDead = Read<uintptr_t>(HHCBNAPCKHF + 0x20);
                     Write<int>(maybeDead + 0x10, 10);
                     
-                    ApplyPatch(base + 0x69052d8, "20 00 80 D2 C0 03 5F D6");
-                    ApplyPatch(base + 0x72e6fd4, "20 00 80 D2 C0 03 5F D6");
-                    ApplyPatch(base + 0x9dd515c, "20 00 80 D2 C0 03 5F D6");
-                    ApplyPatch(base + 0x68a1fd4, "20 00 80 D2 C0 03 5F D6");
+                    ApplyPatch(base + oxorany(0x69052d8), oxorany("20 00 80 D2 C0 03 5F D6"));
+                    ApplyPatch(base + oxorany(0x72e6fd4), oxorany("20 00 80 D2 C0 03 5F D6"));
+                    ApplyPatch(base + oxorany(0x9dd515c), oxorany("20 00 80 D2 C0 03 5F D6"));
+                    ApplyPatch(base + oxorany(0x68a1fd4), oxorany("20 00 80 D2 C0 03 5F D6"));
                     
                     if (!flyThreadRunning) {
                         flyThreadRunning = true;
@@ -171,10 +169,10 @@ int main(int argc, char *argv[]) {
                         
                         saved = false;
                         
-                        RestorePatch(base + 0x69052d8);
-                        RestorePatch(base + 0x72e6fd4);
-                        RestorePatch(base + 0x9dd515c);
-                        RestorePatch(base + 0x68a1fd4);
+                        RestorePatch(base + oxorany(0x69052d8));
+                        RestorePatch(base + oxorany(0x72e6fd4));
+                        RestorePatch(base + oxorany(0x9dd515c));
+                        RestorePatch(base + oxorany(0x68a1fd4));
                     }
                 }
     

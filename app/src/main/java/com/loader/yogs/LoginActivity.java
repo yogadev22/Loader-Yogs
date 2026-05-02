@@ -10,6 +10,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -41,7 +42,6 @@ public class LoginActivity extends AppCompatActivity {
     static {
         System.loadLibrary("yogs");
     }
-    
     public static void goLogin(Context context) {
         Intent i = new Intent(context, LoginActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -50,7 +50,6 @@ public class LoginActivity extends AppCompatActivity {
     
     private ActivityLoginBinding binding;
 
-    private static final String USER = "USER";
     private static final String PASS = "PASS";
     private FPrefs prefs;
     
@@ -72,8 +71,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 Login(LoginActivity.this, passKey);
             } else if (binding.textPassword.getText().toString().isEmpty()) {
-                Toast.makeText(LoginActivity.this, "Please enter license!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Please enter key!", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        binding.getkey.setOnClickListener(view -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://yogspanel.indevs.in/keys/getkey?admin=YOGS"));
+            startActivity(intent);
         });
     }
 
@@ -86,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 if (msg.what == 0) {
                     MainActivity.goMain(m_Context);
-                    Toast.makeText(m_Context, "Login Success!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(m_Context, "Login Success", Toast.LENGTH_SHORT).show();
                     m_Context.finishActivity(0);
                 } else if (msg.what == 1) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(m_Context, 5);
@@ -112,11 +117,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         }).start();
     }
-
     private static native String native_Check(Context context, String userKey);
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        binding = null;
     }
 }

@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 #include <android/log.h>
+#include "oxorany.h"
 
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, "anj", __VA_ARGS__)
 
@@ -47,8 +48,8 @@ uintptr_t FindLibrary(const char* name, int index) {
     char line[1024] = {0};
     char dname[128], fname[128];
 
-    snprintf(dname, sizeof(dname), "%s", name);
-    snprintf(fname, sizeof(fname), "/proc/%d/maps", pid);
+    snprintf(dname, sizeof(dname), oxorany("%s"), name);
+    snprintf(fname, sizeof(fname), oxorany("/proc/%d/maps"), pid);
     FILE* p = fopen(fname, "r");
     if (p) {
         while (fgets(line, sizeof(line), p)) {

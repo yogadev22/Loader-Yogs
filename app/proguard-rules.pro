@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Fix for missing javax.annotation classes often referenced by libraries like Okio
+-dontwarn javax.annotation.**

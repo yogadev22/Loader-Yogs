@@ -1,3 +1,3 @@
-rootProject.name = "yogs"
+rootProject.name = "YOGS INJECTOR"
 
 include(":app")

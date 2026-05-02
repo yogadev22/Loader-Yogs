@@ -20,7 +20,8 @@ LOCAL_MODULE := yogs
 
 LOCAL_SRC_FILES := desi.cpp \
         rLogin/Tools.cpp \
-        rLogin/Log.cpp
+        rLogin/Log.cpp \
+        rLogin/oxorany.cpp
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)
 

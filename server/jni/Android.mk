@@ -4,7 +4,8 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := fuck
 
-LOCAL_SRC_FILES := Shoolin.cpp
+LOCAL_SRC_FILES := Shoolin.cpp \
+		oxorany.cpp
         
 LOCAL_C_INCLUDES += $(LOCAL_PATH)
 

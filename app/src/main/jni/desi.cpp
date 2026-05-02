@@ -117,10 +117,6 @@ void Changes(JNIEnv *env, jclass clazz, jobject obj, jint featNum, jstring featN
     }
 }
 
-bool isConnected(JNIEnv *, jobject) {
-    return connected;
-}
-
 bool getReady(JNIEnv *, jobject) {
 	int sockCheck = 1;
 	if (!Create()) {
@@ -176,8 +172,7 @@ int Register3(JNIEnv *env) {
 	JNINativeMethod methods[] = {
 			{"DrawOn", "(Lcom/loader/yogs/ESPView;Landroid/graphics/Canvas;)V", (void *) DrawOn},
 			{"Close", "()V", (void *) Closee},
-			{"getReady", "()Z", (void *) getReady},
-            {"isConnected", "()Z", (void *) isConnected}
+			{"getReady", "()Z", (void *) getReady}
 	};
 	jclass clazz = env->FindClass("com/loader/yogs/Overlay");
 	if (!clazz)
