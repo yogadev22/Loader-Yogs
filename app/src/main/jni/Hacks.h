@@ -8,7 +8,6 @@
 Request request;
 Response response;
 Options options{false, 0, 0, false, false};
-int Game;
 
 int isPlayerLine = 0, isPlayerBox = 0;
 bool isShowTouch, isPlayerLinee, isPlayerWeapon, isPlayerBoxx, isr360Alert, isPlayerHealth, isPlayerName, isPlayerDist, isNoBot;
@@ -16,7 +15,7 @@ Color clrEnemy, clrFilled, clrEdge, clrBox, clrSkeleton, clrHealth;
 char extra[30];
 
 void DrawESP(ESP esp, int screenWidth, int screenHeight) {
-    if (connected) {
+    if (xConnected && connected) {
         int botCount = 0, playerCount = 0;
         request.screenWidth = screenWidth;
         request.screenHeight = screenHeight;

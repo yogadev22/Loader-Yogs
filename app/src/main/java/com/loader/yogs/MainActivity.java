@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
+import android.icu.util.TimeZone;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private String daemonPath64;
     private static final int REQUEST_MANAGE_STORAGE_PERMISSION = 100;
     private static final int REQUEST_MANAGE_UNKNOWN_APP_SOURCES = 200;
-    public static String gamepackage = "";
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,13 +63,14 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, 123);
         }
 
-        binding.mode.setText(gamepackage);
-        binding.mode.setTextColor(Color.GREEN);
-
         if (Shell.rootAccess()) {
             daemon64 = "su -c " + getFilesDir().getPath()  + "/fuck";
+            binding.mode.setText("Root");
+            binding.mode.setTextColor(Color.GREEN);
         } else {
             daemon64 = getFilesDir().getPath()  + "/fuck";
+            binding.mode.setText("Container");
+            binding.mode.setTextColor(Color.GREEN);
         }
 
         loadAssets64();
@@ -87,10 +88,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     
+    public static void goMain(Context context) {
+        Intent i = new Intent(context, MainActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
+    }
+    
     private void Initialize(final Context context) {
         try {
             PackageManager packageManager = context.getPackageManager();
-            Intent launchIntent = packageManager.getLaunchIntentForPackage(gamepackage);
+            Intent launchIntent = packageManager.getLaunchIntentForPackage("com.dts.freefiremax");
             if (launchIntent != null) {
                 context.startActivity(launchIntent);
             }
@@ -133,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     handler.postDelayed(this, 1000);
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
                     Date expiryDate = dateFormat.parse(EXP());
 
                     long now = System.currentTimeMillis();

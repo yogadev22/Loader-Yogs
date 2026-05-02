@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_height="fill_parent"
+     android:layout_width="fill_parent"
+     android:background="#FF12171D"
+     android:orientation="vertical">
+
+    <LinearLayout
+         android:layout_height="250dp"
+         android:layout_width="fill_parent">
+
+    </LinearLayout>
+
+    <LinearLayout
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:gravity="center"
+         android:orientation="vertical"
+         android:layout_gravity="center">
+
+        <ImageView
+             android:layout_height="190dp"
+             android:layout_width="190dp"
+             android:src="@drawable/yogs" />
+
+    </LinearLayout>
+
+    <LinearLayout
+         android:layout_height="230dp"
+         android:layout_width="fill_parent">
+
+    </LinearLayout>
+
+    <TextView
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:background="#1a1b1c"
+         android:gravity="center"
+         android:textSize="13sp"
+         android:textColor="#FFFFFF"
+         android:text="@string/app_name"
+         android:layout_gravity="center_horizontal"
+         android:textStyle="bold" />
+
+    <LinearLayout
+         android:layout_height="fill_parent"
+         android:layout_width="fill_parent"
+         android:gravity="bottom|center"
+         android:orientation="vertical"
+         android:layout_marginStart="10dp">
+
+        <ProgressBar
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:progressBackgroundTint="#1a1b1c"
+             android:progressTint="#FF2EBD85"
+             style="@android:style/Widget.ProgressBar.Horizontal"
+             android:id="@+id/progressBar" />
+
+        <TextView
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:gravity="center"
+             android:textSize="16sp"
+             android:textColor="#FFFFFF"
+             android:id="@+id/progressText"
+             android:text="Checking resources..."
+             android:layout_gravity="center" />
+
+    </LinearLayout>
+
+</LinearLayout>

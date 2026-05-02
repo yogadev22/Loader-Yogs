@@ -33,6 +33,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.topjohnwu.superuser.Shell;
 import org.lsposed.lsparanoid.Obfuscate;
+import com.loader.yogs.databinding.ActivityLoginBinding;
 
 @Obfuscate
 public class LoginActivity extends AppCompatActivity {
@@ -40,166 +41,43 @@ public class LoginActivity extends AppCompatActivity {
     static {
         System.loadLibrary("yogs");
     }
+    
+    public static void goLogin(Context context) {
+        Intent i = new Intent(context, LoginActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
+    }
+    
+    private ActivityLoginBinding binding;
 
     private static final String USER = "USER";
     private static final String PASS = "PASS";
     private FPrefs prefs;
-    String gamename = "";
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         prefs = FPrefs.with(LoginActivity.this);
         
-        /*if (!Shell.rootAccess()) {
-            AlertDialog newdial = new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
-                    .setCancelable(false)
-                    .setMessage("ROOT REQUIRED!")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        finish(); // Tutup activity
-                        System.exit(0); // Hentikan aplikasi
-                    })
-                    .create();
-            
-            newdial.show();
-        }*/
+        binding.textPassword.setText(prefs.read(PASS, ""));
         
-        RelativeLayout basepage = new RelativeLayout(this);
-        basepage.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
-        
-        LinearLayout loginlyt = new LinearLayout(this);
-        RelativeLayout.LayoutParams loginParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        loginParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-        loginParams.setMargins(25, 0, 25, 0);
-        loginlyt.setLayoutParams(loginParams);
-        loginlyt.setGravity(Gravity.CENTER);
-        loginlyt.setPadding(30, 30, 30, 30);
-        loginlyt.setOrientation(LinearLayout.VERTICAL);
-        loginlyt.setBackground(getDrawable(R.drawable.bg_rounded));
-        
-        TextView loginTitle = new TextView(this);
-        LinearLayout.LayoutParams titleparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        titleparams.setMargins(0, 0, 0, 20);
-        loginTitle.setLayoutParams(titleparams);
-        loginTitle.setTextSize(18);
-        loginTitle.setText("Login Crendentials");
-        loginTitle.setTextColor(Color.WHITE);
-        loginTitle.setTypeface(null, Typeface.BOLD);
-        loginTitle.setGravity(Gravity.CENTER);
-        
-        loginlyt.addView(loginTitle);
-        
-        TextInputLayout PasswordLayout = new TextInputLayout(this);
-        PasswordLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        PasswordLayout.setHint("License");
-        PasswordLayout.setBoxStrokeColor(Color.parseColor("#2E8B57"));
-        PasswordLayout.setBoxBackgroundColor(Color.WHITE);
-        
-        TextInputEditText textPassword = new TextInputEditText(this);
-        textPassword.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        textPassword.setTextColor(Color.WHITE);
-        textPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        
-        PasswordLayout.addView(textPassword);
-        loginlyt.addView(PasswordLayout);
-        
-        TextView textgame = new TextView(this);
-        textgame.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        textgame.setText("Select Game");
-        textgame.setTextColor(Color.WHITE);
-        textgame.setTextSize(16);
-        loginlyt.addView(textgame);
-        
-        Spinner gameSelection = new Spinner(this);
-        gameSelection.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        gameSelection.setBackgroundColor(Color.TRANSPARENT);
-        gameSelection.setGravity(Gravity.CENTER);
-        gameSelection.setPadding(0, 5, 0, 15);
-        String[] items = {"PUBG", "Free Fire", "Mobile Legends"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items) {
+        binding.loginBtn.setOnClickListener(view -> {
+            if (!binding.textPassword.getText().toString().isEmpty()) {
+                prefs.write(PASS, binding.textPassword.getText().toString());
 
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                TextView view = (TextView) super.getView(position, convertView, parent);
-        
-                // Style item yang tampil (selected)
-                view.setTextSize(18); // BESARIN TEXT
-                view.setTextColor(Color.WHITE);
-                view.setGravity(Gravity.LEFT);
-                view.setPadding(10, 10, 10, 10);
-        
-                return view;
-            }
-        
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                TextView view = (TextView) super.getDropDownView(position, convertView, parent);
-        
-                // Style dropdown list
-                view.setTextSize(18); // lebih besar lagi
-                view.setTextColor(Color.WHITE);
-                view.setPadding(20, 20, 20, 20);
-        
-                // Tinggi item dropdown (optional)
-                view.setMinHeight(100);
-        
-                return view;
-            }
-        };
-        gameSelection.setAdapter(adapter);
-        gameSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedText = parent.getItemAtPosition(position).toString();
-                if (selectedText.equals("PUBG")) {
-                    gamename = "PUBG";
-                    MainActivity.gamepackage = "com.tencent.ig";
-                } else if (selectedText.equals("Free Fire")) {
-                    gamename = "FFMAX";
-                    MainActivity.gamepackage = "com.dts.freefiremax";
-                } else if (selectedText.equals("Mobile Legends")) {
-                    gamename = "MLBB";
-                    MainActivity.gamepackage = "com.mobile.legends";
-                }
-            }
-        
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-        loginlyt.addView(gameSelection);
-        
-        MaterialButton loginBtn = new MaterialButton(this);
-        loginBtn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 95));
-        loginBtn.setGravity(Gravity.CENTER);
-        loginBtn.setTextSize(14);
-        loginBtn.setCornerRadius(10);
-        loginBtn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2E8B57")));
-        loginBtn.setTextColor(Color.WHITE);
-        loginBtn.setText("LOGIN");
-        loginBtn.setTypeface(null, Typeface.BOLD);
-        
-        loginlyt.addView(loginBtn);
-        basepage.addView(loginlyt);
-        
-        setContentView(basepage);
-        
-        textPassword.setText(prefs.read(PASS, ""));
+                String passKey = binding.textPassword.getText().toString().trim();
 
-        loginBtn.setOnClickListener(view -> {
-            if (!textPassword.getText().toString().isEmpty()) {
-                prefs.write(PASS, textPassword.getText().toString());
-
-                String passKey = textPassword.getText().toString().trim();
-
-                Login(LoginActivity.this, passKey, gamename);
-            } else if (textPassword.getText().toString().isEmpty()) {
+                Login(LoginActivity.this, passKey);
+            } else if (binding.textPassword.getText().toString().isEmpty()) {
                 Toast.makeText(LoginActivity.this, "Please enter license!", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void Login(final Context m_Context, final String userKey, final String game) {
+    private void Login(final LoginActivity m_Context, final String userKey) {
         AppFunction.ShowLoadingAnimation(m_Context);
 
         final Handler loginHandler = new Handler() {
@@ -207,14 +85,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == 0) {
-                    try {
-                        Intent intent = new Intent(m_Context, MainActivity.class);
-                        m_Context.startActivity(intent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    Toast.makeText(m_Context, "Login Success", Toast.LENGTH_SHORT).show();
-                    finish();
+                    MainActivity.goMain(m_Context);
+                    Toast.makeText(m_Context, "Login Success!", Toast.LENGTH_SHORT).show();
+                    m_Context.finishActivity(0);
                 } else if (msg.what == 1) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(m_Context, 5);
                     builder.setTitle("ERROR");
@@ -228,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         new Thread(() -> {
-            String result = native_Check(m_Context, userKey, game);
+            String result = native_Check(m_Context, userKey);
             if ("OK".equals(result)) {
                 loginHandler.sendEmptyMessage(0);
             } else {
@@ -240,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
         }).start();
     }
 
-    private static native String native_Check(Context context, String userKey, String GameSelected);
+    private static native String native_Check(Context context, String userKey);
 
     @Override
     protected void onDestroy() {

@@ -13,7 +13,7 @@
 
 using json = nlohmann::ordered_json;
 std::string g_Auth, g_Token,ts;
-bool xConnected = true;
+bool xConnected = false;
 bool check;
 int modekey = 1;
 
@@ -30,10 +30,8 @@ std::string sha256(const std::string &input) {
     return std::string(outputBuffer);
 }
 
-extern "C" JNIEXPORT jstring JNICALL native_Check(JNIEnv *env, jclass clazz, jobject mContext, jstring mUserKey, jstring mGameSelected) {
+extern "C" JNIEXPORT jstring JNICALL native_Check(JNIEnv *env, jclass clazz, jobject mContext, jstring mUserKey) {
     const char* user_key = env->GetStringUTFChars(mUserKey, 0);
-    const char* mode_select = env->GetStringUTFChars(mGameSelected, 0);
-    name = mode_select;
     std::string hwid = user_key;
     hwid += GetAndroidID(env, mContext);
     hwid += GetDeviceModel(env);
@@ -50,7 +48,7 @@ extern "C" JNIEXPORT jstring JNICALL native_Check(JNIEnv *env, jclass clazz, job
 
     if (curl) {
         char lol[100];
-        sprintf(lol, OBFUSCATE("https://venomkey.com/connect"));
+        sprintf(lol, OBFUSCATE("http://yogspanel.indevs.in/connect"));
 
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_easy_setopt(curl, CURLOPT_URL, lol);
@@ -62,7 +60,7 @@ extern "C" JNIEXPORT jstring JNICALL native_Check(JNIEnv *env, jclass clazz, job
         headers = curl_slist_append(headers, "Charset: UTF-8");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         char data[4096];
-        sprintf(data, "game=%s&user_key=%s&serial=%s", mode_select, user_key, UUID.c_str());
+        sprintf(data, "game=FFMAX&user_key=%s&serial=%s", user_key, UUID.c_str());
         //printf("%s\n",data);
         curl_easy_setopt(curl, CURLOPT_POST, 1);
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
@@ -87,7 +85,7 @@ extern "C" JNIEXPORT jstring JNICALL native_Check(JNIEnv *env, jclass clazz, job
                     time_t rng = result[DATA][RNG].get<time_t>();
                     ts = result["data"]["EXP"].get<std::string>();
                     if (rng + 30 > time(0)) {
-                        std::string auth = mode_select;
+                        std::string auth = "FFMAX";
                         auth += "-";
                         auth += user_key;
                         auth += "-";

@@ -1,6 +1,7 @@
 package com.loader.yogs;
 
 import android.app.ActivityManager;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -37,11 +38,13 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.cardview.widget.CardView;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.Inflater;
 import org.lsposed.lsparanoid.Obfuscate;
 
 @Obfuscate
@@ -52,12 +55,16 @@ public class Floating extends Service {
     }
         
     Context mContext;
-    private FrameLayout mFloatingView;
+    private View mFloatingView;
+    private View logoView, espView;
     private WindowManager mWindowManager;
     int currentTab = 0;
+    private RelativeLayout ghostlayout, flylayout;
     
     TextView texttab;
     LinearLayout espmenu, aimmenu, setmenu;
+    
+    private boolean checkStatus, chrckst;
     
     private FPrefs prefs;
 
@@ -75,79 +82,24 @@ public class Floating extends Service {
         super.onCreate();
         this.mContext = this;
         prefs = FPrefs.with(this);
+        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        mFloatingView = LayoutInflater.from(this).inflate(R.layout.floating, null);
+        espView = mFloatingView.findViewById(R.id.menulayout);
+        logoView = mFloatingView.findViewById(R.id.logo);
         createOver();
     }
 
     @SuppressLint("InflateParams")
     void createOver() {
-        mFloatingView = new FrameLayout(this);
-        mFloatingView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        
-        RelativeLayout logoView = new RelativeLayout(this);
-        logoView.setLayoutParams(new LinearLayout.LayoutParams(dp(50), dp(50)));
-        ImageView logoImage = new ImageView(this);
-        logoImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        logoImage.setImageDrawable(getDrawable(R.drawable.yogs));
-        logoView.addView(logoImage);
-        mFloatingView.addView(logoView);
-        
-        CardView espView = new CardView(this);
-        espView.setLayoutParams(new LinearLayout.LayoutParams(dp(350), dp(350)));
-        espView.setCardElevation(10);
-        espView.setCardBackgroundColor(getColor(R.color.dark));
-        espView.setRadius(16);
-        
-        LinearLayout mnulyt = new LinearLayout(this);
-        LinearLayout.LayoutParams anjinnn = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        anjinnn.setMargins(0, dp(8), 0, 0);
-        mnulyt.setLayoutParams(anjinnn);
-        mnulyt.setPadding(dp(8), dp(8), dp(8), dp(8));
-        mnulyt.setOrientation(LinearLayout.VERTICAL);
-        
-        LinearLayout titlelyt = new LinearLayout(this);
-        titlelyt.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        titlelyt.setPadding(dp(10), dp(10), dp(10), dp(10));
-        titlelyt.setGravity(Gravity.CENTER);
-        titlelyt.setBackground(getDrawable(R.drawable.bg_button));
-        
-        TextView title = new TextView(this);
-        title.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        title.setTextSize(16);
-        title.setTextColor(Color.WHITE);
-        title.setText("YOGS INJECTOR");
-        title.setTypeface(null, Typeface.BOLD);
-        
-        titlelyt.addView(title);
-        mnulyt.addView(titlelyt);
-        
-        LinearLayout featurelyt = new LinearLayout(this);
-        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        params1.setMargins(dp(8), dp(8), dp(8), dp(8));
-        featurelyt.setLayoutParams(params1);
-        featurelyt.setOrientation(LinearLayout.VERTICAL);
-        
-        ScrollView scrl = new ScrollView(this);
-        LinearLayout.LayoutParams scrollParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                0
-        );
-        scrollParams.weight = 1f;
-        scrl.setLayoutParams(scrollParams);
-        scrl.setScrollBarSize(0);
-        
-        LinearLayout featurelyt2 = new LinearLayout(this);
-        featurelyt2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        featurelyt2.setOrientation(LinearLayout.VERTICAL);
+    
+        LinearLayout featurelayout = mFloatingView.findViewById(R.id.menunya);
         
         Button n = new Button(this);
         LinearLayout.LayoutParams paramss2ss = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        paramss2ss.setMargins(dp(6), dp(6), dp(6), dp(6));
+        paramss2ss.setMargins(10, 10, 10, 10);
         n.setLayoutParams(paramss2ss);
         n.setBackgroundResource(R.drawable.bg_switch);
-        n.setPadding(dp(5), dp(5), dp(5), dp(5));
+        n.setPadding(10, 10, 10, 10);
         n.setTextSize(15);
         n.setTextColor(Color.WHITE);
         n.setText("START MENU");
@@ -155,16 +107,10 @@ public class Floating extends Service {
         n.setOnClickListener(view -> {
             startService(new Intent(this, Overlay.class));
             n.setVisibility(View.GONE);
-            featureList(GetFeatureList(), featurelyt2);
+            featureList(GetFeatureList(), featurelayout);
         });
         
-        featurelyt2.addView(n);
-        
-        scrl.addView(featurelyt2);
-        featurelyt.addView(scrl);
-        mnulyt.addView(featurelyt);
-        espView.addView(mnulyt);
-        mFloatingView.addView(espView);
+        featurelayout.addView(n);
         
         int LAYOUT_FLAG;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -178,10 +124,9 @@ public class Floating extends Service {
                 LAYOUT_FLAG, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.RGBA_8888
         );
 
-        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         mWindowManager.addView(mFloatingView, params);
 
-        title.setOnClickListener(view -> {
+        mFloatingView.findViewById(R.id.closetext).setOnClickListener(view -> {
             espView.setVisibility(View.GONE);
             logoView.setVisibility(View.VISIBLE);
         });
@@ -286,53 +231,59 @@ public class Floating extends Service {
             String[] strSplit = feature.split("_");
             switch (strSplit[0]) {
                 case "Toggle":
-                    addSwitch(strSplit[1], featNum, switchedOn, strSplit[2], linearLayout);
+                    addSwitch(strSplit[1], featNum, switchedOn, linearLayout);
                     break;
                 case "Seekbar":
-                    addSeekbar(strSplit[1], featNum, switchedOn, strSplit[3], Integer.parseInt(strSplit[2]), linearLayout);
+                    addSeekbar(strSplit[1], featNum, switchedOn, Integer.parseInt(strSplit[2]), linearLayout);
                     break;
                 case "RadioButton":
-                    addRadioButton(strSplit[1], featNum, switchedOn, strSplit[3], strSplit[2], linearLayout);
+                    addRadioButton(strSplit[1], featNum, switchedOn, strSplit[2], linearLayout);
                     break;
                 case "TitleMenu":
                     addText(strSplit[1], linearLayout);
+                    break;
+                case "ToggleGhost":
+                    addSwitchGhost(strSplit[1], featNum, switchedOn, linearLayout);
+                    break;
+                case "ToggleFly":
+                    addSwitchFly(strSplit[1], featNum, switchedOn, linearLayout);
                     break;
             }
         }
     }
     
-    private void addSwitch(String name, int featnum, boolean isautosave, String gamename, LinearLayout view) {
+    private void addSwitch(String name, int featnum, boolean isautosave, LinearLayout view) {
         Switch n = new Switch(this);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(dp(6), dp(6), dp(6), dp(6));
+        params.setMargins(10, 10, 10, 10);
         n.setLayoutParams(params);
         n.setBackgroundResource(R.drawable.bg_switch);
-        n.setPadding(dp(10), dp(10), dp(10), dp(10));
+        n.setPadding(20, 20, 20, 20);
         n.setTextSize(15);
         n.setTextColor(Color.WHITE);
         n.setText(name);
         if (isautosave) {
-            n.setChecked(prefs.readBoolean(gamename + "_" + name));
-            Changes(this, featnum, name, 0, 0, prefs.readBoolean(gamename + "_" + name), null);
+            n.setChecked(prefs.readBoolean(name));
+            Changes(this, featnum, name, 0, 0, prefs.readBoolean(name), null);
         }
         
         n.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Changes(this, featnum, name, 0, 0, isChecked, null);
             if (isautosave) {
-                prefs.writeBoolean(gamename + "_" + name, n.isChecked());
+                prefs.writeBoolean(name, n.isChecked());
             }
         });
         
         view.addView(n);
     }
     
-    private void addSeekbar(String name, int featnum, boolean isautosave, String gamename, int max, LinearLayout view) {
+    private void addSeekbar(String name, int featnum, boolean isautosave, int max, LinearLayout view) {
         LinearLayout texlyt = new LinearLayout(this);
         LinearLayout.LayoutParams paramss = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        paramss.setMargins(dp(6), dp(6), dp(6), dp(6));
+        paramss.setMargins(10, 10, 10, 10);
         texlyt.setLayoutParams(paramss);
         texlyt.setBackgroundResource(R.drawable.bg_switch);
-        texlyt.setPadding(dp(10), dp(10), dp(10), dp(10));
+        texlyt.setPadding(20, 20, 20, 20);
         texlyt.setOrientation(LinearLayout.VERTICAL);
         
         LinearLayout textlyt = new LinearLayout(this);
@@ -350,7 +301,7 @@ public class Floating extends Service {
         TextView sTitlee = new TextView(this);
         sTitlee.setLayoutParams(paramssss);
         if (isautosave) {
-            sTitlee.setText(String.valueOf(prefs.readInt(gamename + "_" + name, -1)));
+            sTitlee.setText(String.valueOf(prefs.readInt(name, -1)));
         }
         sTitlee.setTextSize(15);
         sTitlee.setTextColor(Color.WHITE);
@@ -367,7 +318,7 @@ public class Floating extends Service {
         int slidervalue = 0;
 
         if (isautosave) {
-            slidervalue = prefs.readInt(gamename + "_" + name, 0);
+            slidervalue = prefs.readInt(name, 0);
         }
         
         sTitlee.setText(String.valueOf(slidervalue));
@@ -379,7 +330,7 @@ public class Floating extends Service {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 Changes(mContext, featnum, name, progress, 0, false, null);
                 sTitlee.setText(String.valueOf(progress));
-                prefs.writeInt(gamename + "_" + name, progress);
+                prefs.writeInt(name, progress);
             }
     
             @Override
@@ -397,7 +348,7 @@ public class Floating extends Service {
         view.addView(texlyt);
     }
     
-    private void addRadioButton(String name, int featnum, boolean isautosave, String gamename, String list, LinearLayout view) {
+    private void addRadioButton(String name, int featnum, boolean isautosave, String list, LinearLayout view) {
         List<String> lists = new LinkedList<>(Arrays.asList(list.split(",")));
     
         LinearLayout texlyt = new LinearLayout(this);
@@ -405,10 +356,10 @@ public class Floating extends Service {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        paramss.setMargins(dp(6), dp(6), dp(6), dp(6));
+        paramss.setMargins(10, 10, 10, 10);
         texlyt.setLayoutParams(paramss);
         texlyt.setBackgroundResource(R.drawable.bg_switch);
-        texlyt.setPadding(dp(10), dp(10), dp(10), dp(10));
+        texlyt.setPadding(15, 15, 15, 15);
         texlyt.setOrientation(LinearLayout.VERTICAL);
     
         TextView title = new TextView(this);
@@ -439,7 +390,7 @@ public class Floating extends Service {
         // 🔹 LOAD DATA (autosave)
         int savedIndex = 0;
         if (isautosave) {
-            savedIndex = prefs.readInt(gamename + "_" + name, 0);
+            savedIndex = prefs.readInt(name, 0);
         }
     
         // 🔹 Set checked sesuai savedIndex
@@ -464,7 +415,7 @@ public class Floating extends Service {
     
                         // autosave
                         if (isautosave) {
-                            prefs.writeInt(gamename + "_" + name, index);
+                            prefs.writeInt(name, index);
                         }
                     }
                 }
@@ -497,8 +448,95 @@ public class Floating extends Service {
         view.addView(texlyt);
     }
     
-    private int dp(int value) {
-        return (int) (value * getResources().getDisplayMetrics().density);
+    private void addSwitchGhost(String name, int featnum, boolean isautosave, LinearLayout view) {
+        Switch n = new Switch(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(10, 10, 10, 10);
+        n.setLayoutParams(params);
+        n.setBackgroundResource(R.drawable.bg_switch);
+        n.setPadding(20, 20, 20, 20);
+        n.setTextSize(15);
+        n.setTextColor(Color.WHITE);
+        n.setText(name);
+        
+        ghostlayout = new RelativeLayout(this);
+        ghostlayout.setLayoutParams(new RelativeLayout.LayoutParams(90, 90));
+        
+        ImageView ghostlogo = new ImageView(this);
+        ghostlogo.setLayoutParams(new RelativeLayout.LayoutParams(90, 90));
+        ghostlogo.setImageDrawable(getDrawable(R.drawable.ghost));
+        ghostlogo.setColorFilter(0xFFb5b5b5, PorterDuff.Mode.SRC_ATOP);
+        
+        ghostlayout.addView(ghostlogo);
+        
+        int LAYOUT_FLAG;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
+        }
+
+        final WindowManager.LayoutParams wmparams = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
+                LAYOUT_FLAG, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.RGBA_8888
+        );
+        
+        final GestureDetector gestureDetector = new GestureDetector(this, new SingleTapConfirm());
+
+        ghostlayout.setOnTouchListener(new View.OnTouchListener() {
+            private int initialX;
+            private int initialY;
+            private float initialTouchX;
+            private float initialTouchY;
+            private ObjectAnimator alphaAnimator;
+
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (gestureDetector.onTouchEvent(event)) {
+                    if (!checkStatus) {
+						checkStatus = true;
+						ghostlogo.setColorFilter(0xFFa1e36f, PorterDuff.Mode.SRC_ATOP);
+                        Changes(mContext, featnum, name, 0, 0, true, null);
+					} else {
+						checkStatus = false;
+						ghostlogo.setColorFilter(0xFFb5b5b5, PorterDuff.Mode.SRC_ATOP);
+                        Changes(mContext, featnum, name, 0, 0, false, null);
+					}
+                    return true;
+                } else {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            initialX = wmparams.x;
+                            initialY = wmparams.y;
+                            initialTouchX = event.getRawX();
+                            initialTouchY = event.getRawY();
+                            v.setAlpha(1f);
+                            return true;
+                        case MotionEvent.ACTION_MOVE:
+                            wmparams.x = initialX + (int) (event.getRawX() - initialTouchX);
+                            wmparams.y = initialY + (int) (event.getRawY() - initialTouchY);
+                            mWindowManager.updateViewLayout(ghostlayout, wmparams);
+                            return true;
+                    }
+                    return false;
+                }
+            }
+        });
+        
+        n.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                if (ghostlayout.getParent() == null) {
+                    mWindowManager.addView(ghostlayout, wmparams);
+                }
+            } else {
+                if (ghostlayout.getParent() != null) {
+                    mWindowManager.removeView(ghostlayout);
+                }
+            }
+        });
+        
+        view.addView(n);
     }
 
     class SingleTapConfirm extends GestureDetector.SimpleOnGestureListener {
@@ -507,12 +545,112 @@ public class Floating extends Service {
             return true;
         }
     }
+    
+    private void addSwitchFly(String name, int featnum, boolean isautosave, LinearLayout view) {
+        Switch n = new Switch(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(10, 10, 10, 10);
+        n.setLayoutParams(params);
+        n.setBackgroundResource(R.drawable.bg_switch);
+        n.setPadding(20, 20, 20, 20);
+        n.setTextSize(15);
+        n.setTextColor(Color.WHITE);
+        n.setText(name);
+        
+        flylayout = new RelativeLayout(this);
+        flylayout.setLayoutParams(new RelativeLayout.LayoutParams(90, 90));
+        
+        ImageView ghostlogo = new ImageView(this);
+        ghostlogo.setLayoutParams(new RelativeLayout.LayoutParams(90, 90));
+        ghostlogo.setImageDrawable(getDrawable(R.drawable.arrow_up_bold));
+        ghostlogo.setColorFilter(0xFFb5b5b5, PorterDuff.Mode.SRC_ATOP);
+        
+        flylayout.addView(ghostlogo);
+        
+        int LAYOUT_FLAG;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
+        }
+
+        final WindowManager.LayoutParams wmparams = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
+                LAYOUT_FLAG, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.RGBA_8888
+        );
+        
+        final GestureDetector gestureDetector = new GestureDetector(this, new SingleTapConfirm());
+
+        flylayout.setOnTouchListener(new View.OnTouchListener() {
+            private int initialX;
+            private int initialY;
+            private float initialTouchX;
+            private float initialTouchY;
+            private ObjectAnimator alphaAnimator;
+
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (gestureDetector.onTouchEvent(event)) {
+                    if (!chrckst) {
+						chrckst = true;
+						ghostlogo.setColorFilter(0xFFa1e36f, PorterDuff.Mode.SRC_ATOP);
+                        Changes(mContext, featnum, name, 0, 0, true, null);
+					} else {
+						chrckst = false;
+						ghostlogo.setColorFilter(0xFFb5b5b5, PorterDuff.Mode.SRC_ATOP);
+                        Changes(mContext, featnum, name, 0, 0, false, null);
+					}
+                    return true;
+                } else {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            initialX = wmparams.x;
+                            initialY = wmparams.y;
+                            initialTouchX = event.getRawX();
+                            initialTouchY = event.getRawY();
+                            v.setAlpha(1f);
+                            return true;
+                        case MotionEvent.ACTION_MOVE:
+                            wmparams.x = initialX + (int) (event.getRawX() - initialTouchX);
+                            wmparams.y = initialY + (int) (event.getRawY() - initialTouchY);
+                            mWindowManager.updateViewLayout(flylayout, wmparams);
+                            return true;
+                    }
+                    return false;
+                }
+            }
+        });
+        
+        n.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                if (flylayout.getParent() == null) {
+                    mWindowManager.addView(flylayout, wmparams);
+                }
+            } else {
+                if (flylayout.getParent() != null) {
+                    mWindowManager.removeView(flylayout);
+                }
+            }
+        });
+        
+        view.addView(n);
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        checkStatus = false;
         if (mFloatingView != null) {
             mWindowManager.removeView(mFloatingView);
+        }
+        
+        if (ghostlayout != null) {
+            mWindowManager.removeView(ghostlayout);
+        }
+        
+        if (flylayout != null) {
+            mWindowManager.removeView(flylayout);
         }
     }
 }
