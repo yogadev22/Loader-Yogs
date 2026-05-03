@@ -5,39 +5,44 @@ void *bypass(void *) {
     uintptr_t anogs = 0;
 
     while (!anogs) {
-        anogs = FindLibrary(oxorany("libanogs.so"), 1);
+        anogs = FindLibrary("libanogs.so", 1);
         sleep(1);
     }
 
     if (!bLobby) {
-        edithex(anogs + oxorany(0x320A48), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x4B5F00), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x4B5F08), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x1EC088), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x203F90), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x2029C8), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x2031DC), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x21283C), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x244550), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x25C17C), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x265C0C), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x266C40), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x268064), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x27CE88), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x27E8CC), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x27ED10), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x2C0C20), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x2C1164), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x2D0CA4), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x2D4D10), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x2E4E98), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x2E5EA0), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x447698), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x448A88), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x4493AC), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x44A010), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x44B8B0), oxorany("00 00 80 D2 C0 03 5F D6"));
-        edithex(anogs + oxorany(0x497A64), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x320A48), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x4B5F00), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x4B5F08), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x1EC088), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x203F90), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x2029C8), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x2031DC), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x21283C), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x244550), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x25C17C), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x265C0C), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x266C40), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x268064), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x27CE88), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x27E8CC), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x27ED10), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x2C0C20), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x2C1164), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x2D0CA4), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x2D4D10), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x2E4E98), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x2E5EA0), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x447698), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x448A88), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x4493AC), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x44A010), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x44B8B0), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x497A64), oxorany("00 00 80 D2 C0 03 5F D6"));
+        ApplyPatch(anogs + oxorany(0x36E384), oxorany("00 00 80 D2 C0 03 5F D6")); //Segment Check
+        ApplyPatch(anogs + oxorany(0x453188), oxorany("00 00 80 D2 C0 03 5F D6")); //Memory Check
+        ApplyPatch(anogs + oxorany(0x362E98), oxorany("00 00 80 D2 C0 03 5F D6")); //Day Fix
+        ApplyPatch(anogs + oxorany(0x4B9EBC), oxorany("00 00 80 D2 C0 03 5F D6")); //Integrity Check
+        ApplyPatch(anogs + oxorany(0x47BC40), oxorany("00 00 80 D2 C0 03 5F D6"));
         bLobby = true;
     }
     
@@ -69,17 +74,17 @@ int main(int argc, char *argv[]) {
 		 exit(1);
 	}
     
-    edithex(base + oxorany(0xa0ac2d8), oxorany("00 00 80 D2 C0 03 5F D6"));
-    edithex(base + oxorany(0x6da90c8), oxorany("00 00 80 D2 C0 03 5F D6")); //LogEventTypeBannedPlayerAppeal
-    edithex(base + oxorany(0x6da0414), oxorany("00 00 80 D2 C0 03 5F D6")); //LogClanReport
-    edithex(base + oxorany(0x6d84f88), oxorany("00 00 80 D2 C0 03 5F D6")); //LogReportCheatInHistory
-    edithex(base + oxorany(0x5e08578), oxorany("00 00 80 D2 C0 03 5F D6")); //GetBanReasonDesc
-    edithex(base + oxorany(0x6359a44), oxorany("00 00 80 D2 C0 03 5F D6")); //Report
-    edithex(base + oxorany(0x635a664), oxorany("00 00 80 D2 C0 03 5F D6")); //Report
-    edithex(base + oxorany(0x6da41e0), oxorany("00 00 80 D2 C0 03 5F D6")); //CacheMinorVoiceReport
-    edithex(base + oxorany(0x6d84580), oxorany("00 00 80 D2 C0 03 5F D6")); //LogReportCheat
-    edithex(base + oxorany(0x6da3bc4), oxorany("00 00 80 D2 C0 03 5F D6")); //LogEventTypeAntiAddictionBanAck_IP_US
-    edithex(base + oxorany(0x6da3de0), oxorany("00 00 80 D2 C0 03 5F D6")); //CacheMinorChatReport
+    ApplyPatch(base + oxorany(0xa0ac2d8), oxorany("00 00 80 D2 C0 03 5F D6"));
+    ApplyPatch(base + oxorany(0x6da90c8), oxorany("00 00 80 D2 C0 03 5F D6")); //LogEventTypeBannedPlayerAppeal
+    ApplyPatch(base + oxorany(0x6da0414), oxorany("00 00 80 D2 C0 03 5F D6")); //LogClanReport
+    ApplyPatch(base + oxorany(0x6d84f88), oxorany("00 00 80 D2 C0 03 5F D6")); //LogReportCheatInHistory
+    ApplyPatch(base + oxorany(0x5e08578), oxorany("00 00 80 D2 C0 03 5F D6")); //GetBanReasonDesc
+    ApplyPatch(base + oxorany(0x6359a44), oxorany("00 00 80 D2 C0 03 5F D6")); //Report
+    ApplyPatch(base + oxorany(0x635a664), oxorany("00 00 80 D2 C0 03 5F D6")); //Report
+    ApplyPatch(base + oxorany(0x6da41e0), oxorany("00 00 80 D2 C0 03 5F D6")); //CacheMinorVoiceReport
+    ApplyPatch(base + oxorany(0x6d84580), oxorany("00 00 80 D2 C0 03 5F D6")); //LogReportCheat
+    ApplyPatch(base + oxorany(0x6da3bc4), oxorany("00 00 80 D2 C0 03 5F D6")); //LogEventTypeAntiAddictionBanAck_IP_US
+    ApplyPatch(base + oxorany(0x6da3de0), oxorany("00 00 80 D2 C0 03 5F D6")); //CacheMinorChatReport
     
     Request request{};
     Response response{};
@@ -196,6 +201,9 @@ int main(int argc, char *argv[]) {
                     
                     uintptr_t enemy = Read<uintptr_t>(entry + 0x20);
                     if (!enemy || enemy == localPlayer || Read<bool>(enemy + 0x7c))
+                        continue;
+                        
+                    if (request.options.skipbot && Read<bool>(enemy + 0x450))
                         continue;
     
                     float Distance = Vector3::Distance(myPos, GetPosition(Read<uintptr_t>(Read<uintptr_t>(enemy + 0x648) + 0x10)));

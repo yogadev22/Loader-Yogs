@@ -74,7 +74,7 @@ void Changes(JNIEnv *env, jclass clazz, jobject obj, jint featNum, jstring featN
             isr360Alert = boolean;
             break;
         case 6:
-            isNoBot = boolean;
+            options.skipbot = boolean;
             break;
         case 7:
             isPlayerLine = value;

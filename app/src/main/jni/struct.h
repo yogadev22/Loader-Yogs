@@ -34,6 +34,7 @@ struct Options {
     bool GhostHack;
     bool NoSwapWp;
     bool flyhack;
+    bool skipbot;
 };
 
 struct Request {

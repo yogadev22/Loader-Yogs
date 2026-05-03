@@ -13,10 +13,10 @@
          android:layout_marginEnd="16dp"
          android:gravity="center"
          android:background="@drawable/bg_rounded"
+         android:padding="10dp"
          android:orientation="vertical"
          android:layout_centerHorizontal="true"
          android:layout_marginTop="40dp"
-        android:padding="10dp"
          android:layout_marginStart="16dp"
          app:cardCornerRadius="10dp"
          android:id="@+id/licenseinfo">
@@ -47,8 +47,8 @@
                      android:gravity="center"
                      android:background="@color/white"
                      android:textSize="14sp"
-                     android:textStyle="bold"
                      android:textColor="@color/black"
+                     android:textStyle="bold"
                      android:id="@+id/textday"
                      android:text="00" />
 
@@ -72,10 +72,10 @@
                      android:layout_height="25dp"
                      android:layout_width="50dp"
                      android:gravity="center"
-                    android:textStyle="bold"
                      android:background="@color/white"
                      android:textSize="14sp"
                      android:textColor="@color/black"
+                     android:textStyle="bold"
                      android:id="@+id/texthour"
                      android:text="00" />
 
@@ -99,10 +99,10 @@
                      android:layout_height="25dp"
                      android:layout_width="50dp"
                      android:gravity="center"
-                    android:textStyle="bold"
                      android:background="@color/white"
                      android:textSize="14sp"
                      android:textColor="@color/black"
+                     android:textStyle="bold"
                      android:id="@+id/textminute"
                      android:text="00" />
 
@@ -126,10 +126,10 @@
                      android:layout_height="25dp"
                      android:layout_width="50dp"
                      android:gravity="center"
-                    android:textStyle="bold"
                      android:background="@color/white"
                      android:textSize="14sp"
                      android:textColor="@color/black"
+                     android:textStyle="bold"
                      android:id="@+id/textsecond"
                      android:text="00" />
 
@@ -147,17 +147,17 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/anjss"
          android:layout_height="wrap_content"
          android:layout_width="match_parent"
          android:layout_below="@id/licenseinfo"
          android:layout_marginEnd="16dp"
+         android:background="@drawable/bg_rounded"
+         android:padding="10dp"
          android:orientation="horizontal"
          android:layout_marginTop="5dp"
          android:layout_marginStart="16dp"
-        android:background="@drawable/bg_rounded"
-        android:padding="10dp"
-         app:cardCornerRadius="10dp">
+         app:cardCornerRadius="10dp"
+         android:id="@+id/anjss">
 
         <ImageView
              android:layout_height="60dp"
@@ -165,37 +165,37 @@
              android:src="@drawable/yogs" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+             android:layout_height="match_parent"
+             android:layout_width="wrap_content"
+             android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="YOGS LOADER"
-                android:layout_marginTop="5sp"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:textSize="16sp"
+                 android:layout_marginTop="5sp"
+                 android:text="YOGS LOADER"
+                 android:textStyle="bold" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3sp"
-                    android:text="Mode: "
-                    android:textSize="15sp"/>
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="15sp"
+                     android:layout_marginTop="3sp"
+                     android:text="Mode: " />
 
                 <TextView
-                    android:id="@+id/mode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3sp"
-                    android:text="Root"
-                    android:textSize="15sp"/>
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
+                     android:textSize="15sp"
+                     android:layout_marginTop="3sp"
+                     android:id="@+id/mode"
+                     android:text="Root" />
 
             </LinearLayout>
 
@@ -209,12 +209,12 @@
             <com.google.android.material.button.MaterialButton
                  android:layout_height="50dp"
                  android:layout_width="wrap_content"
-                 android:layout_marginTop="4dp"
                  android:layout_marginBottom="4dp"
                  android:textSize="16sp"
+                 app:cornerRadius="10dp"
                  android:backgroundTint="#2E8B57"
                  android:textColor="#FFFFFF"
-                 app:cornerRadius="10dp"
+                 android:layout_marginTop="4dp"
                  android:layout_gravity="end"
                  android:id="@+id/startbtn"
                  android:text="PLAY" />
